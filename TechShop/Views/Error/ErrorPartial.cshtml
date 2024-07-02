@@ -1,0 +1,23 @@
+﻿@using TechShop.Application.Services.TempDataService
+<script src="~/js/site.js" asp-append-version="true"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+@{
+    @inject ITempDataService tempDataService
+    var errorMessage = tempDataService.Get<string>("ErrorMessage");
+}
+
+@if (@errorMessage != null)
+{
+    <div id="errorMessage" class="alert alert-danger alert-dismissible fade show">
+        @errorMessage
+        <button type="button" class="close" id="errorMessageButton" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+}
+
+<script>
+    hideErrorMessage();
+    closeErrorMessage();
+</script>

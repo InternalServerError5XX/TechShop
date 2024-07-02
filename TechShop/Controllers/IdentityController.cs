@@ -1,12 +1,10 @@
-﻿using Azure;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
+﻿using Microsoft.AspNetCore.Mvc;
+using TechShop.Application.Services.AuthService;
+using TechShop.Domain.DTOs.AuthDto;
 
 namespace TechShop.Controllers
 {
-    public class IdentityController : Controller
+    public class IdentityController(IAuthService authService) : Controller
     {
         [HttpGet]
         public IActionResult Login()
@@ -15,30 +13,36 @@ namespace TechShop.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(string username, string password)
+        public async Task<IActionResult> Login(LoginDto loginDto)
         {
-            // Тут потрібно додати логіку для перевірки користувача
-            if (username == "admin@admin.com" && password == "AdminPassword123!")
-            {
-                var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, username)
-            };
+            if (!ModelState.IsValid)
+                return View(loginDto);
 
-                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var token = await authService.Login(loginDto);
 
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+            Response.Cookies.Append(
+                "token",
+                token.TokenValue,
+                token.CookieOptions);
 
-                return RedirectToAction("Privacy", "Home");
-            }
-
-            return View();
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]
         public IActionResult Register()
         {
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Register(RegisterDto registerDto)
+        {
+            if (!ModelState.IsValid)
+                return View(registerDto);
+
+            var token = await authService.Register(registerDto);
+
+            return RedirectToAction("Index", "Home");
         }
     }
 }

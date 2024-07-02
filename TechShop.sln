@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechShop.Infrastructure", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechShop.Application", "TechShop.Application\TechShop.Application.csproj", "{D361C510-5F6A-4AD1-8BAA-1C9AC0A85D2F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechShopWeb.Benchmark", "TechShop.Benchmark\TechShopWeb.Benchmark.csproj", "{FC483073-2923-4B78-8B9F-5CD8CE791984}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{D361C510-5F6A-4AD1-8BAA-1C9AC0A85D2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D361C510-5F6A-4AD1-8BAA-1C9AC0A85D2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D361C510-5F6A-4AD1-8BAA-1C9AC0A85D2F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC483073-2923-4B78-8B9F-5CD8CE791984}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC483073-2923-4B78-8B9F-5CD8CE791984}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC483073-2923-4B78-8B9F-5CD8CE791984}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC483073-2923-4B78-8B9F-5CD8CE791984}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

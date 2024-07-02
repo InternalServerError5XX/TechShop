@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using TechShop;
 using TechShop.Infrastructure;
@@ -19,6 +18,8 @@ builder.Services.InitializeSwagger();
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession();
+
+builder.Services.AddAutoMapper(typeof(Program));
 
 var app = builder.Build();
 
@@ -52,11 +53,6 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
-app.MapControllerRoute(
-    name: "swagger",
-    pattern: "swagger/{action=Index}/{id?}",
-    defaults: new { controller = "Swagger", action = "Index" });
 
 app.MapControllerRoute(
         name: "Error",

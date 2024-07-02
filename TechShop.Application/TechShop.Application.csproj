@@ -21,11 +21,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Services\BaseService\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\TechShop.Domain\TechShop.Domain.csproj" />
+    <ProjectReference Include="..\TechShop.Infrastructure\TechShop.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

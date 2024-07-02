@@ -1,4 +1,14 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿function hideErrorMessage() {
+    var errorMessage = $('#errorMessage');
+    if (errorMessage.length > 0) {
+        errorMessage.delay(3000).fadeOut(1000);
+    }
+}
 
-// Write your JavaScript code.
+function closeErrorMessage() {
+    $(document).ready(function () {
+        $(".close").click(function () {
+            $("#errorMessage").alert('close');
+        });
+    });
+}

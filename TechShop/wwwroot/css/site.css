@@ -21,3 +21,7 @@ body {
   margin-bottom: 60px;
   background-color: #f8f9fa;
 }
+
+.app_footer {
+    margin-bottom: -60px;
+}

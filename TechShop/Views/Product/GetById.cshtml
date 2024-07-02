@@ -1,0 +1,37 @@
+﻿@using TechShop.Domain.DTOs.ProductDto
+@model ResponseProductDto;
+
+@{
+    ViewData["Title"] = $"{Model.Brand} {Model.Model}";
+}
+
+<style>
+    .product-image {
+        max-width: 100%;
+        height: auto;
+        object-fit: cover;
+    }
+</style>
+
+<div class="container mt-3">
+    @Html.PartialAsync("ErrorPartial");
+
+    <div class="row">
+        <div class="col-md-6">
+            @if (Model.ProductPhotos.Any())
+            {
+                <img src="@Model.ProductPhotos.First().Path" class="product-image" alt="@Model.Model">
+            }
+            else
+            {
+                <img src="https://via.placeholder.com/550" class="product-image" alt="No Image Available">
+            }
+        </div>
+        <div class="col-md-6">
+            <h2>@Model.Brand @Model.Model</h2>
+            <p><strong>Price:</strong> $@Model.Price</p>
+            <p><strong>Description:</strong> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quam velit.</p>
+            <button type="button" class="btn btn-primary">Add to Cart</button>
+        </div>
+    </div>
+</div>

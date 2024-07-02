@@ -1,0 +1,82 @@
+﻿@using TechShop.Domain.DTOs.PaginationDto;
+@using TechShop.Domain.DTOs.ProductDto;
+@model ResponsePaginationDto<ResponseProductDto>;
+
+@{
+    ViewData["Title"] = "Products";
+}
+
+<div class="container-fluid mt-5">
+    @await Html.PartialAsync("~/Views/Error/ErrorPartial.cshtml")
+
+    <div class="row row-cols-1 row-cols-md-5 g-3">
+        @foreach (var product in Model.Data)
+        {
+            <div class="col mb-3">
+                <a asp-controller="Product" asp-action="GetById" asp-route-id="50" class="card-link text-decoration-none text-dark">
+                    <div class="card h-100">
+                        @if (product.ProductPhotos.Any())
+                        {
+                            <img src="@product.ProductPhotos.First().Path" class="card-img-top" alt="@product.Model">
+                        }
+                        else
+                        {
+                            <img src="https://via.placeholder.com/550" class="card-img-top" alt="No Image Available">
+                        }
+                        <div class="card-body">
+                            <h5 class="card-title">@product.Brand @product.Model</h5>
+                            <p class="card-text">$@product.Price</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12 d-flex justify-content-center align-items-center">
+            <div class="d-flex align-items-center me-3">
+                <select asp-for="PageSize" id="itemsPerPage" class="form-select" onchange="updateItemsPerPage()">
+                    @foreach (var pageSize in new int[] { 5, 10, 20, 50, 100 })
+                    {
+                        <option value="@pageSize">@pageSize</option>
+                    }
+                </select>
+            </div>
+
+            <nav aria-label="Page navigation">
+                <ul class="pagination mb-0">
+                    <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                        @if (Model.HasPreviousPage)
+                        {
+                            <a class="page-link" asp-controller="Product" asp-action="GetAll" 
+                                asp-route-PageNumber="@(Model.PageNumber - 1)" asp-route-PageSize="@Model.PageSize">Previous</a>
+                        }
+                        else
+                        {
+                            <span class="page-link disabled">Previous</span>
+                        }
+                    </li>
+                    @for (var i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                            <a class="page-link" asp-controller="Product" asp-action="GetAll" 
+                                asp-route-PageNumber="@i" asp-route-PageSize="@Model.PageSize">@i</a>
+                        </li>
+                    }
+                    <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                        @if (Model.HasNextPage)
+                        {
+                            <a class="page-link" asp-controller="Product" asp-action="GetAll" 
+                                asp-route-PageNumber="@(Model.PageNumber + 1)" asp-route-PageSize="@Model.PageSize">Next</a>
+                        }
+                        else
+                        {
+                            <span class="page-link disabled">Next</span>
+                        }
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>

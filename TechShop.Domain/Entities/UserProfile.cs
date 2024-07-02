@@ -1,4 +1,4 @@
-﻿using TechShop.Domain.DTOs.User;
+﻿using TechShop.Domain.DTOs.UserDto;
 
 namespace TechShop.Domain.Entities
 {
@@ -8,6 +8,7 @@ namespace TechShop.Domain.Entities
         public string Firstname { get; set; } = string.Empty;
         public string Lastname { get; set; } = string.Empty;
         public int Age { get; set; }
+        public DateTime LastLogin { get; set; }
 
         public ApplicationUser User { get; set; } = null!;
     }
