@@ -22,6 +22,9 @@ namespace TechShop.Application.Services.ProductService
 
         public async Task<Product> CreateProduct(RequestProductDto productDto)
         {
+            if (!productDto.ProductPhotos.Any())
+                throw new NullReferenceException("Product photos are required.");
+
             await BeginTransactionAsync();
 
             try

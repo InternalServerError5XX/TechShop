@@ -14,9 +14,11 @@ using TechShop.Domain.DTOs.PaginationDto;
 using TechShop.Domain.DTOs.FilterDto;
 using Newtonsoft.Json.Linq;
 using TechShop.Application.Services.TempDataService;
+using TechShopWeb.Filters;
 
 namespace TechShop.Controllers
 {
+    [TypeFilter(typeof(ApiControllerExceptionFilter))]
     public class ApiController(IAuthService authService, IUserService userService, IProductService productService,
         IProductPhotoService productPhotoService, ITempDataService tempDataService, IMapper mapper) : Controller
     {
@@ -44,62 +46,41 @@ namespace TechShop.Controllers
         [HttpGet("AuthCheck")]
         public IActionResult AuthCheck()
         {
-            try
-            {
-                var token = Request.Cookies["token"];
+            var token = Request.Cookies["token"];
 
-                if (token == null)
-                    return Unauthorized("Unauthorized");
+            if (token == null)
+                return Unauthorized("Unauthorized");
 
-                return Ok(token);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return Ok(token);
         }
 
         [Authorize]
         [HttpGet("AdminCheck")]
         public IActionResult AdminCheck()
         {
-            try
-            {
-                var check = User.IsInRole("Admin");
-                return Ok(check);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var check = User.IsInRole("Admin");
+            return Ok(check);
         }
 
         [AllowAnonymous]
         [HttpPost("Login")]
         public async Task<IActionResult> Login(LoginDto loginDto)
         {
-            try
+            if (!ModelState.IsValid)
+                return BadRequest("Wrong input");
+
+            var token = await authService.Login(loginDto);
+
+            Response.Cookies.Append(
+                "token",
+                token.TokenValue,
+                token.CookieOptions);
+
+            return Ok(new
             {
-                if (!ModelState.IsValid) 
-                    return BadRequest("Wrong input");
-
-                var token = await authService.Login(loginDto);
-
-                Response.Cookies.Append(
-                    "token",
-                    token.TokenValue,
-                    token.CookieOptions);
-
-                return Ok(new
-                {
-                    Token = token.TokenValue,
-                    Expires = token.Expiration
-                });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+                Token = token.TokenValue,
+                Expires = token.Expiration
+            });
         }
 
         [HttpPost("Register")]
@@ -128,138 +109,86 @@ namespace TechShop.Controllers
         [HttpPost("Logout")]
         public IActionResult Logout()
         {
-            try
-            {
-                Response.Cookies.Delete("token");
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            Response.Cookies.Delete("token");
+            return Ok();
         }
 
         [HttpGet("GetProduct")]
         public async Task<IActionResult> GetProduct(int id)
         {
-            try
-            {
-                var product = await productService.GetProduct(id);
-                var response = mapper.Map<ResponseProductDto>(product);
+            var product = await productService.GetProduct(id);
+            var response = mapper.Map<ResponseProductDto>(product);
 
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return Ok(response);
         }
 
         [HttpGet("GetProducts")]
         public async Task<IActionResult> GetProducts(RequestPaginationDto paginationDto, string? searchTerm, 
             string? orderBy, bool? isAsc)
         {
-            try
+            var filterDto = new RequestFilterDto<Product>
             {
-                var filterDto = new RequestFilterDto<Product>
-                {
-                    SearchTerm = string.IsNullOrWhiteSpace(searchTerm) ? null :
+                SearchTerm = string.IsNullOrWhiteSpace(searchTerm) ? null :
                         x => x.Brand.ToLower().Contains(searchTerm.ToLower()) ||
                         x.Model.ToLower().Contains(searchTerm.ToLower()) ||
                         x.Category.Name.ToLower().Contains(searchTerm.ToLower()),
 
-                    OrderBy = orderBy switch
-                    {
-                        "price_desc" => x => x.Price,
-                        "price_asc" => x => x.Price,
-                        "date_desc" => x => x.CreatedDate,
-                        "date_asc" => x => x.CreatedDate,
-                        _ => null
-                    },
-                };
-
-                if (filterDto.OrderBy != null)
+                OrderBy = orderBy switch
                 {
-                    if (orderBy!.EndsWith("_desc"))
-                        filterDto.IsAsc = false;
-                    else if (orderBy.EndsWith("_asc"))
-                        filterDto.IsAsc = true;
-                }
+                    "price_desc" => x => x.Price,
+                    "price_asc" => x => x.Price,
+                    "date_desc" => x => x.CreatedDate,
+                    "date_asc" => x => x.CreatedDate,
+                    _ => null
+                },
+            };
 
-                var query = productService.GetFilteredQuery(productService.GetProducts(), filterDto);
-                var products = await productService.GetPaginated(query, paginationDto);
-                var response = mapper.Map<ResponsePaginationDto<ResponseProductDto>>(products);
-
-                return Ok(response);
-            }
-            catch (Exception ex)
+            if (filterDto.OrderBy != null)
             {
-                return BadRequest(ex.Message);
+                if (orderBy!.EndsWith("_desc"))
+                    filterDto.IsAsc = false;
+                else if (orderBy.EndsWith("_asc"))
+                    filterDto.IsAsc = true;
             }
+
+            var query = productService.GetFilteredQuery(productService.GetProducts(), filterDto);
+            var products = await productService.GetPaginated(query, paginationDto);
+            var response = mapper.Map<ResponsePaginationDto<ResponseProductDto>>(products);
+
+            return Ok(response);
         }
 
         [HttpPost("CreateProduct")]
         public async Task<IActionResult> CreateProduct([FromForm] RequestProductDto productDto)
-        {
-            try
-            {
-                if (!productDto.ProductPhotos.Any())
-                    return BadRequest("Product photos are required.");
+        {        
+            var product = await productService.CreateProduct(productDto);
 
-                var product = await productService.CreateProduct(productDto);
-
-                return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, product);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, product);
         }
 
         [HttpGet("GetUsers")]
         public IActionResult GetUsers()
         {
-            try
-            {
-                var users = userService.GetUsers();
-                var response = mapper.Map<IEnumerable<ApplicationUserDto>>(users);
+            var users = userService.GetUsers();
+            var response = mapper.Map<IEnumerable<ApplicationUserDto>>(users);
 
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return Ok(response);
         }
 
         [HttpPost("SavePhoto")]
         public async Task<IActionResult> AddProductPhoto([FromForm] IEnumerable<RequestProductPhotoDto> requestProductPhotoDto)
         {
-            try
-            {
-                var photo = await productPhotoService.SavePhoto(requestProductPhotoDto);
-                var response = mapper.Map<IEnumerable<ResponseProductPhotoDto>>(photo);
+            var photo = await productPhotoService.SavePhoto(requestProductPhotoDto);
+            var response = mapper.Map<IEnumerable<ResponseProductPhotoDto>>(photo);
 
-                return CreatedAtAction(nameof(response), new { }, response);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return CreatedAtAction(nameof(response), new { }, response);
         }
 
         [HttpDelete("DeleteProductPhoto")]
         public async Task<IActionResult> DeleteProductPhoto(int id)
         {
-            try
-            {
-                await productPhotoService.DeletePhoto(id);
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            await productPhotoService.DeletePhoto(id);
+            return NoContent();
         }
     }
 }

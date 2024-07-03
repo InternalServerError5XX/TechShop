@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Filters;
 using TechShop.Application.Services.TempDataService;
 
-public class ControllerExceptionFilter : IActionFilter
+public class MvcControllerExceptionFilter : IActionFilter
 {
     private readonly ITempDataService _tempDataService;
 
@@ -11,7 +11,7 @@ public class ControllerExceptionFilter : IActionFilter
 
     }
 
-    public ControllerExceptionFilter(ITempDataService tempDataService)
+    public MvcControllerExceptionFilter(ITempDataService tempDataService)
     {
         _tempDataService = tempDataService;
     }

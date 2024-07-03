@@ -5,10 +5,10 @@
     ViewData["Title"] = "Register";
 }
 
-<div class="container">
+<div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <div class="card mt-2 shadow-sm">
+            <div class="card shadow-sm">
                 <div class="card-body">
                     <h2 class="text-center mb-3">Register</h2>
                     <form asp-controller="Identity" asp-action="Register" class="mt-3">
@@ -40,7 +40,7 @@
                         <button type="submit" class="btn btn-primary btn-block">Register</button>
                         <div class="mt-3 text-center">
                             <span>Already have an account?</span>
-                            <a href="/Account/Login" class="ml-2">Login</a>
+                            <a asp-controller="Identity" asp-action="Login" class="ml-2">Login</a>
                         </div>
                     </form>
                 </div>

@@ -14,6 +14,7 @@ using TechShop.Infrastructure.Repositories.BaseRepository;
 using TechShop.Infrastructure.Repositories.ProductPhotoRepository;
 using TechShop.Infrastructure.Repositories.ProductRepositoty;
 using TechShop.Infrastructure.Repositories.UserProfileRepository;
+using TechShopWeb.Filters;
 
 namespace TechShop
 {
@@ -28,14 +29,19 @@ namespace TechShop
         }
 
         public static void InitializeServices(this IServiceCollection services)
-        {
-            services.AddScoped<ControllerExceptionFilter>();         
+        {                  
             services.AddScoped<ITempDataService, TempDataService>();           
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserProfileService, UserProfileService>();
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IProductPhotoService, ProductPhotoService>();
+        }
+
+        public static void InitializeFilters(this IServiceCollection services)
+        {
+            services.AddScoped<MvcControllerExceptionFilter>();
+            services.AddScoped<ApiControllerExceptionFilter>();
         }
 
         public static void InitializeIdentity(this IServiceCollection services)

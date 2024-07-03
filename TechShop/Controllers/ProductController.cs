@@ -11,7 +11,7 @@ using TechShop.Domain.Entities;
 
 namespace TechShopWeb.Controllers
 {
-    [TypeFilter(typeof(ControllerExceptionFilter))]
+    [TypeFilter(typeof(MvcControllerExceptionFilter))]
     public class ProductController(IProductService productService, IMapper mapper) : Controller
     {
         [HttpGet]

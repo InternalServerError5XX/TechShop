@@ -4,6 +4,7 @@ using TechShop.Domain.DTOs.AuthDto;
 
 namespace TechShop.Controllers
 {
+    [TypeFilter(typeof(MvcControllerExceptionFilter))]
     public class IdentityController(IAuthService authService) : Controller
     {
         [HttpGet]

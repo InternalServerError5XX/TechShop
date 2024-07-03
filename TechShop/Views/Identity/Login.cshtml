@@ -5,13 +5,13 @@
     ViewData["Title"] = "Login";
 }
 
-<div class="container">
+<div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <div class="card mt-5 shadow-sm">
+            <div class="card shadow-sm">
                 <div class="card-body">
                     <h2 class="text-center mb-4">Login</h2>
-                    <form asp-controller="Swagger" asp-action="Login" class="mt-4">
+                    <form asp-controller="Identity" asp-action="Login" class="mt-4">
                         <div class="form-group">
                             <label asp-for="Email" class="font-weight-bold">Email address</label>
                             <input type="email" class="form-control" asp-for="Email" placeholder="Enter email">
@@ -29,7 +29,7 @@
                         <button type="submit" class="btn btn-primary btn-block">Login</button>
                         <div class="mt-3 text-center">
                             <span>Don't have an account?</span>
-                            <a href="/Account/Register" class="ml-2">Register</a>
+                            <a asp-controller="Identity" asp-action="Register" class="ml-2">Register</a>
                         </div>
                     </form>
                 </div>
