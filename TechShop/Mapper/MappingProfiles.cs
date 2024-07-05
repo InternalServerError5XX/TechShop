@@ -28,116 +28,43 @@ namespace TechShop.Infrastructure.Mapper
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email.Substring(0, src.Email.IndexOf('@'))));
 
             CreateMap<RegisterDto, UserProfile>()
-                .ForMember(dest => dest.CreatedDate, opt => opt.Ignore())
-                .ForMember(dest => dest.UpdatedDate, opt => opt.Ignore())
                 .ForMember(dest => dest.LastLogin, opt => opt.Ignore())
                 .AfterMap((src, dest) =>
                 {
-                    var currentDate = DateTime.Now;
-                    dest.CreatedDate = currentDate;
-                    dest.UpdatedDate = currentDate;
-                    dest.LastLogin = currentDate;
+                    dest.LastLogin = DateTime.Now;
                 });
 
             CreateMap<RegisterDto, LoginDto>();
 
             CreateMap<RequestUserProfileDto, UserProfile>()
-                .ForMember(dest => dest.CreatedDate, opt => opt.Ignore())
-                .ForMember(dest => dest.UpdatedDate, opt => opt.Ignore())
                 .ForMember(dest => dest.LastLogin, opt => opt.Ignore())
                 .AfterMap((src, dest) =>
                 {
-                    var currentDate = DateTime.Now;
-                    dest.CreatedDate = currentDate;
-                    dest.UpdatedDate = currentDate;
-                    dest.LastLogin = currentDate;
+                    dest.LastLogin = DateTime.Now;
                 });
-
             CreateMap<UserProfile, ResponseUserProfileDto>();
 
             CreateMap<ApplicationUser, ApplicationUserDto>();
 
-            CreateMap<RequestProductDto, Product>()
-                .ForMember(dest => dest.CreatedDate, opt => opt.Ignore())
-                .ForMember(dest => dest.UpdatedDate, opt => opt.Ignore())
-                .AfterMap((src, dest) =>
-                {
-                    var currentDate = DateTime.Now;
-                    dest.CreatedDate = currentDate;
-                    dest.UpdatedDate = currentDate;
-                });
-
+            CreateMap<RequestProductDto, Product>();
             CreateMap<Product, ResponseProductDto>();
 
-            CreateMap<RequestProductPhotoDto, ProductPhoto>()
-                .ForMember(dest => dest.CreatedDate, opt => opt.Ignore())
-                .ForMember(dest => dest.UpdatedDate, opt => opt.Ignore())
-                .AfterMap((src, dest) =>
-                {
-                    var currentDate = DateTime.Now;
-                    dest.CreatedDate = currentDate;
-                    dest.UpdatedDate = currentDate;
-                });
+            CreateMap<RequestProductPhotoDto, ProductPhoto>();
             CreateMap<ProductPhoto, ResponseProductPhotoDto>();
 
-            CreateMap<RequestProductCategoryDto, ProductCategory>()
-                .ForMember(dest => dest.CreatedDate, opt => opt.Ignore())
-                .ForMember(dest => dest.UpdatedDate, opt => opt.Ignore())
-                .AfterMap((src, dest) =>
-                {
-                    var currentDate = DateTime.Now;
-                    dest.CreatedDate = currentDate;
-                    dest.UpdatedDate = currentDate;
-                });
-
+            CreateMap<RequestProductCategoryDto, ProductCategory>();
             CreateMap<ProductCategory, ResponseProductCaregoryDto>();
 
-            CreateMap<RequestBasketDto, Basket>()
-                .ForMember(dest => dest.CreatedDate, opt => opt.Ignore())
-                .ForMember(dest => dest.UpdatedDate, opt => opt.Ignore())
-                .AfterMap((src, dest) =>
-                {
-                    var currentDate = DateTime.Now;
-                    dest.CreatedDate = currentDate;
-                    dest.UpdatedDate = currentDate;
-                });
-
+            CreateMap<RequestBasketDto, Basket>();
             CreateMap<Basket, ResponseBasketDto>();
 
-            CreateMap<RequestBasketItemDto, BasketItem>()
-                .ForMember(dest => dest.CreatedDate, opt => opt.Ignore())
-                .ForMember(dest => dest.UpdatedDate, opt => opt.Ignore())
-                .AfterMap((src, dest) =>
-                {
-                    var currentDate = DateTime.Now;
-                    dest.CreatedDate = currentDate;
-                    dest.UpdatedDate = currentDate;
-                });
-
+            CreateMap<RequestBasketItemDto, BasketItem>();
             CreateMap<BasketItem, ResponseBasketItemDto>();
 
-            CreateMap<RequestWishlistDto, Wishlist>()
-                .ForMember(dest => dest.CreatedDate, opt => opt.Ignore())
-                .ForMember(dest => dest.UpdatedDate, opt => opt.Ignore())
-                .AfterMap((src, dest) =>
-                {
-                    var currentDate = DateTime.Now;
-                    dest.CreatedDate = currentDate;
-                    dest.UpdatedDate = currentDate;
-                });
-
+            CreateMap<RequestWishlistDto, Wishlist>();
             CreateMap<Wishlist, ResponseWishlistDto>();
 
-            CreateMap<RequestWishlistItemDto, WishlistItem>()
-                .ForMember(dest => dest.CreatedDate, opt => opt.Ignore())
-                .ForMember(dest => dest.UpdatedDate, opt => opt.Ignore())
-                .AfterMap((src, dest) =>
-                {
-                    var currentDate = DateTime.Now;
-                    dest.CreatedDate = currentDate;
-                    dest.UpdatedDate = currentDate;
-                });
-
+            CreateMap<RequestWishlistItemDto, WishlistItem>();
             CreateMap<WishlistItem, ResponseWishlistItemDto>();
 
             CreateMap<ResponsePaginationDto<Product>, ResponsePaginationDto<ResponseProductDto>>()

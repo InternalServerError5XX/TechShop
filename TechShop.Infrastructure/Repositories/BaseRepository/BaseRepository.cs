@@ -48,6 +48,10 @@ namespace TechShop.Infrastructure.Repositories.BaseRepository
 
         public async Task<T> AddAsync(T entity)
         {
+            var date = DateTime.Now;
+            entity.CreatedDate = date;
+            entity.UpdatedDate = date;
+
             await dbSet.AddAsync(entity);
             await _context.SaveChangesAsync();
 
@@ -56,6 +60,13 @@ namespace TechShop.Infrastructure.Repositories.BaseRepository
 
         public async Task<IEnumerable<T>> AddRangeAsync(IEnumerable<T> entities)
         {
+            foreach (var entity in entities)
+            {
+                var date = DateTime.Now;
+                entity.CreatedDate = date;
+                entity.UpdatedDate = date;
+            }
+
             await dbSet.AddRangeAsync(entities);
             await _context.SaveChangesAsync();
 
@@ -64,6 +75,8 @@ namespace TechShop.Infrastructure.Repositories.BaseRepository
 
         public async Task UpdateAsync(T entity)
         {
+            entity.UpdatedDate = DateTime.Now;
+
             dbSet.Update(entity);
             await _context.SaveChangesAsync();
         }
