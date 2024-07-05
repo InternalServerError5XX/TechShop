@@ -144,7 +144,7 @@
 
     <!-- Basket Modal -->
     <div class="modal fade" id="basketModal" tabindex="-1" role="dialog" aria-labelledby="basketModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="basketLabel">Basket</h5>
@@ -161,14 +161,14 @@
                         </svg>
                         Order
                     </a>
-                </div>               
+                </div>
             </div>
         </div>
     </div>
 
     <div class="container" id="layout_container">
         <main role="main" class="pb-3">
-            @await Html.PartialAsync("~/Views/Error/ErrorPartial.cshtml")
+            @await Html.PartialAsync("~/Views/Error/_ErrorPartial.cshtml")
             @RenderBody()
         </main>
     </div>
@@ -238,9 +238,7 @@
                 });
             });
         });
-    </script>
 
-    <script>
         $(document).ready(function () {
             $('#basketButton').click(function (e) {
                 e.preventDefault();
@@ -257,9 +255,7 @@
                 });
             });
         });
-    </script>
 
-    <script>
         $(document).ready(function () {
             $('#openBasketButton').click(function () {
                 $('#wishlistModal').modal('hide');
@@ -276,9 +272,7 @@
                 });
             });
         });
-    </script>
 
-    <script>
         closeBasketModal();
         closeWishlistModal();
         getBasketFromWishlist();

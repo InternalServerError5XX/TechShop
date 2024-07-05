@@ -51,7 +51,7 @@ namespace TechShop.Application.Services.BasketServices.BasketService
         {
             var basket = await GetUserBasket(email);
 
-            if (await IsInBasket(email, productId, x => x.ProductId))
+            if (await IsInBasket(basket, productId, x => x.ProductId))
                 await _basketItemService.DeleteItemFromBasket(basket, x => x.ProductId == productId);
             else
                 throw new Exception("Product is not in the basket");
@@ -125,6 +125,16 @@ namespace TechShop.Application.Services.BasketServices.BasketService
                 .Include(x => x.BasketItems)
                     .ThenInclude(x => x.Product)
                         .ThenInclude(x => x.ProductPhotos);
+        }
+
+        private async Task<bool> IsInBasket<TField>(Basket basket, TField field,
+            Expression<Func<BasketItem, TField>> selector)
+        {
+            var productIds = _basketItemService.GetAllAsync()
+                .Where(x => x.BasketId == basket.Id)
+                .Select(selector);
+
+            return await productIds.ContainsAsync(field);
         }
     }
 }

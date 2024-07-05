@@ -13,9 +13,9 @@
 {
     foreach (var item in Model.WishlistItems)
     {
-        var isInWishlist = await basketService.IsInBasket(email, item.Product.Id, x => x.ProductId);
-        <div class="d-flex justify-content-between align-items-center">
-            <a class="dropdown-item d-flex align-items-center" asp-controller="Product" asp-action="GetById" asp-route-id="@item.ProductId">
+        var isInBasket = await basketService.IsInBasket(email, item.Product.Id, x => x.ProductId);
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <a class="dropdown-item d-flex align-items-center me-3" asp-controller="Product" asp-action="GetById" asp-route-id="@item.ProductId">
                 @if (item.Product.ProductPhotos.Any())
                 {
                     <img src="@item.Product.ProductPhotos.FirstOrDefault()!.Path"
@@ -25,20 +25,18 @@
                 {
                     <img src="https://via.placeholder.com/50" alt="No Image" style="width: 50px; height: 50px;" class="mr-2" />
                 }
-                <span class="text-truncate" style="width: 38vh">@item.Product.Brand @item.Product.Model</span>
+                <span class="text-truncate" style="width: 250px">@item.Product.Brand @item.Product.Model</span>
             </a>
 
             <section class="d-flex align-items-center">
-                <a asp-controller="Wishlist" asp-action="DeleteById" asp-route-id="@item.Id"
-                   class="btn btn-outline-danger d-inline-flex me-1">
+                <a href="#" class="btn btn-outline-danger d-inline-flex wishlist-delete-btn me-1" data-id="@item.Id">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-bag-heart-fill" viewBox="0 0 16 16">
                         <path d="M11.5 4v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4zM8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1m0 6.993c1.664-1.711 5.825 1.283 0 5.132-5.825-3.85-1.664-6.843 0-5.132" />
                     </svg>
                 </a>
-                @if (!isInWishlist)
+                @if (!isInBasket)
                 {
-                    <a asp-controller="Basket" asp-action="Add" asp-route-productId="@item.Product.Id"
-                       class="btn btn-primary d-inline-flex">
+                    <a href="#" class="btn btn-primary d-inline-flex basket-add-btn me-1" data-product-id="@item.Product.Id">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-bag-plus" viewBox="0 0 16 16">
                             <path fill-rule="evenodd" d="M8 7.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V12a.5.5 0 0 1-1 0v-1.5H6a.5.5 0 0 1 0-1h1.5V8a.5.5 0 0 1 .5-.5" />
                             <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1m3.5 3v-.5a3.5 3.5 1 0 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z" />
@@ -47,8 +45,7 @@
                 }
                 else
                 {
-                    <a asp-controller="Basket" asp-action="DeleteByProductId" asp-route-productId="@item.Product.Id"
-                       class="btn btn-outline-danger d-inline-flex">
+                    <a href="#" class="btn btn-outline-danger d-inline-flex basket-delete-btn me-1" data-product-id="@item.Product.Id">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-bag-dash-fill" viewBox="0 0 16 16">
                             <path fill-rule="evenodd" d="M10.5 3.5a2.5 2.5 0 0 0-5 0V4h5zm1 0V4H15v10a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V4h3.5v-.5a3.5 3.5 0 1 1 7 0M6 9.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1z" />
                         </svg>
@@ -62,3 +59,81 @@ else
 {
     <p class="dropdown-item">Your wishlist is empty.</p>
 }
+
+
+<script>
+    $(document).ready(function () {
+        $('.wishlist-delete-btn').click(function (e) {
+            e.preventDefault();
+            var id = $(this).data('id');
+            deleteWishlistItem(id);
+        });
+
+        $('.basket-add-btn').click(function (e) {
+            e.preventDefault();
+            var productId = $(this).data('product-id');
+            addToBasket(productId);
+        });
+
+        $('.basket-delete-btn').click(function (e) {
+            e.preventDefault();
+            var productId = $(this).data('product-id');
+            deleteFromBasket(productId);
+        });
+
+        function deleteWishlistItem(id) {
+            $.ajax({
+                url: '@Url.Action("DeleteById", "Wishlist")' + '/' + id,
+                type: 'DELETE',
+                success: function () {
+                    reloadWishlist();
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        }
+
+        function addToBasket(productId) {
+            $.ajax({
+                url: '@Url.Action("Add", "Basket")',
+                type: 'POST',
+                data: { productId: productId },
+                success: function () {
+                    reloadWishlist();
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        }
+
+        function deleteFromBasket(productId) {
+            $.ajax({
+                url: '@Url.Action("DeleteByProductId", "Basket")',
+                type: 'DELETE',
+                data: { productId: productId }, // Ensure productId is correctly passed
+                success: function () {
+                    reloadWishlist();
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        }
+
+        function reloadWishlist() {
+            $.ajax({
+                url: '@Url.Action("Get", "Wishlist")',
+                type: 'GET',
+                success: function (result) {
+                    $('#wishlistModalBody').html(result);
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        }
+    });
+
+</script>

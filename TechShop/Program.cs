@@ -13,6 +13,7 @@ builder.Services.InitializeRepositories();
 builder.Services.InitializeServices();
 builder.Services.InitializeIdentity();
 builder.InitializeAuthentication();
+builder.Services.InitializeFilters();
 builder.Services.InitializeSwagger();
 
 builder.Services.AddControllersWithViews();

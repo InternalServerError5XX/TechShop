@@ -3,13 +3,16 @@ using Microsoft.AspNetCore.Mvc;
 using TechShop.Application.Services.ProductServices.ProductService;
 using TechShop.Domain.DTOs.FilterDto;
 using TechShop.Domain.DTOs.PaginationDto;
+using TechShop.Domain.DTOs.ProductDtos.ProductCaregoryDto;
+using TechShop.Domain.DTOs.ProductDtos.ProductCategoryService;
 using TechShop.Domain.DTOs.ProductDtos.ProductDto;
 using TechShop.Domain.Entities.ProductEntities;
 
 namespace TechShopWeb.Controllers
 {
     [TypeFilter(typeof(MvcControllerExceptionFilter))]
-    public class ProductController(IProductService productService, IMapper mapper) : Controller
+    public class ProductController(IProductService productService, IProductCategoryService productCategoryService, 
+        IMapper mapper) : Controller
     {
         [HttpGet]
         public async Task<IActionResult> GetAll(RequestPaginationDto paginationDto, string? searchTerm, string? orderBy)
@@ -70,5 +73,23 @@ namespace TechShopWeb.Controllers
 
             return View(await GetById(response.Id));
         }
+
+        [HttpGet]
+        public IActionResult CreateCategory()
+        {
+            return PartialView("~/Views/Product/_CreateCategoryModal.cshtml", new RequestProductCategoryDto());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateCategory(RequestProductCategoryDto categoryDto)
+        {
+            if (!ModelState.IsValid)
+                return PartialView("~/Views/Product/_CreateCategoryModal.cshtml", categoryDto);
+
+            await productCategoryService.CreateCategory(categoryDto);
+
+            return Json(new { success = true });
+        }
+
     }
 }

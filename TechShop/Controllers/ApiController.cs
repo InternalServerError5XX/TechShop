@@ -20,13 +20,15 @@ using TechShop.Domain.DTOs.BasketDtos.BasketDto;
 using TechShop.Domain.DTOs.ProductDtos.ProductDto;
 using TechShop.Domain.DTOs.ProductDtos.ProductPhoto;
 using TechShop.Domain.DTOs.UserDtos.UserDto;
+using TechShop.Domain.DTOs.ProductDtos.ProductCaregoryDto;
+using TechShop.Domain.DTOs.ProductDtos.ProductCategoryService;
 
 namespace TechShop.Controllers
 {
     [TypeFilter(typeof(ApiControllerExceptionFilter))]
     public class ApiController(IAuthService authService, IUserService userService, IProductService productService,
         IProductPhotoService productPhotoService, ITempDataService tempDataService, IWishlistService wishlistService, 
-        IBasketService basketService, IMapper mapper) : Controller
+        IBasketService basketService, IProductCategoryService productCategoryService, IMapper mapper) : Controller
     {
         [HttpGet]
         public async Task<IActionResult> Swagger()
@@ -170,6 +172,24 @@ namespace TechShop.Controllers
             var product = await productService.CreateProduct(productDto);
 
             return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, product);
+        }
+
+        [HttpGet("GetCategories")]
+        public async Task<IActionResult> GetCategories()
+        {
+            var category = productCategoryService.GetAllAsync();
+            var response = mapper.Map<IEnumerable<ResponseProductCaregoryDto>>(category);
+
+            return CreatedAtAction(nameof(response), new { }, response);
+        }
+
+        [HttpPost("CreateCategory")]
+        public async Task<IActionResult> CreateCategory(RequestProductCategoryDto categoryDto)
+        {
+            var category = await productCategoryService.CreateCategory(categoryDto);
+            var response = mapper.Map<ResponseProductCaregoryDto>(category);
+
+            return CreatedAtAction(nameof(response), new { response.Id }, response);
         }
 
         [HttpGet("GetUsers")]

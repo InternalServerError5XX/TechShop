@@ -54,7 +54,6 @@ namespace TechShop.Application.Services.BasketServices.BasketItemService
         {
             var response = await GetByIdAsync(id);
             response.Quantity += 1;
-            response.UpdatedDate = DateTime.Now;
 
             if (response.Quantity > 99)
                 throw new Exception("Product quantity must be less than 99");
@@ -66,7 +65,6 @@ namespace TechShop.Application.Services.BasketServices.BasketItemService
         {
             var response = await GetByIdAsync(id);
             response.Quantity -= 1;
-            response.UpdatedDate = DateTime.Now;
 
             if (response.Quantity < 1)
                 throw new Exception("Product quantity must be over than 1");

@@ -10,3 +10,15 @@ function setActiveSlide(index) {
     var carousel = new bootstrap.Carousel(document.querySelector('#productCarousel'));
     carousel.to(index);
 }
+
+function closeCategoryModal() {
+    $(document).ready(function () {
+        $('#addCategoryModal').on('hidden.bs.modal', function () {
+            $('#categoryModalBody').empty();
+        });
+
+        $('.close').click(function () {
+            $('#addCategoryModal').modal('hide');
+        });
+    });
+}

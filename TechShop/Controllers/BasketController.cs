@@ -27,7 +27,7 @@ namespace TechShopWeb.Controllers
         {
             var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
             var reffer = Request.Headers["Referer"].ToString();
-            await basketService.DeleteFromBasketByProductId(email!, id);
+            await basketService.DeleteFromBasketById(email!, id);
 
             return Redirect(reffer);
         }
