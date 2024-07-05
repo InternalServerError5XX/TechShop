@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
-using TechShop.Application.Services.UserProfileService;
 using TechShop.Domain.DTOs.FilterDto;
 using TechShop.Domain.DTOs.PaginationDto;
 using TechShop.Infrastructure.Repositories.BaseRepository;

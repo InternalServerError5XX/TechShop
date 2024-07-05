@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using TechShop.Domain.DTOs.BasketDto;
+using TechShop.Domain.DTOs.BasketDtos.BasketDto;
 using TechShop.Domain.DTOs.UserProfileDto;
-using TechShop.Domain.DTOs.WishlistDto;
+using TechShop.Domain.DTOs.WishlistDtos.WishlistDto;
 
 namespace TechShop.Domain.DTOs.UserDto
 {

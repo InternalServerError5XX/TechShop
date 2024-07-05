@@ -2,25 +2,31 @@
 using Microsoft.AspNetCore.Mvc;
 using TechShop.Application.Services.AuthService;
 using TechShop.Domain.DTOs.AuthDto;
-using TechShop.Domain.Entities;
 using TechShop.Domain.DTOs.UserDto;
 using AutoMapper;
 using TechShop.Domain.DTOs.ProductDto;
-using TechShop.Application.Services.ProductService;
-using TechShop.Application.Services.UserService;
-using TechShop.Application.Services.ProductPhotoService;
 using TechShop.Domain.DTOs.ProductPhoto;
 using TechShop.Domain.DTOs.PaginationDto;
 using TechShop.Domain.DTOs.FilterDto;
-using Newtonsoft.Json.Linq;
 using TechShop.Application.Services.TempDataService;
 using TechShopWeb.Filters;
+using TechShop.Domain.Entities.ProductEntities;
+using TechShop.Application.Services.ProductServices.ProductService;
+using TechShop.Application.Services.ProductServices.ProductPhotoService;
+using TechShop.Application.Services.UserServices.UserService;
+using TechShop.Domain.DTOs.WishlistDtos.WishlistDto;
+using TechShop.Application.Services.WishlistServices.WishlistService;
+using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
+using TechShop.Application.Services.BasketServices.BasketService;
+using TechShop.Domain.DTOs.BasketDtos.BasketDto;
 
 namespace TechShop.Controllers
 {
     [TypeFilter(typeof(ApiControllerExceptionFilter))]
     public class ApiController(IAuthService authService, IUserService userService, IProductService productService,
-        IProductPhotoService productPhotoService, ITempDataService tempDataService, IMapper mapper) : Controller
+        IProductPhotoService productPhotoService, ITempDataService tempDataService, IWishlistService wishlistService, 
+        IBasketService basketService, IMapper mapper) : Controller
     {
         [HttpGet]
         public async Task<IActionResult> Swagger()
@@ -189,6 +195,128 @@ namespace TechShop.Controllers
         {
             await productPhotoService.DeletePhoto(id);
             return NoContent();
+        }
+
+        [HttpPost("AddToWishlist")]
+        public async Task<IActionResult> AddToWishlist([Required] int productId)
+        {
+            var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            if (email != null)
+            {
+                await wishlistService.AddToWishlist(email, productId);
+                return Ok();
+            }
+
+            return Unauthorized("Unauthorized");
+        }
+
+        [HttpDelete("DeleteFromWishlistByProductId")]
+        public async Task<IActionResult> DeleteFromWishlistByProductId([Required] int productId)
+        {
+            var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            if (email != null)
+            {
+                await wishlistService.DeleteFromWishlistByProductId(email, productId);
+                return NoContent();
+            }
+
+            return Unauthorized("Unauthorized");
+        }
+
+        [HttpGet("IsInWishlist")]
+        public async Task<IActionResult> IsInWishlist(int id)
+        {
+            var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            if (email != null)
+            {
+                var response = await wishlistService.IsInWishlist(email, id, x => x.ProductId);
+                return Ok(response);
+            }
+
+            return Unauthorized("Unauthorized");
+        }
+
+        [HttpGet("GetWishlist")]
+        public async Task<IActionResult> GetWishlist(string email)
+        {
+            var wishlists = await wishlistService.GetUserWishlist(email);
+            var response = mapper.Map<ResponseWishlistDto>(wishlists);
+
+            return Ok(response);
+        }
+
+        [HttpPost("AddToBasket")]
+        public async Task<IActionResult> AddToBasket([Required] int productId)
+        {
+            var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            if (email != null)
+            {
+                await basketService.AddToBasket(email!, productId);
+                return Ok();
+            }
+
+            return Unauthorized("Unauthorized");
+        }
+
+        [HttpDelete("DeleteFromBasketByProductId")]
+        public async Task<IActionResult> DeleteFromBasketByProductId([Required] int productId)
+        {
+            var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            if (email != null)
+            {
+                await basketService.DeleteFromBasketByProductId(email!, productId);
+                return Ok();
+            }
+
+            return Unauthorized("Unauthorized");
+        }
+
+        [HttpGet("IsInBasket")]
+        public async Task<IActionResult> IsInBasket(int id)
+        {
+            var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            if (email != null)
+            {
+                var response = await basketService.IsInBasket(email, id, x => x.ProductId);
+                return Ok(response);
+            }
+
+            return Unauthorized("Unauthorized");
+        }
+
+        [HttpGet("GetBasket")]
+        public async Task<IActionResult> GetBasket(string email)
+        {
+            var wishlists = await basketService.GetUserBasket(email!);
+            var response = mapper.Map<ResponseBasketDto>(wishlists);
+
+            return Ok(response);
+        }
+
+        [HttpPost("EncreaseBasketItemQuantity")]
+        public async Task<IActionResult> EncreaseBasketItemQuantity([Required] int id)
+        {
+            var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            if (email != null)
+            {
+                await basketService.EncreaseQuantityById(email!, id);
+                return Ok();
+            }
+
+            return Unauthorized("Unauthorized");
+        }
+
+        [HttpPost("DecreaseBasketItemQuantity")]
+        public async Task<IActionResult> DecreaseBasketItemQuantity([Required] int id)
+        {
+            var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            if (email != null)
+            {
+                await basketService.DecreaseQuantityById(email!, id);
+                return Ok();
+            }
+
+            return Unauthorized("Unauthorized");
         }
     }
 }

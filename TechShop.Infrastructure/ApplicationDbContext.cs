@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Emit;
 using TechShop.Domain.DTOs.UserDto;
 using TechShop.Domain.Entities;
+using TechShop.Domain.Entities.BasketEntities;
+using TechShop.Domain.Entities.ProductEntities;
+using TechShop.Domain.Entities.WishlistEntities;
 using TechShop.Infrastructure.Configs;
 
 namespace TechShop.Infrastructure

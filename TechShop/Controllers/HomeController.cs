@@ -4,6 +4,7 @@ using TechShop.Models;
 
 namespace TechShop.Controllers
 {
+    [TypeFilter(typeof(MvcControllerExceptionFilter))]
     public class HomeController : Controller
     {
         public IActionResult Index()

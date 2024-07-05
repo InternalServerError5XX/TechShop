@@ -7,7 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using TechShop.Application.Services.UserProfileService;
+using TechShop.Application.Services.UserServices.UserProfileService;
 using TechShop.Domain.DTOs.AuthDto;
 using TechShop.Domain.DTOs.JWTDto;
 using TechShop.Domain.DTOs.UserDto;
@@ -19,13 +19,21 @@ namespace TechShop.Application.Services.AuthService
     public class AuthService(UserManager<ApplicationUser> userManager, IOptions<JwtTokenSettings> jwtTokenSettings,
         IMapper mapper, IUserProfileService userProfileService) : IAuthService
     {
+        public async Task<string> GetUserId(string email)
+        {
+            var user = await userManager.FindByEmailAsync(email);
+            if (user == null)
+                throw new NullReferenceException("User not found");
+
+            return user.Id;
+        }
+
         public JwtDto GenerateJwt(ApplicationUser user)
         {
             var expires = DateTime.UtcNow.AddDays(jwtTokenSettings.Value.JwtExpires);
 
             var authClaims = new List<Claim>
             {
-                new(ClaimTypes.Name, user.UserName!),
                 new(ClaimTypes.Email, user.Email!),
                 new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };

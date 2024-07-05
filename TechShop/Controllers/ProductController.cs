@@ -1,13 +1,10 @@
 ﻿using AutoMapper;
-using Azure;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using TechShop.Application.Services.ProductService;
-using TechShop.Application.Services.TempDataService;
+using TechShop.Application.Services.ProductServices.ProductService;
 using TechShop.Domain.DTOs.FilterDto;
 using TechShop.Domain.DTOs.PaginationDto;
 using TechShop.Domain.DTOs.ProductDto;
-using TechShop.Domain.Entities;
+using TechShop.Domain.Entities.ProductEntities;
 
 namespace TechShopWeb.Controllers
 {
@@ -15,8 +12,7 @@ namespace TechShopWeb.Controllers
     public class ProductController(IProductService productService, IMapper mapper) : Controller
     {
         [HttpGet]
-        public async Task<IActionResult> GetAll(RequestPaginationDto paginationDto, string? searchTerm,
-            string? orderBy, bool? isAsc)
+        public async Task<IActionResult> GetAll(RequestPaginationDto paginationDto, string? searchTerm, string? orderBy)
         {
             var filterDto = new RequestFilterDto<Product>
             {

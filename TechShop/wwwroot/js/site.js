@@ -12,3 +12,39 @@ function closeErrorMessage() {
         });
     });
 }
+
+function closeWishlistModal() {
+    $(document).ready(function () {
+        $('#wishlistModal').on('hidden.bs.modal', function () {
+            $('#wishlistModalBody').empty();
+        });
+
+        $('.close').click(function () {
+            $('#wishlistModal').modal('hide');
+        });
+    });
+}
+
+function closeBasketModal() {
+    $(document).ready(function () {
+        $('#basketModal').on('hidden.bs.modal', function () {
+            $('#basketModalBody').empty();
+        });
+
+        $('.close').click(function () {
+            $('#basketModal').modal('hide');
+        });
+    });
+}
+
+function getBasketFromWishlist() {
+    $(document).ready(function () {
+        $('#wishlistModal .btn-primary').click(function () {
+            $('#wishlistModal').modal('hide');
+            $('#wishlistModal').on('hidden.bs.modal', function () {
+                $('#basketModal').modal('show');
+            });
+        });
+    });
+
+}

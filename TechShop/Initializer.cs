@@ -2,18 +2,26 @@
 using Microsoft.OpenApi.Models;
 using TechShop.Application.Extensions;
 using TechShop.Application.Services.AuthService;
-using TechShop.Application.Services.ProductPhotoService;
-using TechShop.Application.Services.ProductService;
+using TechShop.Application.Services.BasketServices.BasketItemService;
+using TechShop.Application.Services.BasketServices.BasketService;
+using TechShop.Application.Services.ProductServices.ProductPhotoService;
+using TechShop.Application.Services.ProductServices.ProductService;
 using TechShop.Application.Services.TempDataService;
-using TechShop.Application.Services.UserProfileService;
-using TechShop.Application.Services.UserService;
+using TechShop.Application.Services.UserServices.UserProfileService;
+using TechShop.Application.Services.UserServices.UserService;
+using TechShop.Application.Services.WishlistServices.WishlistItemService;
+using TechShop.Application.Services.WishlistServices.WishlistService;
 using TechShop.Domain.DTOs.JWTDto;
 using TechShop.Domain.DTOs.UserDto;
 using TechShop.Infrastructure;
 using TechShop.Infrastructure.Repositories.BaseRepository;
+using TechShop.Infrastructure.Repositories.BasketRepositories.BasketItemRepository;
+using TechShop.Infrastructure.Repositories.BasketRepositories.BasketRepository;
 using TechShop.Infrastructure.Repositories.ProductPhotoRepository;
 using TechShop.Infrastructure.Repositories.ProductRepositoty;
 using TechShop.Infrastructure.Repositories.UserProfileRepository;
+using TechShop.Infrastructure.Repositories.WishlistRepositories.WishlistItemRepository;
+using TechShop.Infrastructure.Repositories.WishlistRepositories.WishlistRepository;
 using TechShopWeb.Filters;
 
 namespace TechShop
@@ -26,6 +34,10 @@ namespace TechShop
             services.AddScoped<IUserProfileRepository, UserProfileRepository>();
             services.AddScoped<IProductRepositoty, ProductRepositoty>();
             services.AddScoped<IProductPhotoRepository, ProductPhotoRepository>();
+            services.AddScoped<IWishlistRepository, WishlistRepository>();
+            services.AddScoped<IWishlistItemRepository, WishlistItemRepository>();
+            services.AddScoped<IBasketRepository, BasketRepository>();
+            services.AddScoped<IBasketItemRepository, BasketItemRepository>();
         }
 
         public static void InitializeServices(this IServiceCollection services)
@@ -36,6 +48,10 @@ namespace TechShop
             services.AddScoped<IUserProfileService, UserProfileService>();
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IProductPhotoService, ProductPhotoService>();
+            services.AddScoped<IWishlistService, WishlistService>();
+            services.AddScoped<IWishlistItemService, WishlistItemService>();
+            services.AddScoped<IBasketService, BasketService>();
+            services.AddScoped<IBasketItemService, BasketItemService>();
         }
 
         public static void InitializeFilters(this IServiceCollection services)

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
-using TechShop.Domain.Entities;
+using TechShop.Domain.Entities.BasketEntities;
 
 namespace TechShop.Infrastructure.Configs
 {

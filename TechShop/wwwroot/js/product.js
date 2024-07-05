@@ -4,4 +4,9 @@
             currentUrl.searchParams.set('PageNumber', 1);
             currentUrl.searchParams.set('PageSize', pageSize);
             window.location.href = currentUrl.href;
-        }
+}
+
+function setActiveSlide(index) {
+    var carousel = new bootstrap.Carousel(document.querySelector('#productCarousel'));
+    carousel.to(index);
+}

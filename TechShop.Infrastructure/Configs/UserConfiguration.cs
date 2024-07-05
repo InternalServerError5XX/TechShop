@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using TechShop.Domain.Entities;
 using TechShop.Domain.DTOs.UserDto;
+using TechShop.Domain.Entities.BasketEntities;
+using TechShop.Domain.Entities.WishlistEntities;
 
 namespace TechShop.Infrastructure.Configs
 {

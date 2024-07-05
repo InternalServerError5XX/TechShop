@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using TechShop.Domain.DTOs.AuthDto;
-using TechShop.Domain.DTOs.BasketDto;
-using TechShop.Domain.DTOs.BasketItemDto;
+using TechShop.Domain.DTOs.BasketDtos.BasketDto;
+using TechShop.Domain.DTOs.BasketDtos.BasketItemDto;
 using TechShop.Domain.DTOs.CaregoryDto;
 using TechShop.Domain.DTOs.PaginationDto;
 using TechShop.Domain.DTOs.ProductCaregoryDto;
@@ -9,9 +9,12 @@ using TechShop.Domain.DTOs.ProductDto;
 using TechShop.Domain.DTOs.ProductPhoto;
 using TechShop.Domain.DTOs.UserDto;
 using TechShop.Domain.DTOs.UserProfileDto;
-using TechShop.Domain.DTOs.WishlistDto;
-using TechShop.Domain.DTOs.WishlistItemDto;
+using TechShop.Domain.DTOs.WishlistDtos.WishlistDto;
+using TechShop.Domain.DTOs.WishlistDtos.WishlistItemDto;
 using TechShop.Domain.Entities;
+using TechShop.Domain.Entities.BasketEntities;
+using TechShop.Domain.Entities.ProductEntities;
+using TechShop.Domain.Entities.WishlistEntities;
 
 namespace TechShop.Infrastructure.Mapper
 {

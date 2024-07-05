@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
-using TechShop.Application.Services.UserService;
+using TechShop.Application.Services.UserServices.UserService;
 using TechShop.Domain.DTOs.UserDto;
 
 public class Benchmark(IUserService _userService, IMapper _mapper)
