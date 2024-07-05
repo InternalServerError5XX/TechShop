@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using TechShop.Domain.DTOs.UserDto;
+using TechShop.Domain.DTOs.UserDtos.UserDto;
 using TechShop.Domain.Entities;
 using TechShop.Domain.Entities.BasketEntities;
 using TechShop.Domain.Entities.ProductEntities;

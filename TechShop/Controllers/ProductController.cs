@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using TechShop.Application.Services.ProductServices.ProductService;
 using TechShop.Domain.DTOs.FilterDto;
 using TechShop.Domain.DTOs.PaginationDto;
-using TechShop.Domain.DTOs.ProductDto;
+using TechShop.Domain.DTOs.ProductDtos.ProductDto;
 using TechShop.Domain.Entities.ProductEntities;
 
 namespace TechShopWeb.Controllers
@@ -64,8 +64,9 @@ namespace TechShopWeb.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(RequestProductDto productDto)
         {
-            var product = mapper.Map<Product>(productDto);
-            var response = await productService.AddAsync(product);          
+            if (!ModelState.IsValid)
+                return View(productDto);
+            var response = await productService.CreateProduct(productDto);          
 
             return View(await GetById(response.Id));
         }

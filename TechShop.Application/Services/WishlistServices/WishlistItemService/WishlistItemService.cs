@@ -4,7 +4,7 @@ using TechShop.Application.Services.BaseService;
 using TechShop.Domain.DTOs.WishlistDtos.WishlistItemDto;
 using TechShop.Domain.Entities.WishlistEntities;
 using TechShop.Infrastructure.Repositories.BaseRepository;
-using TechShop.Infrastructure.Repositories.ProductRepositoty;
+using TechShop.Infrastructure.Repositories.ProductRepositories.ProductRepositoty;
 using TechShop.Infrastructure.Repositories.WishlistRepositories.WishlistItemRepository;
 
 namespace TechShop.Application.Services.WishlistServices.WishlistItemService

@@ -4,7 +4,7 @@ using TechShop.Application.Services.BaseService;
 using TechShop.Application.Services.BasketServices.BasketService;
 using TechShop.Application.Services.ProductServices.ProductPhotoService;
 using TechShop.Application.Services.WishlistServices.WishlistService;
-using TechShop.Domain.DTOs.ProductDto;
+using TechShop.Domain.DTOs.ProductDtos.ProductDto;
 using TechShop.Domain.Entities.ProductEntities;
 using TechShop.Infrastructure.Repositories.BaseRepository;
 

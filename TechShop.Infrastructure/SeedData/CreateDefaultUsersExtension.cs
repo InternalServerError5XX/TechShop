@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using TechShop.Domain.DTOs.UserDto;
+using TechShop.Domain.DTOs.UserDtos.UserDto;
 using TechShop.Domain.Identity;
 
 namespace TechShop.Infrastructure.SeedData

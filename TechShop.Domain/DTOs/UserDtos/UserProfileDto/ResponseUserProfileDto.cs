@@ -1,4 +1,4 @@
-﻿namespace TechShop.Domain.DTOs.UserProfileDto
+﻿namespace TechShop.Domain.DTOs.UserDtos.UserProfileDto
 {
     public class ResponseUserProfileDto
     {
@@ -9,6 +9,6 @@
         public int Age { get; set; }
         public DateTime LastLogin { get; set; }
         public DateTime CreatedDate { get; set; }
-        public DateTime UpdatedDate { get; set; }       
+        public DateTime UpdatedDate { get; set; }
     }
 }

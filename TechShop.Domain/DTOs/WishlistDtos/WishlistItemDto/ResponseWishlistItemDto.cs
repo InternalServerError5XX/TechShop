@@ -1,4 +1,4 @@
-﻿using TechShop.Domain.DTOs.ProductDto;
+﻿using TechShop.Domain.DTOs.ProductDtos.ProductDto;
 
 namespace TechShop.Domain.DTOs.WishlistDtos.WishlistItemDto
 {

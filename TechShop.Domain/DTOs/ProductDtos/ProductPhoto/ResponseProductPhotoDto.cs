@@ -1,4 +1,4 @@
-﻿namespace TechShop.Domain.DTOs.ProductPhoto
+﻿namespace TechShop.Domain.DTOs.ProductDtos.ProductPhoto
 {
     public class ResponseProductPhotoDto
     {

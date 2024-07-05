@@ -1,4 +1,4 @@
-﻿namespace TechShop.Domain.DTOs.CaregoryDto
+﻿namespace TechShop.Domain.DTOs.ProductDtos.ProductCaregoryDto
 {
     public class ResponseProductCaregoryDto
     {

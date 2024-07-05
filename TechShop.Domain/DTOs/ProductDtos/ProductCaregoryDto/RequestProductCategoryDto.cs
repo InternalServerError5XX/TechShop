@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace TechShop.Domain.DTOs.ProductCaregoryDto
+namespace TechShop.Domain.DTOs.ProductDtos.ProductCaregoryDto
 {
     public class RequestProductCategoryDto
     {

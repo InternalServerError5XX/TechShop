@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace TechShop.Domain.DTOs.UserProfileDto
+namespace TechShop.Domain.DTOs.UserDtos.UserProfileDto
 {
     public class RequestUserProfileDto
     {

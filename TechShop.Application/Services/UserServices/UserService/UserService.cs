@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TechShop.Application.Services.BaseService;
-using TechShop.Domain.DTOs.UserDto;
+using TechShop.Domain.DTOs.UserDtos.UserDto;
 using TechShop.Infrastructure.Repositories.BaseRepository;
 
 namespace TechShop.Application.Services.UserServices.UserService

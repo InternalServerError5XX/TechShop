@@ -1,4 +1,4 @@
-﻿using TechShop.Domain.DTOs.UserDto;
+﻿using TechShop.Domain.DTOs.UserDtos.UserDto;
 
 namespace TechShop.Domain.Entities.BasketEntities
 {

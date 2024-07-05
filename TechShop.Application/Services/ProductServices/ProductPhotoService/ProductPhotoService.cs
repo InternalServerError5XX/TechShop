@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using TechShop.Application.Services.BaseService;
-using TechShop.Domain.DTOs.ProductPhoto;
+using TechShop.Domain.DTOs.ProductDtos.ProductPhoto;
 using TechShop.Domain.Entities.ProductEntities;
 using TechShop.Infrastructure.Repositories.BaseRepository;
-using TechShop.Infrastructure.Repositories.ProductRepositoty;
+using TechShop.Infrastructure.Repositories.ProductRepositories.ProductRepositoty;
 
 namespace TechShop.Application.Services.ProductServices.ProductPhotoService
 {

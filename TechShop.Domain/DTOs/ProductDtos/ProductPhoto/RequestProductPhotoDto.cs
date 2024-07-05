@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
-namespace TechShop.Domain.DTOs.ProductPhoto
+namespace TechShop.Domain.DTOs.ProductDtos.ProductPhoto
 {
     public class RequestProductPhotoDto
     {

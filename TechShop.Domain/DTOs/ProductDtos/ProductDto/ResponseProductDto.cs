@@ -1,7 +1,7 @@
-﻿using TechShop.Domain.DTOs.CaregoryDto;
-using TechShop.Domain.DTOs.ProductPhoto;
+﻿using TechShop.Domain.DTOs.ProductDtos.ProductCaregoryDto;
+using TechShop.Domain.DTOs.ProductDtos.ProductPhoto;
 
-namespace TechShop.Domain.DTOs.ProductDto
+namespace TechShop.Domain.DTOs.ProductDtos.ProductDto
 {
     public class ResponseProductDto
     {

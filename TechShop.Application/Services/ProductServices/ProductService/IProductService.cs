@@ -1,5 +1,5 @@
 ﻿using TechShop.Application.Services.BaseService;
-using TechShop.Domain.DTOs.ProductDto;
+using TechShop.Domain.DTOs.ProductDtos.ProductDto;
 using TechShop.Domain.Entities.ProductEntities;
 
 namespace TechShop.Application.Services.ProductServices.ProductService

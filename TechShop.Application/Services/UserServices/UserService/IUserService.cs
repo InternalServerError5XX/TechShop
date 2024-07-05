@@ -1,5 +1,5 @@
 ﻿using TechShop.Application.Services.BaseService;
-using TechShop.Domain.DTOs.UserDto;
+using TechShop.Domain.DTOs.UserDtos.UserDto;
 
 namespace TechShop.Application.Services.UserServices.UserService
 {

@@ -5,7 +5,7 @@ using TechShop.Domain.DTOs.BasketDtos.BasketItemDto;
 using TechShop.Domain.Entities.BasketEntities;
 using TechShop.Domain.Entities.WishlistEntities;
 using TechShop.Infrastructure.Repositories.BaseRepository;
-using TechShop.Infrastructure.Repositories.ProductRepositoty;
+using TechShop.Infrastructure.Repositories.ProductRepositories.ProductRepositoty;
 
 namespace TechShop.Application.Services.BasketServices.BasketItemService
 {

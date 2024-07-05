@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using TechShop.Domain.DTOs.ProductPhoto;
+using TechShop.Domain.DTOs.ProductDtos.ProductPhoto;
 
-namespace TechShop.Domain.DTOs.ProductDto
+namespace TechShop.Domain.DTOs.ProductDtos.ProductDto
 {
     public class RequestProductDto
     {

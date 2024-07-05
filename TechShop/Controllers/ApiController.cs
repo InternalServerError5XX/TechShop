@@ -2,10 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TechShop.Application.Services.AuthService;
 using TechShop.Domain.DTOs.AuthDto;
-using TechShop.Domain.DTOs.UserDto;
 using AutoMapper;
-using TechShop.Domain.DTOs.ProductDto;
-using TechShop.Domain.DTOs.ProductPhoto;
 using TechShop.Domain.DTOs.PaginationDto;
 using TechShop.Domain.DTOs.FilterDto;
 using TechShop.Application.Services.TempDataService;
@@ -20,6 +17,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using TechShop.Application.Services.BasketServices.BasketService;
 using TechShop.Domain.DTOs.BasketDtos.BasketDto;
+using TechShop.Domain.DTOs.ProductDtos.ProductDto;
+using TechShop.Domain.DTOs.ProductDtos.ProductPhoto;
+using TechShop.Domain.DTOs.UserDtos.UserDto;
 
 namespace TechShop.Controllers
 {
