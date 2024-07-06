@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using TechShop.Application.Services.BaseService;
+using TechShop.Application.Services.ProductServices.ProductService;
 using TechShop.Domain.DTOs.ProductDtos.ProductPhoto;
 using TechShop.Domain.Entities.ProductEntities;
 using TechShop.Infrastructure.Repositories.BaseRepository;
@@ -10,24 +11,22 @@ namespace TechShop.Application.Services.ProductServices.ProductPhotoService
     public class ProductPhotoService : BaseService<ProductPhoto>, IProductPhotoService
     {
         private readonly IMapper _mapper;
-        private readonly IProductRepositoty _productRepositoty;
+        private readonly IBaseRepository<ProductPhoto> _productPhotoRepository;
 
         public ProductPhotoService(IBaseRepository<ProductPhoto> productPhotoRepository,
             IProductRepositoty productRepositoty, IMapper mapper) : base(productPhotoRepository)
         {
             _mapper = mapper;
-            _productRepositoty = productRepositoty;
+            _productPhotoRepository = productPhotoRepository;
         }
 
-        public async Task<IEnumerable<ProductPhoto>> SavePhoto(IEnumerable<RequestProductPhotoDto> productPhotoDtos)
+        public async Task<IEnumerable<ProductPhoto>> SavePhotoAsync(IEnumerable<RequestProductPhotoDto> productPhotoDtos)
         {
             var savedPhotos = new List<ProductPhoto>();
 
             foreach (var productPhotoDto in productPhotoDtos)
             {
-                await CheckProduct(productPhotoDto);
                 var extension = CheckExtension(productPhotoDto);
-
                 var fileName = Guid.NewGuid().ToString() + extension;
                 var directoryPath = Path.Combine("wwwroot", "images", "products");
                 var filePath = Path.Combine(directoryPath, fileName);
@@ -47,40 +46,33 @@ namespace TechShop.Application.Services.ProductServices.ProductPhotoService
             return await AddRangeAsync(savedPhotos);
         }
 
-        public async Task DeletePhoto(int id)
+        public async Task<IEnumerable<ProductPhoto>> UpdatePhoto(IEnumerable<RequestProductPhotoDto> productPhotoDto,
+            IEnumerable<ProductPhoto> productPhotos)
         {
-            await BeginTransactionAsync();
+            DeletePhoto(productPhotos);
+            var photos = await SavePhoto(productPhotoDto);
+            var date = DateTime.Now;
 
-            try
+            for (int i = 0; i < productPhotos.Count(); i++)
             {
-                var photo = await GetByIdAsync(id);
-                if (photo == null)
-                    throw new NullReferenceException("Photo not found from the DB");
+                var photo = photos.ElementAtOrDefault(i);
+                productPhotos.ElementAt(i).Path = photo!.Path;
+                productPhotos.ElementAt(i).UpdatedDate = date;
+            }
 
+            return productPhotos;
+        }
+
+        public void DeletePhotoFile(IEnumerable<ProductPhoto> productPhotos)
+        {
+            foreach (var photo in productPhotos)
+            {
                 var filePath = Path.Combine("wwwroot", photo.Path.TrimStart('/'));
                 if (!File.Exists(filePath))
                     throw new NullReferenceException("Photo not found from the server");
 
                 File.Delete(filePath);
-                await DeleteAsync(id);
-
-                await CommitTransactionAsync();
             }
-            catch (Exception ex)
-            {
-                await RollbackTransactionAsync(ex);
-                throw;
-            }
-        }
-
-        private async Task CheckProduct(RequestProductPhotoDto productPhotoDto)
-        {
-            if (productPhotoDto.ProductId == null)
-                throw new NullReferenceException("Product id is required");
-
-            var product = await _productRepositoty.GetByIdAsync(productPhotoDto.ProductId.Value);
-            if (product == null)
-                throw new NullReferenceException("Product not found");
         }
 
         private string CheckExtension(RequestProductPhotoDto productPhotoDto)
@@ -96,6 +88,45 @@ namespace TechShop.Application.Services.ProductServices.ProductPhotoService
                 throw new ArgumentException("Invalid file content type.");
 
             return extension;
+        }
+
+        private async Task<IEnumerable<ProductPhoto>> SavePhoto(IEnumerable<RequestProductPhotoDto> productPhotoDtos)
+        {
+            var savedPhotos = new List<ProductPhoto>();
+
+            foreach (var productPhotoDto in productPhotoDtos)
+            {
+                var extension = CheckExtension(productPhotoDto);
+                var fileName = Guid.NewGuid().ToString() + extension;
+                var directoryPath = Path.Combine("wwwroot", "images", "products");
+                var filePath = Path.Combine(directoryPath, fileName);
+
+                if (!Directory.Exists(directoryPath))
+                    Directory.CreateDirectory(directoryPath);
+
+                await using var stream = new FileStream(filePath, FileMode.Create);
+                await productPhotoDto.Photo.CopyToAsync(stream);
+
+                var productPhoto = _mapper.Map<ProductPhoto>(productPhotoDto);
+                productPhoto.Path = $"/images/products/{fileName}";
+
+                savedPhotos.Add(productPhoto);
+            }
+
+            return savedPhotos;
+        }
+
+        public async void DeletePhoto(IEnumerable<ProductPhoto> productPhotos)
+        {
+            foreach (var photo in productPhotos)
+            {
+                var filePath = Path.Combine("wwwroot", photo.Path.TrimStart('/'));
+                if (!File.Exists(filePath))
+                    throw new NullReferenceException("Photo not found from the server");
+
+                File.Delete(filePath);
+                await _productPhotoRepository.DeleteRangeAsync(productPhotos);
+            }
         }
     }
 }

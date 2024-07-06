@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -21,7 +22,6 @@ namespace TechShop.Application.Extensions
             })
                 .AddCookie("Cookies", options =>
                 {
-                    options.LoginPath = "/";
                     options.ExpireTimeSpan = TimeSpan.FromDays(expires!.Value);
                 })
                 .AddJwtBearer("Bearer", options =>
@@ -43,6 +43,21 @@ namespace TechShop.Application.Extensions
                         OnMessageReceived = context =>
                         {
                             context.Token = context.Request.Cookies["token"];
+                            return Task.CompletedTask;
+                        },
+
+                        OnChallenge = context =>
+                        {
+                            context.HandleResponse();
+                            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                            context.Response.Redirect("/Identity/Login");
+                            return Task.CompletedTask;
+                        },
+
+                        OnForbidden = context =>
+                        {
+                            context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                            context.Response.Redirect("/Error/Error403");
                             return Task.CompletedTask;
                         }
                     };

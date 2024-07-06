@@ -8,6 +8,8 @@ namespace TechShop.Application.Services.ProductServices.ProductService
     {
         IQueryable<Product> GetProducts();
         Task<Product> GetProduct(int id);
-        Task<Product> CreateProduct(RequestProductDto productDto);
+        Task<Product> CreateProduct(CreateProductDto productDto);
+        Task UpdateProduct(int id, CreateProductDto productDto);
+        Task DeleteProduct(int id);
     }
 }

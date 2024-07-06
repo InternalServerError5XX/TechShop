@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Azure;
 using Microsoft.AspNetCore.Mvc;
 using TechShop.Application.Services.ProductServices.ProductService;
 using TechShop.Domain.DTOs.FilterDto;
@@ -59,19 +60,53 @@ namespace TechShopWeb.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
-            return await Task.FromResult(View());
+            return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(RequestProductDto productDto)
+        public async Task<IActionResult> Create(CreateProductDto productDto)
         {
             if (!ModelState.IsValid)
                 return View(productDto);
-            var response = await productService.CreateProduct(productDto);          
+            var response = await productService.CreateProduct(productDto);
 
-            return View(await GetById(response.Id));
+            return RedirectToAction(nameof(GetById), new { id = response.Id });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Update(int id)
+        {
+            var product = await productService.GetByIdAsync(id);
+            var response = mapper.Map<CreateProductDto>(product);
+            return View(response);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Update(int id, CreateProductDto productDto)
+        {
+            if (!ModelState.IsValid)
+                return View(productDto);
+            await productService.UpdateProduct(id, productDto);
+
+            return RedirectToAction(nameof(GetById), new { id });
+        }
+
+        public async Task<IActionResult> Delete(int id)
+        {
+            await productService.DeleteProduct(id);
+
+            var referer = Request.Headers["Referer"].ToString();
+
+            if (!string.IsNullOrEmpty(referer) && referer.Contains("Adminpanel") && referer.Contains("GetAll"))
+            {
+                return Redirect(referer);
+            }
+            else
+            {
+                return RedirectToAction("Adminpanel", "Admin");
+            }
         }
 
         [HttpGet]

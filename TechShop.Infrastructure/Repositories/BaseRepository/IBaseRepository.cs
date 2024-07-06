@@ -10,7 +10,9 @@ namespace TechShop.Infrastructure.Repositories.BaseRepository
         Task<T> AddAsync(T entity);
         Task<IEnumerable<T>> AddRangeAsync(IEnumerable<T> entities);
         Task UpdateAsync(T entity);
+        Task UpdateRangeAsync(IEnumerable<T> entities);
         Task DeleteAsync(int id);
+        Task DeleteRangeAsync(IEnumerable<T> entities);
 
         Task BeginTransactionAsync();
         Task CommitTransactionAsync();
