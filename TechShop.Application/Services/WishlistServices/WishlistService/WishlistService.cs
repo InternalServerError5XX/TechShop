@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using TechShop.Application.Services.AuthService;
 using TechShop.Application.Services.BaseService;
+using TechShop.Application.Services.UserServices.UserService;
 using TechShop.Application.Services.WishlistServices.WishlistItemService;
 using TechShop.Domain.DTOs.WishlistDtos.WishlistDto;
 using TechShop.Domain.Entities.WishlistEntities;
@@ -13,14 +14,14 @@ namespace TechShop.Application.Services.WishlistServices.WishlistService
     public class WishlistService : BaseService<Wishlist>, IWishlistService
     {
         private readonly IMapper _mapper;
-        private readonly IAuthService _authService;
+        private readonly IUserService _userService;
         private readonly IWishlistItemService _wishlistItemService;
 
         public WishlistService(IBaseRepository<Wishlist> wishlistRepository, IWishlistItemService wishlistItemService,
-            IAuthService authService, IMapper mapper) : base(wishlistRepository)
+            IUserService userService, IMapper mapper) : base(wishlistRepository)
         {
             _mapper = mapper;
-            _authService = authService;
+            _userService = userService;
             _wishlistItemService = wishlistItemService;
         }
 
@@ -68,7 +69,7 @@ namespace TechShop.Application.Services.WishlistServices.WishlistService
 
         public async Task<Wishlist> GetUserWishlist(string email)
         {
-            var userId = await _authService.GetUserId(email);
+            var userId = await _userService.GetUserId(email);
             var wishlist = await GetWishlists()
                 .SingleOrDefaultAsync(x => x.UserId == userId);
 
@@ -86,7 +87,7 @@ namespace TechShop.Application.Services.WishlistServices.WishlistService
 
             var wishlist = await GetUserWishlist(email);
 
-            var productIds = _wishlistItemService.GetAllAsync()
+            var productIds = _wishlistItemService.GetAll()
                 .Where(x => x.WishlistId == wishlist.Id)
                 .Select(selector);
 
@@ -106,7 +107,7 @@ namespace TechShop.Application.Services.WishlistServices.WishlistService
 
         private IQueryable<Wishlist> GetWishlists()
         {
-            return GetAllAsync()
+            return GetAll()
                 .Include(x => x.WishlistItems)
                     .ThenInclude(x => x.Product)
                         .ThenInclude(x => x.ProductPhotos);
@@ -115,7 +116,7 @@ namespace TechShop.Application.Services.WishlistServices.WishlistService
         private async Task<bool> IsInWishlist<TField>(Wishlist wishlist, TField field,
             Expression<Func<WishlistItem, TField>> selector)
         {
-            var productIds = _wishlistItemService.GetAllAsync()
+            var productIds = _wishlistItemService.GetAll()
                 .Where(x => x.WishlistId == wishlist.Id)
                 .Select(selector);
 

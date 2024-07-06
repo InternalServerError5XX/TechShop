@@ -18,16 +18,7 @@ namespace TechShop.Application.Services.AuthService
 {
     public class AuthService(UserManager<ApplicationUser> userManager, IOptions<JwtTokenSettings> jwtTokenSettings,
         IMapper mapper, IUserProfileService userProfileService) : IAuthService
-    {
-        public async Task<string> GetUserId(string email)
-        {
-            var user = await userManager.FindByEmailAsync(email);
-            if (user == null)
-                throw new NullReferenceException("User not found");
-
-            return user.Id;
-        }
-
+    {    
         public JwtDto GenerateJwt(ApplicationUser user)
         {
             var expires = DateTime.UtcNow.AddDays(jwtTokenSettings.Value.JwtExpires);

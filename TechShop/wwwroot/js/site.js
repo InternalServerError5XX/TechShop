@@ -37,6 +37,18 @@ function closeBasketModal() {
     });
 }
 
+function closeProfileModal() {
+    $(document).ready(function () {
+        $('#profileModal').on('hidden.bs.modal', function () {
+            $('#profileModalBody').empty();
+        });
+
+        $('.close').click(function () {
+            $('#profileModal').modal('hide');
+        });
+    });
+}
+
 function getBasketFromWishlist() {
     $(document).ready(function () {
         $('#wishlistModal .btn-primary').click(function () {

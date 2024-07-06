@@ -70,6 +70,8 @@ namespace TechShop
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+
+            services.AddScoped<RoleManager<IdentityRole>>();
         }
 
         public static void InitializeAuthentication(this WebApplicationBuilder builder)

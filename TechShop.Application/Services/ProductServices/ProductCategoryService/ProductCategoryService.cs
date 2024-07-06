@@ -31,7 +31,7 @@ namespace TechShop.Application.Services.ProductServices.ProductCategoryService
 
         public async Task<bool> IsInWishlist<TField>(TField field, Expression<Func<ProductCategory, TField>> selector)
         {
-            var categoryIds = GetAllAsync().AsQueryable()
+            var categoryIds = GetAll().AsQueryable()
                 .Select(selector);
 
             return await categoryIds.ContainsAsync(field);

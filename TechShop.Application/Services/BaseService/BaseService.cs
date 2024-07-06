@@ -8,9 +8,9 @@ namespace TechShop.Application.Services.BaseService
 {
     public class BaseService<T>(IBaseRepository<T> baseRepository) : IBaseService<T> where T : class
     {
-        public IQueryable<T> GetAllAsync()
+        public IQueryable<T> GetAll()
         {
-            return baseRepository.GetAllAsync();
+            return baseRepository.GetAll();
         }
 
         public async Task<T> GetByIdAsync(int id)

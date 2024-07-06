@@ -22,6 +22,8 @@ using TechShop.Domain.DTOs.ProductDtos.ProductPhoto;
 using TechShop.Domain.DTOs.UserDtos.UserDto;
 using TechShop.Domain.DTOs.ProductDtos.ProductCaregoryDto;
 using TechShop.Domain.DTOs.ProductDtos.ProductCategoryService;
+using TechShop.Application.Services.UserServices.UserProfileService;
+using TechShop.Domain.DTOs.UserDtos.UserProfileDto;
 
 namespace TechShop.Controllers
 {
@@ -68,6 +70,13 @@ namespace TechShop.Controllers
         {
             var check = User.IsInRole("Admin");
             return Ok(check);
+        }
+
+        [HttpGet("GetRoles")]
+        public async Task<IActionResult> GetRoles()
+        {
+            var response = await userService.GetRoles();
+            return Ok(response);
         }
 
         [AllowAnonymous]
@@ -177,7 +186,7 @@ namespace TechShop.Controllers
         [HttpGet("GetCategories")]
         public async Task<IActionResult> GetCategories()
         {
-            var category = productCategoryService.GetAllAsync();
+            var category = productCategoryService.GetAll();
             var response = mapper.Map<IEnumerable<ResponseProductCaregoryDto>>(category);
 
             return CreatedAtAction(nameof(response), new { }, response);
@@ -197,6 +206,17 @@ namespace TechShop.Controllers
         {
             var users = userService.GetUsers();
             var response = mapper.Map<IEnumerable<ApplicationUserDto>>(users);
+
+            return Ok(response);
+        }
+
+        [Authorize]
+        [HttpGet("GetUserProfile")]
+        public async Task<IActionResult> GetUserProfile()
+        {
+            var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            var profile = await userService.GetUserProfile(email!);
+            var response = mapper.Map<ResponseUserProfileDto>(profile);
 
             return Ok(response);
         }

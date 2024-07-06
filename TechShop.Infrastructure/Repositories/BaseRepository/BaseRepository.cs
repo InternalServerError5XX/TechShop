@@ -17,7 +17,7 @@ namespace TechShop.Infrastructure.Repositories.BaseRepository
             dbSet = _context.Set<T>();
         }
 
-        public IQueryable<T> GetAllAsync()
+        public IQueryable<T> GetAll()
         {
             return dbSet
                 .AsQueryable()

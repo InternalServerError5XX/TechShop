@@ -43,6 +43,7 @@ namespace TechShop.Infrastructure.Mapper
                     dest.LastLogin = DateTime.Now;
                 });
             CreateMap<UserProfile, ResponseUserProfileDto>();
+            CreateMap<ResponseUserProfileDto, UserProfile>();
 
             CreateMap<ApplicationUser, ApplicationUserDto>();
 

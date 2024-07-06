@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using TechShop.Application.Services.AuthService;
 using TechShop.Application.Services.BaseService;
 using TechShop.Application.Services.BasketServices.BasketItemService;
+using TechShop.Application.Services.UserServices.UserService;
 using TechShop.Domain.DTOs.WishlistDtos.WishlistDto;
 using TechShop.Domain.Entities.BasketEntities;
 using TechShop.Domain.Entities.ProductEntities;
@@ -14,14 +15,14 @@ namespace TechShop.Application.Services.BasketServices.BasketService
     public class BasketService : BaseService<Basket>, IBasketService
     {
         private readonly IMapper _mapper;
-        private readonly IAuthService _authService;
+        private readonly IUserService _userService;
         private readonly IBasketItemService _basketItemService;
 
         public BasketService(IBaseRepository<Basket> basketRepository, IBasketItemService basketItemService,
-            IAuthService authService, IMapper mapper) : base(basketRepository)
+            IUserService userService, IMapper mapper) : base(basketRepository)
         {
             _mapper = mapper;
-            _authService = authService;
+            _userService = userService;
             _basketItemService = basketItemService;
         }
 
@@ -67,7 +68,7 @@ namespace TechShop.Application.Services.BasketServices.BasketService
 
         public async Task<Basket> GetUserBasket(string email)
         {
-            var userId = await _authService.GetUserId(email);
+            var userId = await _userService.GetUserId(email);
             var basket = await GetBasket()
                 .SingleOrDefaultAsync(x => x.UserId == userId);
 
@@ -85,7 +86,7 @@ namespace TechShop.Application.Services.BasketServices.BasketService
 
             var basket = await GetUserBasket(email);
 
-            var productIds = _basketItemService.GetAllAsync()
+            var productIds = _basketItemService.GetAll()
                 .Where(x => x.BasketId == basket.Id)
                 .Select(selector);
 
@@ -121,7 +122,7 @@ namespace TechShop.Application.Services.BasketServices.BasketService
 
         private IQueryable<Basket> GetBasket()
         {
-            return GetAllAsync()
+            return GetAll()
                 .Include(x => x.BasketItems)
                     .ThenInclude(x => x.Product)
                         .ThenInclude(x => x.ProductPhotos);
@@ -130,7 +131,7 @@ namespace TechShop.Application.Services.BasketServices.BasketService
         private async Task<bool> IsInBasket<TField>(Basket basket, TField field,
             Expression<Func<BasketItem, TField>> selector)
         {
-            var productIds = _basketItemService.GetAllAsync()
+            var productIds = _basketItemService.GetAll()
                 .Where(x => x.BasketId == basket.Id)
                 .Select(selector);
 

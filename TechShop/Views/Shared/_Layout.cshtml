@@ -110,8 +110,8 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="User" asp-action="Profile">
-                            <div class="d-flex flex-column align-items-center">
+                        <a class="nav-link" href="">
+                            <div class="d-flex flex-column align-items-center" id="profileButton">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="27" height="27" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 18 18">
                                     <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
                                     <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
@@ -161,6 +161,24 @@
                         </svg>
                         Order
                     </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div class="modal fade" id="profileModal" tabindex="-1" role="dialog" aria-labelledby="profileModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="profileModalLabel">Profile</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="profileModalBody"></div>
+                <div class="modal-footer">
+                    <button type="button" id="saveProfileButton" class="btn btn-primary" data-dismiss="modal">Save</button>
                 </div>
             </div>
         </div>
@@ -257,6 +275,23 @@
         });
 
         $(document).ready(function () {
+            $('#profileButton').click(function (e) {
+                e.preventDefault();
+                $.ajax({
+                    url: '@Url.Action("Profile", "User")',
+                    type: 'GET',
+                    success: function (result) {
+                        $('#profileModalBody').html(result);
+                        $('#profileModal').modal('show');
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(xhr.responseText);
+                    }
+                });
+            });
+        });
+
+        $(document).ready(function () {
             $('#openBasketButton').click(function () {
                 $('#wishlistModal').modal('hide');
                 $.ajax({
@@ -272,11 +307,46 @@
                 });
             });
         });
+    </script>
 
+    <script>
+        $(document).ready(function () {
+            $('#saveProfileButton').click(function () {
+                var formData = $('#profileForm').serialize();
+                $.ajax({
+                    url: '@Url.Action("Update", "User")',
+                    type: 'POST',
+                    data: formData,
+                    success: function (response) {
+                        reloadProfile();
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(xhr.responseText);
+                    }
+                });
+            });
+        });
+
+        function reloadProfile() {
+            $.ajax({
+                url: '@Url.Action("Profile", "User")',
+                type: 'GET',
+                success: function (result) {
+                    $('#profileModalBody').html(result);
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        }
+    </script>
+
+    <script>
         closeBasketModal();
         closeWishlistModal();
+        closeProfileModal();
         getBasketFromWishlist();
-    </script>
+    </<script>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

@@ -72,7 +72,7 @@ namespace TechShop.Application.Services.ProductServices.ProductService
 
         public IQueryable<Product> GetProducts()
         {
-            return GetAllAsync()
+            return GetAll()
                 .Include(x => x.Category)
                 .Include(x => x.ProductPhotos);
         }

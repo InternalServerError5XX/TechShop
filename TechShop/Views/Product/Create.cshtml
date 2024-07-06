@@ -5,7 +5,7 @@
 @{
     ViewData["Title"] = "Create Product";
     @inject IProductCategoryService productCategoryService
-    var categories = productCategoryService.GetAllAsync();
+    var categories = productCategoryService.GetAll();
     <script src="~/js/product.js" asp-append-version="true"></script>
 }
 

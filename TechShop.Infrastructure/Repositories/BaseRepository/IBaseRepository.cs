@@ -4,7 +4,7 @@ namespace TechShop.Infrastructure.Repositories.BaseRepository
 {
     public interface IBaseRepository<T> where T : class
     {
-        IQueryable<T> GetAllAsync();
+        IQueryable<T> GetAll();
         Task<T> GetByIdAsync(int id);
         Task<T> GetByIdAsync(int id, params Expression<Func<T, object>>[] includes);
         Task<T> AddAsync(T entity);
