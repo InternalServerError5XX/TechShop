@@ -38,22 +38,29 @@ namespace TechShop.Controllers
             return await Task.FromResult(View());
         }
 
+        // TEMPDATA
+
         [HttpPost("SetTempData")]
-        public IActionResult SetTempData()
+        [ApiExplorerSettings(GroupName = "Temdata")]
+        public IActionResult SetTempData(string value)
         {
-            tempDataService.Set("TestKey", "Test Value");
-            return NoContent();
+            tempDataService.Set("TestKey", value);
+            return CreatedAtAction(value, value);
         }
 
         [HttpGet("GetTempData")]
+        [ApiExplorerSettings(GroupName = "Temdata")]
         public IActionResult GetTempData()
         {
             var value = tempDataService.Get<string>("TestKey");
             return Ok(value);
         }
 
+        // AUTH
+
         [Authorize]
         [HttpGet("AuthCheck")]
+        [ApiExplorerSettings(GroupName = "Auth")]
         public IActionResult AuthCheck()
         {
             var token = Request.Cookies["token"];
@@ -66,6 +73,7 @@ namespace TechShop.Controllers
 
         [Authorize]
         [HttpGet("AdminCheck")]
+        [ApiExplorerSettings(GroupName = "Auth")]
         public IActionResult AdminCheck()
         {
             var check = User.IsInRole("Admin");
@@ -73,6 +81,7 @@ namespace TechShop.Controllers
         }
 
         [HttpGet("GetRoles")]
+        [ApiExplorerSettings(GroupName = "Auth")]
         public async Task<IActionResult> GetRoles()
         {
             var response = await userService.GetRoles();
@@ -81,6 +90,7 @@ namespace TechShop.Controllers
 
         [AllowAnonymous]
         [HttpPost("Login")]
+        [ApiExplorerSettings(GroupName = "Auth")]
         public async Task<IActionResult> Login(LoginDto loginDto)
         {
             if (!ModelState.IsValid)
@@ -100,8 +110,9 @@ namespace TechShop.Controllers
             });
         }
 
-        [HttpPost("Register")]
         [AllowAnonymous]
+        [HttpPost("Register")]
+        [ApiExplorerSettings(GroupName = "Auth")]      
         public async Task<ActionResult> Register(RegisterDto registerDto)
         {
             try
@@ -124,13 +135,17 @@ namespace TechShop.Controllers
         }
 
         [HttpPost("Logout")]
+        [ApiExplorerSettings(GroupName = "Auth")]
         public IActionResult Logout()
         {
             Response.Cookies.Delete("token");
             return Ok();
         }
 
+        // PRODUCTS
+
         [HttpGet("GetProduct")]
+        [ApiExplorerSettings(GroupName = "Products")]
         public async Task<IActionResult> GetProduct(int id)
         {
             var product = await productService.GetProduct(id);
@@ -140,6 +155,7 @@ namespace TechShop.Controllers
         }
 
         [HttpGet("GetProducts")]
+        [ApiExplorerSettings(GroupName = "Products")]
         public async Task<IActionResult> GetProducts(RequestPaginationDto paginationDto, string? searchTerm, 
             string? orderBy, bool? isAsc)
         {
@@ -176,6 +192,7 @@ namespace TechShop.Controllers
         }
 
         [HttpPost("CreateProduct")]
+        [ApiExplorerSettings(GroupName = "Products")]
         public async Task<IActionResult> CreateProduct([FromForm] RequestProductDto productDto)
         {        
             var product = await productService.CreateProduct(productDto);
@@ -184,6 +201,7 @@ namespace TechShop.Controllers
         }
 
         [HttpGet("GetCategories")]
+        [ApiExplorerSettings(GroupName = "Products")]
         public async Task<IActionResult> GetCategories()
         {
             var category = productCategoryService.GetAll();
@@ -193,6 +211,7 @@ namespace TechShop.Controllers
         }
 
         [HttpPost("CreateCategory")]
+        [ApiExplorerSettings(GroupName = "Products")]
         public async Task<IActionResult> CreateCategory(RequestProductCategoryDto categoryDto)
         {
             var category = await productCategoryService.CreateCategory(categoryDto);
@@ -201,7 +220,28 @@ namespace TechShop.Controllers
             return CreatedAtAction(nameof(response), new { response.Id }, response);
         }
 
+        [HttpPost("SaveProductPhoto")]
+        [ApiExplorerSettings(GroupName = "Products")]
+        public async Task<IActionResult> AddProductPhoto([FromForm] IEnumerable<RequestProductPhotoDto> requestProductPhotoDto)
+        {
+            var photo = await productPhotoService.SavePhoto(requestProductPhotoDto);
+            var response = mapper.Map<IEnumerable<ResponseProductPhotoDto>>(photo);
+
+            return CreatedAtAction(nameof(response), new { }, response);
+        }
+
+        [HttpDelete("DeleteProductPhoto")]
+        [ApiExplorerSettings(GroupName = "Products")]
+        public async Task<IActionResult> DeleteProductPhoto(int id)
+        {
+            await productPhotoService.DeletePhoto(id);
+            return NoContent();
+        }
+
+        // USERS
+
         [HttpGet("GetUsers")]
+        [ApiExplorerSettings(GroupName = "Users")]
         public IActionResult GetUsers()
         {
             var users = userService.GetUsers();
@@ -212,6 +252,7 @@ namespace TechShop.Controllers
 
         [Authorize]
         [HttpGet("GetUserProfile")]
+        [ApiExplorerSettings(GroupName = "Users")]
         public async Task<IActionResult> GetUserProfile()
         {
             var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
@@ -219,25 +260,12 @@ namespace TechShop.Controllers
             var response = mapper.Map<ResponseUserProfileDto>(profile);
 
             return Ok(response);
-        }
+        }      
 
-        [HttpPost("SavePhoto")]
-        public async Task<IActionResult> AddProductPhoto([FromForm] IEnumerable<RequestProductPhotoDto> requestProductPhotoDto)
-        {
-            var photo = await productPhotoService.SavePhoto(requestProductPhotoDto);
-            var response = mapper.Map<IEnumerable<ResponseProductPhotoDto>>(photo);
-
-            return CreatedAtAction(nameof(response), new { }, response);
-        }
-
-        [HttpDelete("DeleteProductPhoto")]
-        public async Task<IActionResult> DeleteProductPhoto(int id)
-        {
-            await productPhotoService.DeletePhoto(id);
-            return NoContent();
-        }
+        // WISHLIST
 
         [HttpPost("AddToWishlist")]
+        [ApiExplorerSettings(GroupName = "Wishlist")]
         public async Task<IActionResult> AddToWishlist([Required] int productId)
         {
             var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
@@ -251,6 +279,7 @@ namespace TechShop.Controllers
         }
 
         [HttpDelete("DeleteFromWishlistByProductId")]
+        [ApiExplorerSettings(GroupName = "Wishlist")]
         public async Task<IActionResult> DeleteFromWishlistByProductId([Required] int productId)
         {
             var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
@@ -264,6 +293,7 @@ namespace TechShop.Controllers
         }
 
         [HttpGet("IsInWishlist")]
+        [ApiExplorerSettings(GroupName = "Wishlist")]
         public async Task<IActionResult> IsInWishlist(int id)
         {
             var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
@@ -277,6 +307,7 @@ namespace TechShop.Controllers
         }
 
         [HttpGet("GetWishlist")]
+        [ApiExplorerSettings(GroupName = "Wishlist")]
         public async Task<IActionResult> GetWishlist(string email)
         {
             var wishlists = await wishlistService.GetUserWishlist(email);
@@ -285,7 +316,10 @@ namespace TechShop.Controllers
             return Ok(response);
         }
 
+        // BASKET
+
         [HttpPost("AddToBasket")]
+        [ApiExplorerSettings(GroupName = "Basket")]
         public async Task<IActionResult> AddToBasket([Required] int productId)
         {
             var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
@@ -299,6 +333,7 @@ namespace TechShop.Controllers
         }
 
         [HttpDelete("DeleteFromBasketByProductId")]
+        [ApiExplorerSettings(GroupName = "Basket")]
         public async Task<IActionResult> DeleteFromBasketByProductId([Required] int productId)
         {
             var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
@@ -312,6 +347,7 @@ namespace TechShop.Controllers
         }
 
         [HttpGet("IsInBasket")]
+        [ApiExplorerSettings(GroupName = "Basket")]
         public async Task<IActionResult> IsInBasket(int id)
         {
             var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
@@ -325,6 +361,7 @@ namespace TechShop.Controllers
         }
 
         [HttpGet("GetBasket")]
+        [ApiExplorerSettings(GroupName = "Basket")]
         public async Task<IActionResult> GetBasket(string email)
         {
             var wishlists = await basketService.GetUserBasket(email!);
@@ -334,6 +371,7 @@ namespace TechShop.Controllers
         }
 
         [HttpPost("EncreaseBasketItemQuantity")]
+        [ApiExplorerSettings(GroupName = "Basket")]
         public async Task<IActionResult> EncreaseBasketItemQuantity([Required] int id)
         {
             var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
@@ -347,6 +385,7 @@ namespace TechShop.Controllers
         }
 
         [HttpPost("DecreaseBasketItemQuantity")]
+        [ApiExplorerSettings(GroupName = "Basket")]
         public async Task<IActionResult> DecreaseBasketItemQuantity([Required] int id)
         {
             var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;

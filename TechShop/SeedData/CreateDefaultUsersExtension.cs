@@ -18,7 +18,7 @@ namespace TechShop.Infrastructure.SeedData
             var adminUser = await userManager.FindByEmailAsync(DefaultUsers.AdminEmail);
             var defaultUser = await userManager.FindByEmailAsync(DefaultUsers.UserEmail);
 
-            if (adminUser != null && defaultUser != null)
+            if (adminUser == null && defaultUser == null)
             {
                 var userProfileService = scope.ServiceProvider.GetRequiredService<IUserProfileService>();
 

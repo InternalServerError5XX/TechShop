@@ -97,6 +97,22 @@ namespace TechShop
                     Title = "Tech Shop",
                     Description = "Tech Shop API testing"
                 });
+
+                c.DocInclusionPredicate((docName, apiDesc) =>
+                {
+                    var groupName = apiDesc.GroupName ?? string.Empty;
+                    return docName == groupName || docName == "v1";
+                });
+
+                c.TagActionsBy(apiDesc =>
+                {
+                    if (apiDesc.GroupName != null)
+                    {
+                        return new[] { apiDesc.GroupName };
+                    }
+
+                    return new[] { apiDesc.HttpMethod };
+                });
             });
         }
     }
