@@ -22,14 +22,27 @@ namespace TechShop.Application.Services.ProductServices.ProductCategoryService
 
         public async Task<ProductCategory> CreateCategory(RequestProductCategoryDto productCategory)
         {
-            if (await IsInWishlist(productCategory.Name.ToLower(), x => x.Name.ToLower()))
+            if (await IfExist(productCategory.Name.ToLower(), x => x.Name.ToLower()))
                 throw new Exception("Category already exists");
 
             var reasponse = _mapper.Map<ProductCategory>(productCategory);
             return await AddAsync(reasponse);
         }
 
-        public async Task<bool> IsInWishlist<TField>(TField field, Expression<Func<ProductCategory, TField>> selector)
+        public async Task UpdateCategory(int id, RequestProductCategoryDto productCategory)
+        {
+            var categoryCheck = await GetByIdAsync(id);
+            if (categoryCheck == null)
+                throw new NullReferenceException("Category not found");
+
+            var category = _mapper.Map<ProductCategory>(productCategory);
+            category.Id = id;
+            category.CreatedDate = categoryCheck.CreatedDate;
+
+            await UpdateAsync(category);
+        }
+
+        private async Task<bool> IfExist<TField>(TField field, Expression<Func<ProductCategory, TField>> selector)
         {
             var categoryIds = GetAll().AsQueryable()
                 .Select(selector);

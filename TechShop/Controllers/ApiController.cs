@@ -24,13 +24,16 @@ using TechShop.Domain.DTOs.ProductDtos.ProductCaregoryDto;
 using TechShop.Domain.DTOs.ProductDtos.ProductCategoryService;
 using TechShop.Application.Services.UserServices.UserProfileService;
 using TechShop.Domain.DTOs.UserDtos.UserProfileDto;
+using TechShop.Application.Services.AdminService;
+using TechShop.Domain.Entities;
 
 namespace TechShop.Controllers
 {
     [TypeFilter(typeof(ApiControllerExceptionFilter))]
     public class ApiController(IAuthService authService, IUserService userService, IProductService productService,
         IProductPhotoService productPhotoService, ITempDataService tempDataService, IWishlistService wishlistService, 
-        IBasketService basketService, IProductCategoryService productCategoryService, IMapper mapper) : Controller
+        IBasketService basketService, IProductCategoryService productCategoryService, IAdminService adminService,
+        IUserProfileService userProfileService, IMapper mapper) : Controller
     {
         [HttpGet]
         public async Task<IActionResult> Swagger()
@@ -200,9 +203,40 @@ namespace TechShop.Controllers
             return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, product);
         }
 
-        [HttpGet("GetCategories")]
+        [HttpPut("UpdateProduct")]
         [ApiExplorerSettings(GroupName = "Products")]
-        public async Task<IActionResult> GetCategories()
+        public async Task<IActionResult> UpdateProduct(int id, [FromForm] CreateProductDto productDto)
+        {
+            await productService.UpdateProduct(id, productDto);
+            var updatedProduct = await productService.GetProduct(id);
+            var response = mapper.Map<ResponseProductDto>(updatedProduct);
+            return Ok(response);
+        }
+
+        [HttpDelete("DeleteProduct")]
+        [ApiExplorerSettings(GroupName = "Products")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            await productService.DeleteProduct(id);
+            return NoContent();
+        }
+
+
+        [HttpPost("SaveProductPhoto")]
+        [ApiExplorerSettings(GroupName = "Products")]
+        public async Task<IActionResult> AddProductPhoto([FromForm] IEnumerable<RequestProductPhotoDto> requestProductPhotoDto)
+        {
+            var photo = await productPhotoService.SavePhotoAsync(requestProductPhotoDto);
+            var response = mapper.Map<IEnumerable<ResponseProductPhotoDto>>(photo);
+
+            return CreatedAtAction(nameof(response), new { }, response);
+        }
+
+        // CATEGORIES
+
+        [HttpGet("GetCategories")]
+        [ApiExplorerSettings(GroupName = "Categories")]
+        public IActionResult GetCategories()
         {
             var category = productCategoryService.GetAll();
             var response = mapper.Map<IEnumerable<ResponseProductCaregoryDto>>(category);
@@ -211,7 +245,7 @@ namespace TechShop.Controllers
         }
 
         [HttpPost("CreateCategory")]
-        [ApiExplorerSettings(GroupName = "Products")]
+        [ApiExplorerSettings(GroupName = "Categories")]
         public async Task<IActionResult> CreateCategory(RequestProductCategoryDto categoryDto)
         {
             var category = await productCategoryService.CreateCategory(categoryDto);
@@ -220,14 +254,23 @@ namespace TechShop.Controllers
             return CreatedAtAction(nameof(response), new { response.Id }, response);
         }
 
-        [HttpPost("SaveProductPhoto")]
-        [ApiExplorerSettings(GroupName = "Products")]
-        public async Task<IActionResult> AddProductPhoto([FromForm] IEnumerable<RequestProductPhotoDto> requestProductPhotoDto)
+        [HttpPut("UpdateCategory")]
+        [ApiExplorerSettings(GroupName = "Categories")]
+        public async Task<IActionResult> UpdateCategory(int id, RequestProductCategoryDto categoryDto)
         {
-            var photo = await productPhotoService.SavePhoto(requestProductPhotoDto);
-            var response = mapper.Map<IEnumerable<ResponseProductPhotoDto>>(photo);
+            await productCategoryService.UpdateCategory(id, categoryDto);
+            var category = await productCategoryService.GetByIdAsync(id);
+            var response = mapper.Map<ResponseProductCaregoryDto>(category);
 
-            return CreatedAtAction(nameof(response), new { }, response);
+            return CreatedAtAction(nameof(response), new { response.Id }, response);
+        }
+
+        [HttpDelete("DeleteCategory")]
+        [ApiExplorerSettings(GroupName = "Categories")]
+        public async Task<IActionResult> DeleteCategory(int id)
+        {
+            await productCategoryService.DeleteAsync(id);
+            return NoContent();
         }
 
         [HttpDelete("DeleteProductPhoto")]
@@ -260,7 +303,26 @@ namespace TechShop.Controllers
             var response = mapper.Map<ResponseUserProfileDto>(profile);
 
             return Ok(response);
-        }      
+        }
+
+        [Authorize]
+        [HttpPut("UpdateUserProfile")]
+        [ApiExplorerSettings(GroupName = "Users")]
+        public async Task<IActionResult> UpdateUserProfile(int id, RequestUserProfileDto userProfileDto)
+        {
+            var checkProfile = await userProfileService.GetByIdAsync(id);
+            if (checkProfile == null)
+                throw new NullReferenceException("Profile not found");
+
+            var profile = mapper.Map<UserProfile>(userProfileDto);
+            profile.Id = id;
+            profile.CreatedDate = checkProfile.CreatedDate;
+
+            await userService.UpdateProfile(profile);
+            var response = mapper.Map<ResponseUserProfileDto>(profile);
+
+            return Ok(response);
+        }
 
         // WISHLIST
 
@@ -370,7 +432,7 @@ namespace TechShop.Controllers
             return Ok(response);
         }
 
-        [HttpPost("EncreaseBasketItemQuantity")]
+        [HttpPut("EncreaseBasketItemQuantity")]
         [ApiExplorerSettings(GroupName = "Basket")]
         public async Task<IActionResult> EncreaseBasketItemQuantity([Required] int id)
         {
@@ -384,7 +446,7 @@ namespace TechShop.Controllers
             return Unauthorized("Unauthorized");
         }
 
-        [HttpPost("DecreaseBasketItemQuantity")]
+        [HttpPut("DecreaseBasketItemQuantity")]
         [ApiExplorerSettings(GroupName = "Basket")]
         public async Task<IActionResult> DecreaseBasketItemQuantity([Required] int id)
         {

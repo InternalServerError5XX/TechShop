@@ -8,6 +8,6 @@ namespace TechShop.Domain.DTOs.ProductDtos.ProductCategoryService
     public interface IProductCategoryService : IBaseService<ProductCategory>
     {
         Task<ProductCategory> CreateCategory(RequestProductCategoryDto productCategory);
-        Task<bool> IsInWishlist<TField>(TField field, Expression<Func<ProductCategory, TField>> selector);
+        Task UpdateCategory(int id, RequestProductCategoryDto productCategory);
     }
 }

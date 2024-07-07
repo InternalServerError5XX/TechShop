@@ -27,12 +27,7 @@ namespace TechShop.Infrastructure.Mapper
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email.Substring(0, src.Email.IndexOf('@'))));
 
-            CreateMap<RegisterDto, UserProfile>()
-                .ForMember(dest => dest.LastLogin, opt => opt.Ignore())
-                .AfterMap((src, dest) =>
-                {
-                    dest.LastLogin = DateTime.Now;
-                });
+            CreateMap<RegisterDto, UserProfile>();
 
             CreateMap<RegisterDto, LoginDto>();
 
