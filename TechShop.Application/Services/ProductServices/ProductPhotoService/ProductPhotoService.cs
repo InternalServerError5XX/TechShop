@@ -46,11 +46,20 @@ namespace TechShop.Application.Services.ProductServices.ProductPhotoService
             return await AddRangeAsync(savedPhotos);
         }
 
-        public async Task<IEnumerable<ProductPhoto>> UpdatePhoto(IEnumerable<RequestProductPhotoDto> productPhotoDto,
+        public async Task<IEnumerable<ProductPhoto>> UpdatePhoto(IEnumerable<RequestProductPhotoDto> productPhotoDto, 
+            Product product)
+        {
+            await DeletePhoto(product.ProductPhotos);
+            var response = await SavePhoto(productPhotoDto, product.Id);
+
+            return response;
+        }
+
+        public async Task<IEnumerable<ProductPhoto>> UpdatePhotoSameCount(IEnumerable<RequestProductPhotoDto> productPhotoDto, 
             IEnumerable<ProductPhoto> productPhotos)
         {
-            DeletePhoto(productPhotos);
-            var photos = await SavePhoto(productPhotoDto);
+            DeletePhotoFile(productPhotos);
+            var photos = await SavePhotoSameCount(productPhotoDto);
             var date = DateTime.Now;
 
             for (int i = 0; i < productPhotos.Count(); i++)
@@ -68,10 +77,10 @@ namespace TechShop.Application.Services.ProductServices.ProductPhotoService
             foreach (var photo in productPhotos)
             {
                 var filePath = Path.Combine("wwwroot", photo.Path.TrimStart('/'));
-                if (!File.Exists(filePath))
-                    throw new NullReferenceException("Photo not found from the server");
+                //if (!File.Exists(filePath))
+                //    throw new NullReferenceException("Photo not found from the server");
 
-                File.Delete(filePath);
+                //File.Delete(filePath);
             }
         }
 
@@ -90,7 +99,21 @@ namespace TechShop.Application.Services.ProductServices.ProductPhotoService
             return extension;
         }
 
-        private async Task<IEnumerable<ProductPhoto>> SavePhoto(IEnumerable<RequestProductPhotoDto> productPhotoDtos)
+        public async Task DeletePhoto(IEnumerable<ProductPhoto> productPhotos)
+        {
+            foreach (var photo in productPhotos)
+            {
+                var filePath = Path.Combine("wwwroot", photo.Path.TrimStart('/'));
+                //if (!File.Exists(filePath))
+                //    throw new NullReferenceException("Photo not found from the server");
+
+                //File.Delete(filePath);               
+            }
+
+            await _productPhotoRepository.DeleteRangeAsync(productPhotos);
+        }
+
+        private async Task<IEnumerable<ProductPhoto>> SavePhotoSameCount(IEnumerable<RequestProductPhotoDto> productPhotoDtos)
         {
             var savedPhotos = new List<ProductPhoto>();
 
@@ -116,17 +139,31 @@ namespace TechShop.Application.Services.ProductServices.ProductPhotoService
             return savedPhotos;
         }
 
-        public async void DeletePhoto(IEnumerable<ProductPhoto> productPhotos)
+        private async Task<IEnumerable<ProductPhoto>> SavePhoto(IEnumerable<RequestProductPhotoDto> productPhotoDtos, int productId)
         {
-            foreach (var photo in productPhotos)
-            {
-                var filePath = Path.Combine("wwwroot", photo.Path.TrimStart('/'));
-                if (!File.Exists(filePath))
-                    throw new NullReferenceException("Photo not found from the server");
+            var savedPhotos = new List<ProductPhoto>();
 
-                File.Delete(filePath);
-                await _productPhotoRepository.DeleteRangeAsync(productPhotos);
+            foreach (var productPhotoDto in productPhotoDtos)
+            {
+                var extension = CheckExtension(productPhotoDto);
+                var fileName = Guid.NewGuid().ToString() + extension;
+                var directoryPath = Path.Combine("wwwroot", "images", "products");
+                var filePath = Path.Combine(directoryPath, fileName);
+
+                if (!Directory.Exists(directoryPath))
+                    Directory.CreateDirectory(directoryPath);
+
+                await using var stream = new FileStream(filePath, FileMode.Create);
+                await productPhotoDto.Photo.CopyToAsync(stream);
+
+                var productPhoto = _mapper.Map<ProductPhoto>(productPhotoDto);
+                productPhoto.Path = $"/images/products/{fileName}";
+                productPhoto.ProductId = productId;
+
+                savedPhotos.Add(productPhoto);
             }
+
+            return savedPhotos;
         }
     }
 }

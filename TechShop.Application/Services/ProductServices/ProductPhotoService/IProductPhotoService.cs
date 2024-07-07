@@ -7,7 +7,8 @@ namespace TechShop.Application.Services.ProductServices.ProductPhotoService
     public interface IProductPhotoService : IBaseService<ProductPhoto>
     {
         Task<IEnumerable<ProductPhoto>> SavePhotoAsync(IEnumerable<RequestProductPhotoDto> productPhotoDtos);
-        Task<IEnumerable<ProductPhoto>> UpdatePhoto(IEnumerable<RequestProductPhotoDto> productPhotoDto, IEnumerable<ProductPhoto> productPhotos);
+        Task<IEnumerable<ProductPhoto>> UpdatePhoto(IEnumerable<RequestProductPhotoDto> productPhotoDto, Product product);
+        Task<IEnumerable<ProductPhoto>> UpdatePhotoSameCount(IEnumerable<RequestProductPhotoDto> productPhotoDto, IEnumerable<ProductPhoto> productPhotos);
         void DeletePhotoFile(IEnumerable<ProductPhoto> productPhotos);
     }
 }

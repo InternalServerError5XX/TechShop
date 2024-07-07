@@ -70,9 +70,12 @@ namespace TechShop.Application.Services.ProductServices.ProductService
 
                 if (!productDto.ProductPhotos.Any())
                     product.ProductPhotos = checkProduct.ProductPhotos;
+                else if (checkProduct.ProductPhotos.Count() == productDto.ProductPhotos.Count())
+                    product.ProductPhotos = (await _productPhotoService
+                        .UpdatePhotoSameCount(requestProduct.ProductPhotos, checkProduct.ProductPhotos)).ToList();
                 else
                     product.ProductPhotos = (await _productPhotoService
-                        .UpdatePhoto(requestProduct.ProductPhotos, checkProduct.ProductPhotos)).ToList();
+                        .UpdatePhoto(requestProduct.ProductPhotos, checkProduct)).ToList();
 
                 await UpdateAsync(product);
 
