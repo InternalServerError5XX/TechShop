@@ -12,7 +12,9 @@ namespace TechShop.Application.Services.BaseService
         Task<T> AddAsync(T entity);
         Task<IEnumerable<T>> AddRangeAsync(IEnumerable<T> entities);
         Task UpdateAsync(T entity);
+        Task UpdateRangeAsync(IEnumerable<T> entities);
         Task DeleteAsync(int id);
+        Task DeleteRangeAsync(IEnumerable<T> entities);
 
         Task<ResponsePaginationDto<T>> GetPaginated(IQueryable<T> query, RequestPaginationDto pagination);
         IQueryable<T> GetFilteredQuery(IQueryable<T> query, RequestFilterDto<T> filterDto);

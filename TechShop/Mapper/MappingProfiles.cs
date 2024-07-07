@@ -42,8 +42,14 @@ namespace TechShop.Infrastructure.Mapper
 
             CreateMap<ApplicationUser, ApplicationUserDto>();
 
-            CreateMap<RequestProductDto, Product>();
+            CreateMap<RequestProductDto, Product>()
+                .ForMember(dest => dest.ProductPhotos, opt => opt.Ignore());
+            CreateMap<CreateProductDto, RequestProductDto>();
+            CreateMap<IFormFile, RequestProductPhotoDto>()
+                .ForMember(dest => dest.Photo, opt => opt.MapFrom(src => src))
+                .ForMember(dest => dest.ProductId, opt => opt.Ignore());
             CreateMap<Product, ResponseProductDto>();
+            CreateMap<Product, CreateProductDto>();
 
             CreateMap<RequestProductPhotoDto, ProductPhoto>();
             CreateMap<ProductPhoto, ResponseProductPhotoDto>();

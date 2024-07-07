@@ -29,6 +29,7 @@ using TechShop.Domain.Entities;
 
 namespace TechShop.Controllers
 {
+    [Authorize(Roles = "Admin")]
     [TypeFilter(typeof(ApiControllerExceptionFilter))]
     public class ApiController(IAuthService authService, IUserService userService, IProductService productService,
         IProductPhotoService productPhotoService, ITempDataService tempDataService, IWishlistService wishlistService, 
@@ -39,6 +40,16 @@ namespace TechShop.Controllers
         public async Task<IActionResult> Swagger()
         {
             return await Task.FromResult(View());
+        }
+
+        // ADMIN
+
+        [HttpGet("AdminPanel")]
+        [ApiExplorerSettings(GroupName = "Admin")]
+        public IActionResult AdminPanel()
+        {
+            var response = adminService.GetAdminPanel();
+            return Ok(response);
         }
 
         // TEMPDATA
@@ -196,10 +207,9 @@ namespace TechShop.Controllers
 
         [HttpPost("CreateProduct")]
         [ApiExplorerSettings(GroupName = "Products")]
-        public async Task<IActionResult> CreateProduct([FromForm] RequestProductDto productDto)
+        public async Task<IActionResult> CreateProduct([FromForm] CreateProductDto productDto)
         {        
             var product = await productService.CreateProduct(productDto);
-
             return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, product);
         }
 
@@ -270,14 +280,6 @@ namespace TechShop.Controllers
         public async Task<IActionResult> DeleteCategory(int id)
         {
             await productCategoryService.DeleteAsync(id);
-            return NoContent();
-        }
-
-        [HttpDelete("DeleteProductPhoto")]
-        [ApiExplorerSettings(GroupName = "Products")]
-        public async Task<IActionResult> DeleteProductPhoto(int id)
-        {
-            await productPhotoService.DeletePhoto(id);
             return NoContent();
         }
 

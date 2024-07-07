@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
 using TechShop.Application.Extensions;
+using TechShop.Application.Services.AdminService;
 using TechShop.Application.Services.AuthService;
 using TechShop.Application.Services.BasketServices.BasketItemService;
 using TechShop.Application.Services.BasketServices.BasketService;
@@ -45,7 +46,8 @@ namespace TechShop
         }
 
         public static void InitializeServices(this IServiceCollection services)
-        {                  
+        {
+            services.AddScoped<IAdminService, AdminService>();
             services.AddScoped<ITempDataService, TempDataService>();           
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IUserService, UserService>();

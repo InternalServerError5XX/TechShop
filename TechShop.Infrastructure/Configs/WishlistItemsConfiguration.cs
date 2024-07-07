@@ -18,7 +18,7 @@ namespace TechShop.Infrastructure.Configs
             builder.HasOne(wi => wi.Product)
                 .WithMany()
                 .HasForeignKey(wi => wi.ProductId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
