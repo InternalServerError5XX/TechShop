@@ -38,9 +38,19 @@ namespace TechShop.Application.Services.BaseService
             await baseRepository.UpdateAsync(entity);
         }
 
+        public async Task UpdateRangeAsync(IEnumerable<T> entities)
+        {
+            await baseRepository.UpdateRangeAsync(entities);
+        }
+
         public async Task DeleteAsync(int id)
         {
             await baseRepository.DeleteAsync(id);
+        }
+
+        public async Task DeleteRangeAsync(IEnumerable<T> entities)
+        {
+            await baseRepository.DeleteRangeAsync(entities);
         }
 
 

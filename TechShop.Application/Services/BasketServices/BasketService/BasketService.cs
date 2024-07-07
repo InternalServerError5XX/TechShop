@@ -5,6 +5,7 @@ using TechShop.Application.Services.AuthService;
 using TechShop.Application.Services.BaseService;
 using TechShop.Application.Services.BasketServices.BasketItemService;
 using TechShop.Application.Services.UserServices.UserService;
+using TechShop.Domain.DTOs.BasketDtos.BasketDto;
 using TechShop.Domain.DTOs.WishlistDtos.WishlistDto;
 using TechShop.Domain.Entities.BasketEntities;
 using TechShop.Domain.Entities.ProductEntities;
@@ -73,7 +74,7 @@ namespace TechShop.Application.Services.BasketServices.BasketService
                 .SingleOrDefaultAsync(x => x.UserId == userId);
 
             if (basket == null)
-                basket = await CreateWishlist(userId);
+                basket = await CreateBasket(userId);
 
             return basket;
         }
@@ -109,14 +110,14 @@ namespace TechShop.Application.Services.BasketServices.BasketService
                 throw new Exception("Product is not in the basket");
         }
 
-        private async Task<Basket> CreateWishlist(string userId)
+        private async Task<Basket> CreateBasket(string userId)
         {
-            var wishlistDto = new RequestWishlistDto
+            var basketDto = new RequestBasketDto
             {
                 UserId = userId,
             };
 
-            var basket = _mapper.Map<Basket>(wishlistDto);
+            var basket = _mapper.Map<Basket>(basketDto);
             return await AddAsync(basket);
         }
 

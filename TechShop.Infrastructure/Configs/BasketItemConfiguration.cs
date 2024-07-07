@@ -13,7 +13,7 @@ namespace TechShop.Infrastructure.Configs
             builder.HasOne(bi => bi.Basket)
                 .WithMany(b => b.BasketItems)
                 .HasForeignKey(bi => bi.BasketId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(bi => bi.Product)
                 .WithMany()

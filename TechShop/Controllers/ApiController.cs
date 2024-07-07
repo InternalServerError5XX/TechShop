@@ -24,18 +24,31 @@ using TechShop.Domain.DTOs.ProductDtos.ProductCaregoryDto;
 using TechShop.Domain.DTOs.ProductDtos.ProductCategoryService;
 using TechShop.Application.Services.UserServices.UserProfileService;
 using TechShop.Domain.DTOs.UserDtos.UserProfileDto;
+using TechShop.Application.Services.AdminService;
 
 namespace TechShop.Controllers
 {
+    [Authorize(Roles = "Admin")]
     [TypeFilter(typeof(ApiControllerExceptionFilter))]
     public class ApiController(IAuthService authService, IUserService userService, IProductService productService,
         IProductPhotoService productPhotoService, ITempDataService tempDataService, IWishlistService wishlistService, 
-        IBasketService basketService, IProductCategoryService productCategoryService, IMapper mapper) : Controller
+        IBasketService basketService, IProductCategoryService productCategoryService, IAdminService adminService,
+        IMapper mapper) : Controller
     {
         [HttpGet]
         public async Task<IActionResult> Swagger()
         {
             return await Task.FromResult(View());
+        }
+
+        // ADMIN
+
+        [HttpGet("AdminPanel")]
+        [ApiExplorerSettings(GroupName = "Admin")]
+        public IActionResult AdminPanel()
+        {
+            var response = adminService.GetAdminPanel();
+            return Ok(response);
         }
 
         // TEMPDATA
@@ -193,16 +206,33 @@ namespace TechShop.Controllers
 
         [HttpPost("CreateProduct")]
         [ApiExplorerSettings(GroupName = "Products")]
-        public async Task<IActionResult> CreateProduct([FromForm] RequestProductDto productDto)
+        public async Task<IActionResult> CreateProduct([FromForm] CreateProductDto productDto)
         {        
             var product = await productService.CreateProduct(productDto);
-
             return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, product);
+        }
+
+        [HttpPut("UpdateProduct")]
+        [ApiExplorerSettings(GroupName = "Products")]
+        public async Task<IActionResult> UpdateProduct(int id, [FromForm] CreateProductDto productDto)
+        {
+            await productService.UpdateProduct(id, productDto);
+            var updatedProduct = await productService.GetProduct(id);
+            var response = mapper.Map<ResponseProductDto>(updatedProduct);
+            return Ok(response);
+        }
+
+        [HttpDelete("DeleteProduct")]
+        [ApiExplorerSettings(GroupName = "Products")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            await productService.DeleteProduct(id);
+            return NoContent();
         }
 
         [HttpGet("GetCategories")]
         [ApiExplorerSettings(GroupName = "Products")]
-        public async Task<IActionResult> GetCategories()
+        public IActionResult GetCategories()
         {
             var category = productCategoryService.GetAll();
             var response = mapper.Map<IEnumerable<ResponseProductCaregoryDto>>(category);
@@ -224,18 +254,10 @@ namespace TechShop.Controllers
         [ApiExplorerSettings(GroupName = "Products")]
         public async Task<IActionResult> AddProductPhoto([FromForm] IEnumerable<RequestProductPhotoDto> requestProductPhotoDto)
         {
-            var photo = await productPhotoService.SavePhoto(requestProductPhotoDto);
+            var photo = await productPhotoService.SavePhotoAsync(requestProductPhotoDto);
             var response = mapper.Map<IEnumerable<ResponseProductPhotoDto>>(photo);
 
             return CreatedAtAction(nameof(response), new { }, response);
-        }
-
-        [HttpDelete("DeleteProductPhoto")]
-        [ApiExplorerSettings(GroupName = "Products")]
-        public async Task<IActionResult> DeleteProductPhoto(int id)
-        {
-            await productPhotoService.DeletePhoto(id);
-            return NoContent();
         }
 
         // USERS

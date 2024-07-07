@@ -11,6 +11,7 @@
 
     var photos = Model.ProductPhotos.ToList();
     var hasPhotos = photos.Any();
+    var carouselButtonsCheck = photos.Count() > 1;
     var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
     var isInWishlist = await wishlistService.IsInWishlist(email, Model.Id, x => x.ProductId);
     var isInBasket = await basketService.IsInBasket(email, Model.Id, x => x.ProductId);
@@ -37,7 +38,7 @@
                         </div>
                     }
                 </div>
-                @if (hasPhotos)
+                @if (carouselButtonsCheck)
                 {
                     <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
                         <span class="carousel-control-prev-icon" aria-hidden="true"></span>

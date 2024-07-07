@@ -1,0 +1,8 @@
+.table-actions {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.table-actions .btn {
+    margin: 0 2px;
+}

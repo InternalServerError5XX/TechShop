@@ -60,9 +60,9 @@ namespace TechShop.Infrastructure.Repositories.BaseRepository
 
         public async Task<IEnumerable<T>> AddRangeAsync(IEnumerable<T> entities)
         {
+            var date = DateTime.Now;
             foreach (var entity in entities)
-            {
-                var date = DateTime.Now;
+            {               
                 entity.CreatedDate = date;
                 entity.UpdatedDate = date;
             }
@@ -81,14 +81,32 @@ namespace TechShop.Infrastructure.Repositories.BaseRepository
             await _context.SaveChangesAsync();
         }
 
+        public async Task UpdateRangeAsync(IEnumerable<T> entities)
+        {
+            var date = DateTime.Now;
+            foreach (var entity in entities)
+            {
+                entity.UpdatedDate = date;
+            }
+
+            dbSet.UpdateRange(entities);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task DeleteAsync(int id)
         {
             var entity = await GetByIdAsync(id);
-            if (entity != null)
-            {
-                dbSet.Remove(entity);
-                await _context.SaveChangesAsync();
-            }
+            if (entity == null)
+                throw new NullReferenceException($"{typeof(T).Name} not found.");
+
+            dbSet.Remove(entity);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteRangeAsync(IEnumerable<T> entities)
+        {
+             _context.RemoveRange(entities);
+            await _context.SaveChangesAsync();
         }
 
         public async Task BeginTransactionAsync()
