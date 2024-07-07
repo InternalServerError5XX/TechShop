@@ -1,0 +1,113 @@
+﻿@using TechShop.Domain.DTOs.AdminDto
+@model ResponseAdminDto
+
+@{
+    ViewData["Title"] = "Admin Panel";
+}
+
+<div class="container mt-4">
+    <h2>Admin Panel</h2>
+    <hr />
+
+    <nav class="mb-3">
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <a class="nav-item nav-link" id="nav-users-tab" data-bs-toggle="tab" href="#nav-users" role="tab" aria-controls="nav-users" aria-selected="true">Users</a>
+            <a class="nav-item nav-link" id="nav-roles-tab" data-bs-toggle="tab" href="#nav-roles" role="tab" aria-controls="nav-roles" aria-selected="false">Roles</a>
+            <a class="nav-item nav-link" id="nav-products-tab" data-bs-toggle="tab" href="#nav-products" role="tab" aria-controls="nav-products" aria-selected="false">Products</a>
+            <a class="nav-item nav-link" id="nav-categories-tab" data-bs-toggle="tab" href="#nav-categories" role="tab" aria-controls="nav-categories" aria-selected="false">Categories</a>
+            <a id="add-new-button" class="btn btn-success btn-sm ms-auto d-flex align-items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-square me-2" viewBox="0 0 16 16">
+                    <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+                </svg>
+                Add new
+            </a>
+        </div>
+    </nav>
+
+    <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active" id="nav-users" role="tabpanel" aria-labelledby="nav-users-tab">
+            <!-- Users Table -->
+        </div>
+        <div class="tab-pane fade" id="nav-roles" role="tabpanel" aria-labelledby="nav-roles-tab">
+            <!-- Roles Table -->
+        </div>
+        <div class="tab-pane fade" id="nav-products" role="tabpanel" aria-labelledby="nav-products-tab">
+            <!-- Products Table -->
+        </div>        
+        <div class="tab-pane fade" id="nav-categories" role="tabpanel" aria-labelledby="nav-categories-tab">
+            <!-- Categories Table -->
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const navTabs = document.querySelectorAll('#nav-tab a');
+        const addNewButton = document.getElementById('add-new-button');
+        const activeTabId = localStorage.getItem('activeTab');
+
+        if (activeTabId) {
+            const activeTab = document.getElementById(activeTabId);
+            if (activeTab) {
+                const bootstrapTab = new bootstrap.Tab(activeTab);
+                bootstrapTab.show();
+                updateAddNewButton(activeTabId);
+            }
+        } else {
+            loadTabContent('nav-products-tab');
+            updateAddNewButton('nav-products-tab');
+        }
+
+        navTabs.forEach(tab => {
+            tab.addEventListener('shown.bs.tab', function (event) {
+                const tabId = event.target.id;
+                localStorage.setItem('activeTab', tabId);
+                loadTabContent(tabId);
+                updateAddNewButton(tabId);
+            });
+        });
+
+        function loadTabContent(tabId) {
+            let url;
+            switch (tabId) {
+                case 'nav-products-tab':
+                    url = '@Url.Action("GetProductsAdminPanel")';
+                    break;
+                case 'nav-users-tab':
+                    url = '@Url.Action("GetUsersAdminPanel")';
+                    break;
+                case 'nav-categories-tab':
+                    url = '@Url.Action("GetCategoriesAdminPanel")';
+                    break;
+                default:
+                    return;
+            }
+
+            const tabContent = document.querySelector(`#${tabId.replace('-tab', '')}`);
+            fetch(url)
+                .then(response => response.text())
+                .then(html => {
+                    tabContent.innerHTML = html;
+                })
+                .catch(error => console.error('Error loading tab content:', error));
+        }
+
+        function updateAddNewButton(tabId) {
+            switch (tabId) {
+                case 'nav-products-tab':
+                    addNewButton.setAttribute('href', '@Url.Action("Create", "Product")');
+                    break;
+                case 'nav-users-tab':
+                    addNewButton.setAttribute('href', '@Url.Action("Create", "User")');
+                    break;
+                case 'nav-categories-tab':
+                    addNewButton.setAttribute('href', '@Url.Action("Create", "Category")');
+                    break;
+                default:
+                    addNewButton.removeAttribute('href');
+                    break;
+            }
+        }
+    });
+</script>
