@@ -2,13 +2,14 @@
 using Microsoft.OpenApi.Models;
 using TechShop.Application.Extensions;
 using TechShop.Application.Services.AdminService;
+using TechShop.Application.Services.AppServices.CacheService;
+using TechShop.Application.Services.AppServices.TempDataService;
 using TechShop.Application.Services.AuthService;
 using TechShop.Application.Services.BasketServices.BasketItemService;
 using TechShop.Application.Services.BasketServices.BasketService;
 using TechShop.Application.Services.ProductServices.ProductCategoryService;
 using TechShop.Application.Services.ProductServices.ProductPhotoService;
 using TechShop.Application.Services.ProductServices.ProductService;
-using TechShop.Application.Services.TempDataService;
 using TechShop.Application.Services.UserServices.UserProfileService;
 using TechShop.Application.Services.UserServices.UserService;
 using TechShop.Application.Services.WishlistServices.WishlistItemService;
@@ -47,8 +48,10 @@ namespace TechShop
 
         public static void InitializeServices(this IServiceCollection services)
         {
-            services.AddScoped<IAdminService, AdminService>();
-            services.AddScoped<ITempDataService, TempDataService>();           
+            services.AddScoped<ITempDataService, TempDataService>();
+            services.AddScoped<ICacheService, CacheService>();
+
+            services.AddScoped<IAdminService, AdminService>();                      
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserProfileService, UserProfileService>();

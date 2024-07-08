@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using TechShop.Application.Services.BaseService;
 using TechShop.Application.Services.UserServices.UserProfileService;
 using TechShop.Domain.DTOs.UserDtos.UserDto;
 using TechShop.Domain.Entities;
-using TechShop.Infrastructure.Repositories.BaseRepository;
 
 namespace TechShop.Application.Services.UserServices.UserService
 {
@@ -23,6 +21,17 @@ namespace TechShop.Application.Services.UserServices.UserService
         public async Task<IEnumerable<IdentityRole>> GetRoles()
         {
             return await roleManager.Roles.ToListAsync();
+        }
+
+        public async Task<int> GetUsersCountByRole(string name)
+        {
+            var role = await roleManager.FindByNameAsync(name);
+            if (role == null)
+                throw new NullReferenceException("Role not found");
+
+            var usersInRole = await userManager.GetUsersInRoleAsync(name);
+            return usersInRole.Count();
+
         }
 
         public IQueryable<ApplicationUser> GetUsers()

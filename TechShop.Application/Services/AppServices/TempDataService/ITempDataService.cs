@@ -1,4 +1,4 @@
-﻿namespace TechShop.Application.Services.TempDataService
+﻿namespace TechShop.Application.Services.AppServices.TempDataService
 {
     public interface ITempDataService
     {

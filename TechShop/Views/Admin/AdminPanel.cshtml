@@ -71,12 +71,15 @@
         function loadTabContent(tabId) {
             let url;
             switch (tabId) {
-                case 'nav-products-tab':
-                    url = '@Url.Action("GetProductsAdminPanel")';
-                    break;
                 case 'nav-users-tab':
                     url = '@Url.Action("GetUsersAdminPanel")';
                     break;
+                case 'nav-roles-tab':
+                    url = '@Url.Action("GetRolesAdminPanel")';
+                    break;
+                case 'nav-products-tab':
+                    url = '@Url.Action("GetProductsAdminPanel")';
+                    break;                
                 case 'nav-categories-tab':
                     url = '@Url.Action("GetCategoriesAdminPanel")';
                     break;

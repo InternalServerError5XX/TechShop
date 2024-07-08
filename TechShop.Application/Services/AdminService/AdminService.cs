@@ -12,19 +12,25 @@ namespace TechShop.Application.Services.AdminService
     public class AdminService(IUserService userService, IProductService productService, 
         IProductCategoryService productCategoryService, IMapper mapper) : IAdminService
     {
-        public ResponseAdminDto GetAdminPanel()
+        public async Task<ResponseAdminDto> GetAdminPanel()
         {
             var users = userService.GetUsers();
+            var roles = await userService.GetRoles();
             var categories = productCategoryService.GetAll();
             var products = productService.GetProducts();
 
             var usersResponse = mapper.Map<IEnumerable<ApplicationUserDto>>(users);
+
+            foreach (var user in usersResponse)
+                user.UserProfile.IsOnline = UserHub.IsUserOnline(user.Id);
+
             var categoriesResponse = mapper.Map<IEnumerable<ResponseProductCaregoryDto>>(categories);
             var productsReponse = mapper.Map<IEnumerable<ResponseProductDto>>(products);
 
             return new ResponseAdminDto
             {
                 Users = usersResponse,
+                Roles = roles,
                 Categories = categoriesResponse,
                 Products = productsReponse
             };

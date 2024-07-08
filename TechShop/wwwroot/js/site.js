@@ -1,4 +1,21 @@
-﻿function hideErrorMessage() {
+﻿var connection = new signalR.HubConnectionBuilder().withUrl("/UserHub").build();
+
+connection.start().then(function () {
+    connection.invoke("IsUserOnline", userId).then(function (isOnline) {
+        if (isOnline) {
+            console.log("User is online");
+        } else {
+            console.log("User is ofline");
+        }
+    }).catch(function (err) {
+        console.error(err.toString());
+    });
+}).catch(function (err) {
+    console.error(err.toString());
+});
+
+
+function hideErrorMessage() {
     var errorMessage = $('#errorMessage');
     if (errorMessage.length > 0) {
         errorMessage.delay(3000).fadeOut(1000);

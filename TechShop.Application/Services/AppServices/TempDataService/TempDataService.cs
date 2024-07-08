@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
-namespace TechShop.Application.Services.TempDataService
+namespace TechShop.Application.Services.AppServices.TempDataService
 {
     public class TempDataService : ITempDataService
     {

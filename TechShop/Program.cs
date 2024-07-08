@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TechShop;
+using TechShop.Application.Services.UserServices.UserService;
 using TechShop.Infrastructure;
 using TechShop.Infrastructure.SeedData;
 
@@ -20,6 +21,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession();
 
+builder.Services.AddSignalR();
 builder.Services.AddAutoMapper(typeof(Program));
 
 var app = builder.Build();
@@ -63,5 +65,7 @@ app.MapControllerRoute(
 
 await app.CreateDefaultRoles();
 await app.CreateDefaultUsers();
+
+app.MapHub<UserHub>("/UserHub");
 
 await app.RunAsync();

@@ -5,7 +5,6 @@ using TechShop.Domain.DTOs.AuthDto;
 using AutoMapper;
 using TechShop.Domain.DTOs.PaginationDto;
 using TechShop.Domain.DTOs.FilterDto;
-using TechShop.Application.Services.TempDataService;
 using TechShopWeb.Filters;
 using TechShop.Domain.Entities.ProductEntities;
 using TechShop.Application.Services.ProductServices.ProductService;
@@ -26,6 +25,9 @@ using TechShop.Application.Services.UserServices.UserProfileService;
 using TechShop.Domain.DTOs.UserDtos.UserProfileDto;
 using TechShop.Application.Services.AdminService;
 using TechShop.Domain.Entities;
+using TechShop.Application.Services.AppServices.TempDataService;
+using TechShop.Application.Services.AppServices.CacheService;
+using Microsoft.AspNetCore.SignalR;
 
 namespace TechShop.Controllers
 {
@@ -34,7 +36,7 @@ namespace TechShop.Controllers
     public class ApiController(IAuthService authService, IUserService userService, IProductService productService,
         IProductPhotoService productPhotoService, ITempDataService tempDataService, IWishlistService wishlistService, 
         IBasketService basketService, IProductCategoryService productCategoryService, IAdminService adminService,
-        IUserProfileService userProfileService, IMapper mapper) : Controller
+        IUserProfileService userProfileService, ICacheService cacheService, IMapper mapper) : Controller
     {
         [HttpGet]
         public async Task<IActionResult> Swagger()
@@ -46,28 +48,67 @@ namespace TechShop.Controllers
 
         [HttpGet("AdminPanel")]
         [ApiExplorerSettings(GroupName = "Admin")]
-        public IActionResult AdminPanel()
+        public async Task<IActionResult> AdminPanel()
         {
-            var response = adminService.GetAdminPanel();
+            var response = await adminService.GetAdminPanel();
             return Ok(response);
         }
 
         // TEMPDATA
 
         [HttpPost("SetTempData")]
-        [ApiExplorerSettings(GroupName = "Temdata")]
-        public IActionResult SetTempData(string value)
+        [ApiExplorerSettings(GroupName = "Tempdata")]
+        public IActionResult SetTempData(string key, string value)
         {
-            tempDataService.Set("TestKey", value);
-            return CreatedAtAction(value, value);
+            tempDataService.Set(key, value);
+            return Ok();
         }
 
         [HttpGet("GetTempData")]
-        [ApiExplorerSettings(GroupName = "Temdata")]
-        public IActionResult GetTempData()
+        [ApiExplorerSettings(GroupName = "Tempdata")]
+        public IActionResult GetTempData(string key)
         {
-            var value = tempDataService.Get<string>("TestKey");
+            var value = tempDataService.Get<string>(key);
             return Ok(value);
+        }
+
+        // CACHE
+
+        [HttpPost("SetCache")]
+        [ApiExplorerSettings(GroupName = "Cache")]
+        public IActionResult SetCache(string key, string value, int absoluteSecs, int slidingSecs)
+        {
+            var absoluteExpiration = TimeSpan.FromSeconds(absoluteSecs);
+            var slidingExpiration = TimeSpan.FromSeconds(slidingSecs);
+
+            cacheService.Set(key, value, absoluteExpiration, slidingExpiration);
+            return Ok();
+        }
+
+        [HttpGet("GetCache")]
+        [ApiExplorerSettings(GroupName = "Cache")]
+        public IActionResult GetCache(string key)
+        {
+            var response = cacheService.Get<string>(key);
+            return Ok(response);
+        }
+
+        [HttpGet("RemoveCache")]
+        [ApiExplorerSettings(GroupName = "Cache")]
+        public IActionResult RemoveCache(string key)
+        {
+            cacheService.Remove(key);
+            return NoContent();
+        }
+
+        // SIGNALR
+
+        [HttpGet("CheckUserOnline")]
+        [ApiExplorerSettings(GroupName = "SignalR")]
+        public IActionResult CheckUserOnline(string id)
+        {
+            var isOnline = UserHub.IsUserOnline(id);
+            return Ok(new { IsOnline = isOnline });
         }
 
         // AUTH
@@ -170,8 +211,7 @@ namespace TechShop.Controllers
 
         [HttpGet("GetProducts")]
         [ApiExplorerSettings(GroupName = "Products")]
-        public async Task<IActionResult> GetProducts(RequestPaginationDto paginationDto, string? searchTerm, 
-            string? orderBy, bool? isAsc)
+        public async Task<IActionResult> GetProducts(RequestPaginationDto paginationDto, string? searchTerm, string? orderBy)
         {
             var filterDto = new RequestFilterDto<Product>
             {
