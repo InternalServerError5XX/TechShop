@@ -89,10 +89,8 @@ namespace TechShop.Application.Services.ProductServices.ProductService
                     product.ProductPhotos = (await _productPhotoService
                         .UpdatePhotoSameCount(requestProduct.ProductPhotos, productPhotos)).ToList();
                 else
-                {
                     product.ProductPhotos = (await _productPhotoService
-                        .UpdatePhoto(requestProduct.ProductPhotos, productPhotos, id)).ToList();
-                }             
+                        .UpdatePhoto(requestProduct.ProductPhotos, productPhotos, id)).ToList();           
 
                 await UpdateAsync(product);
 
