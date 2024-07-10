@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using TechShop.Domain.DTOs.AuthDto;
 using TechShop.Domain.DTOs.BasketDtos.BasketDto;
 using TechShop.Domain.DTOs.BasketDtos.BasketItemDto;
@@ -6,6 +7,7 @@ using TechShop.Domain.DTOs.PaginationDto;
 using TechShop.Domain.DTOs.ProductDtos.ProductCaregoryDto;
 using TechShop.Domain.DTOs.ProductDtos.ProductDto;
 using TechShop.Domain.DTOs.ProductDtos.ProductPhoto;
+using TechShop.Domain.DTOs.UserDtos.RoleDto;
 using TechShop.Domain.DTOs.UserDtos.UserDto;
 using TechShop.Domain.DTOs.UserDtos.UserProfileDto;
 using TechShop.Domain.DTOs.WishlistDtos.WishlistDto;
@@ -39,8 +41,13 @@ namespace TechShop.Infrastructure.Mapper
                 });
             CreateMap<UserProfile, ResponseUserProfileDto>();
             CreateMap<ResponseUserProfileDto, UserProfile>();
+            CreateMap<UpdateUserDto, UserProfile>();
+            CreateMap<ResponseUserProfileDto, UpdateUserDto>();
 
             CreateMap<ApplicationUser, ApplicationUserDto>();
+
+            CreateMap<IdentityRole, RequestRoleDto>();
+            CreateMap<RequestRoleDto, IdentityRole>();
 
             CreateMap<RequestProductDto, Product>()
                 .ForMember(dest => dest.ProductPhotos, opt => opt.Ignore());
@@ -56,6 +63,7 @@ namespace TechShop.Infrastructure.Mapper
 
             CreateMap<RequestProductCategoryDto, ProductCategory>();
             CreateMap<ProductCategory, ResponseProductCaregoryDto>();
+            CreateMap<ResponseProductCaregoryDto, ProductCategory>();
 
             CreateMap<RequestBasketDto, Basket>();
             CreateMap<Basket, ResponseBasketDto>();

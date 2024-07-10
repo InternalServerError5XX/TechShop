@@ -4,6 +4,7 @@ using TechShop.Application.Services.UserServices.UserProfileService;
 using TechShop.Domain.DTOs.UserDtos.UserDto;
 using TechShop.Domain.Entities;
 using TechShop.Domain.Identity;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TechShop.Infrastructure.SeedData
 {
@@ -13,32 +14,25 @@ namespace TechShop.Infrastructure.SeedData
         {
             using var scope = app.Services.CreateAsyncScope();
 
+            var userProfileService = scope.ServiceProvider.GetRequiredService<IUserProfileService>();
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();         
 
             var adminUser = await userManager.FindByEmailAsync(DefaultUsers.AdminEmail);
             var defaultUser = await userManager.FindByEmailAsync(DefaultUsers.UserEmail);
 
-            if (adminUser == null && defaultUser == null)
-            {
-                var userProfileService = scope.ServiceProvider.GetRequiredService<IUserProfileService>();
-
+            if (adminUser == null)
+            {             
                 var admin = new ApplicationUser
                 {
                     Email = DefaultUsers.AdminEmail,
                     UserName = DefaultUsers.AdminName,
-                };
-
-                var user = new ApplicationUser
-                {
-                    Email = DefaultUsers.UserEmail,
-                    UserName = DefaultUsers.UserName,
-                };
+                };               
 
                 var adminResponse = await userManager.CreateAsync(admin, DefaultUsers.AdminPassword);
-                var date = DateTime.Now;
 
                 if (adminResponse.Succeeded)
                 {
+                    var date = DateTime.Now;
                     await userManager.AddToRoleAsync(admin, DefaultRoles.Admin);
                     var adminProfile = new UserProfile
                     {
@@ -53,9 +47,21 @@ namespace TechShop.Infrastructure.SeedData
                     await userProfileService.AddAsync(adminProfile);
                 }
 
+                
+            }
+
+            if (defaultUser == null)
+            {
+                var user = new ApplicationUser
+                {
+                    Email = DefaultUsers.UserEmail,
+                    UserName = DefaultUsers.UserName,
+                };
+
                 var userResponse = await userManager.CreateAsync(user, DefaultUsers.UserPassword);
                 if (userResponse.Succeeded)
                 {
+                    var date = DateTime.Now;
                     await userManager.AddToRoleAsync(user, DefaultRoles.User);
                     var userProfile = new UserProfile
                     {

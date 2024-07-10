@@ -28,6 +28,8 @@ using TechShop.Domain.Entities;
 using TechShop.Application.Services.AppServices.TempDataService;
 using TechShop.Application.Services.AppServices.CacheService;
 using Microsoft.AspNetCore.SignalR;
+using TechShop.Domain.DTOs.UserDtos.RoleDto;
+using Microsoft.AspNetCore.Identity;
 
 namespace TechShop.Controllers
 {
@@ -93,7 +95,7 @@ namespace TechShop.Controllers
             return Ok(response);
         }
 
-        [HttpGet("RemoveCache")]
+        [HttpDelete("RemoveCache")]
         [ApiExplorerSettings(GroupName = "Cache")]
         public IActionResult RemoveCache(string key)
         {
@@ -111,9 +113,8 @@ namespace TechShop.Controllers
             return Ok(new { IsOnline = isOnline });
         }
 
-        // AUTH
+        // AUTH      
 
-        [Authorize]
         [HttpGet("AuthCheck")]
         [ApiExplorerSettings(GroupName = "Auth")]
         public IActionResult AuthCheck()
@@ -124,23 +125,6 @@ namespace TechShop.Controllers
                 return Unauthorized("Unauthorized");
 
             return Ok(token);
-        }
-
-        [Authorize]
-        [HttpGet("AdminCheck")]
-        [ApiExplorerSettings(GroupName = "Auth")]
-        public IActionResult AdminCheck()
-        {
-            var check = User.IsInRole("Admin");
-            return Ok(check);
-        }
-
-        [HttpGet("GetRoles")]
-        [ApiExplorerSettings(GroupName = "Auth")]
-        public async Task<IActionResult> GetRoles()
-        {
-            var response = await userService.GetRoles();
-            return Ok(response);
         }
 
         [AllowAnonymous]
@@ -253,7 +237,7 @@ namespace TechShop.Controllers
             return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, product);
         }
 
-        [HttpPut("UpdateProduct")]
+        [HttpPatch("UpdateProduct")]
         [ApiExplorerSettings(GroupName = "Products")]
         public async Task<IActionResult> UpdateProduct(int id, [FromForm] CreateProductDto productDto)
         {
@@ -284,14 +268,24 @@ namespace TechShop.Controllers
 
         // CATEGORIES
 
+        [HttpGet("GetCategory")]
+        [ApiExplorerSettings(GroupName = "Categories")]
+        public async Task<IActionResult> GetCategory(int id)
+        {
+            var category = await productCategoryService.GetByIdAsync(id);
+            var response = mapper.Map<ResponseProductCaregoryDto>(category);
+
+            return Ok(response);
+        }
+
         [HttpGet("GetCategories")]
         [ApiExplorerSettings(GroupName = "Categories")]
         public IActionResult GetCategories()
         {
-            var category = productCategoryService.GetAll();
-            var response = mapper.Map<IEnumerable<ResponseProductCaregoryDto>>(category);
+            var categories = productCategoryService.GetAll();
+            var response = mapper.Map<IEnumerable<ResponseProductCaregoryDto>>(categories);
 
-            return CreatedAtAction(nameof(response), new { }, response);
+            return Ok(response);
         }
 
         [HttpPost("CreateCategory")]
@@ -304,7 +298,7 @@ namespace TechShop.Controllers
             return CreatedAtAction(nameof(response), new { response.Id }, response);
         }
 
-        [HttpPut("UpdateCategory")]
+        [HttpPatch("UpdateCategory")]
         [ApiExplorerSettings(GroupName = "Categories")]
         public async Task<IActionResult> UpdateCategory(int id, RequestProductCategoryDto categoryDto)
         {
@@ -319,11 +313,19 @@ namespace TechShop.Controllers
         [ApiExplorerSettings(GroupName = "Categories")]
         public async Task<IActionResult> DeleteCategory(int id)
         {
-            await productCategoryService.DeleteAsync(id);
+            await productCategoryService.DeleteCategory(id);
             return NoContent();
         }
 
         // USERS
+
+        [HttpGet("AdminCheck")]
+        [ApiExplorerSettings(GroupName = "Users")]
+        public IActionResult AdminCheck()
+        {
+            var check = User.IsInRole("Admin");
+            return Ok(check);
+        }        
 
         [HttpGet("GetUsers")]
         [ApiExplorerSettings(GroupName = "Users")]
@@ -335,7 +337,28 @@ namespace TechShop.Controllers
             return Ok(response);
         }
 
-        [Authorize]
+        [HttpGet("GetUser")]
+        [ApiExplorerSettings(GroupName = "Users")]
+        public async Task<IActionResult> GetUser(string id)
+        {
+            var user = await userService.GetUser(id);
+            var response = mapper.Map<ApplicationUserDto>(user);
+            response.UserProfile.Role = await userService.GetRoleByUserId(id);
+
+            return Ok(response);
+        }
+
+        [HttpGet("GetProfile")]
+        [ApiExplorerSettings(GroupName = "Users")]
+        public async Task<IActionResult> GetProfile(string userId)
+        {
+            var profile = await userService.GetProfile(userId);
+            var response = mapper.Map<ResponseUserProfileDto>(profile);
+            response.Role = await userService.GetRoleByUserId(userId);
+
+            return Ok(response);
+        }
+
         [HttpGet("GetUserProfile")]
         [ApiExplorerSettings(GroupName = "Users")]
         public async Task<IActionResult> GetUserProfile()
@@ -343,12 +366,30 @@ namespace TechShop.Controllers
             var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
             var profile = await userService.GetUserProfile(email!);
             var response = mapper.Map<ResponseUserProfileDto>(profile);
+            response.Role = await userService.GetRoleByUserId(profile.UserId);
 
             return Ok(response);
         }
 
-        [Authorize]
-        [HttpPut("UpdateUserProfile")]
+        [HttpPost("CreateUser")]
+        [ApiExplorerSettings(GroupName = "Users")]
+        public async Task<IActionResult> CreateUser(RequestUserDto userDto)
+        {
+            var user = await userService.CreateUser(userDto);
+            var response = mapper.Map<ApplicationUserDto>(user);
+
+            return Ok(response);
+        }
+
+        [HttpPatch("UpdateUser")]
+        [ApiExplorerSettings(GroupName = "Users")]
+        public async Task<IActionResult> UpdateUser(UpdateUserDto userDto)
+        {
+            await userService.UpdateUser(userDto);
+            return Ok();
+        }
+
+        [HttpPatch("UpdateUserProfile")]
         [ApiExplorerSettings(GroupName = "Users")]
         public async Task<IActionResult> UpdateUserProfile(int id, RequestUserProfileDto userProfileDto)
         {
@@ -364,6 +405,70 @@ namespace TechShop.Controllers
             var response = mapper.Map<ResponseUserProfileDto>(profile);
 
             return Ok(response);
+        }
+
+        [HttpDelete("DeleteUser")]
+        [ApiExplorerSettings(GroupName = "Users")]
+        public async Task<IActionResult> DeleteUser(string id)
+        {
+            await userService.DeleteUser(id);
+            return NoContent();
+        }
+
+        // ROLES
+
+        [HttpPost("CreateRole")]
+        [ApiExplorerSettings(GroupName = "Roles")]
+        public async Task<IActionResult> CreateRole(RequestRoleDto roleDto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            var response = await userService.CreateRole(roleDto);
+            return Ok(response);
+        }
+
+        [HttpPatch("UpdateRole")]
+        [ApiExplorerSettings(GroupName = "Roles")]
+        public async Task<IActionResult> UpdateRole(IdentityRole identityRole)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            var response = await userService.UpdateRole(identityRole);
+            return Ok(response);
+        }
+
+        [HttpGet("GetRole")]
+        [ApiExplorerSettings(GroupName = "Roles")]
+        public async Task<IActionResult> GetRole(string id)
+        {
+            var response = await userService.GetRole(id);
+            return Ok(response);
+        }
+
+        [HttpGet("GetRoleByUserId")]
+        [ApiExplorerSettings(GroupName = "Roles")]
+        public async Task<IActionResult> GetRoleByUserId(string userId)
+        {
+            var response = await userService.GetRoleByUserId(userId);
+            return Ok(response);
+        }
+
+        [HttpGet("GetRoles")]
+        [ApiExplorerSettings(GroupName = "Roles")]
+        public async Task<IActionResult> GetRoles()
+        {
+            var response = await userService.GetRoles();
+            return Ok(response);
+        }
+
+        [HttpDelete("DeleteRole")]
+        [ApiExplorerSettings(GroupName = "Roles")]
+        public async Task<IActionResult> DeleteRole(string id)
+        {
+            await userService.DeleteRole(id);
+            return NoContent();
         }
 
         // WISHLIST
@@ -474,7 +579,7 @@ namespace TechShop.Controllers
             return Ok(response);
         }
 
-        [HttpPut("EncreaseBasketItemQuantity")]
+        [HttpPatch("EncreaseBasketItemQuantity")]
         [ApiExplorerSettings(GroupName = "Basket")]
         public async Task<IActionResult> EncreaseBasketItemQuantity([Required] int id)
         {
@@ -488,7 +593,7 @@ namespace TechShop.Controllers
             return Unauthorized("Unauthorized");
         }
 
-        [HttpPut("DecreaseBasketItemQuantity")]
+        [HttpPatch("DecreaseBasketItemQuantity")]
         [ApiExplorerSettings(GroupName = "Basket")]
         public async Task<IActionResult> DecreaseBasketItemQuantity([Required] int id)
         {

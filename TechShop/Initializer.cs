@@ -51,7 +51,7 @@ namespace TechShop
             services.AddScoped<ITempDataService, TempDataService>();
             services.AddScoped<ICacheService, CacheService>();
 
-            services.AddScoped<IAdminService, AdminService>();                      
+            services.AddScoped<IAdminService, AdminService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserProfileService, UserProfileService>();

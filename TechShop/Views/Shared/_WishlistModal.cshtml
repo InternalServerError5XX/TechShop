@@ -112,7 +112,7 @@ else
             $.ajax({
                 url: '@Url.Action("DeleteByProductId", "Basket")',
                 type: 'DELETE',
-                data: { productId: productId }, // Ensure productId is correctly passed
+                data: { productId: productId },
                 success: function () {
                     reloadWishlist();
                 },

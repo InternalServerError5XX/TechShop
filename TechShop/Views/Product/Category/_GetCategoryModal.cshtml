@@ -1,0 +1,26 @@
+﻿@using Microsoft.EntityFrameworkCore
+@using TechShop.Application.Services.ProductServices.ProductService
+@using TechShop.Domain.DTOs.ProductDtos.ProductCaregoryDto
+@model ResponseProductCaregoryDto
+
+@{
+    Layout = null;
+    ViewData["Title"] = "Create Category";
+    @inject IProductService productService
+    var productCount = await productService.GetAll().Where(x => x.CategoryId == Model.Id).CountAsync();
+}
+
+<form id="getCategoryForm" class="mt-1">
+    <div class="form-group">
+        <input asp-for="Id" class="form-control" hidden />
+    </div>
+    <div class="form-group">
+        <label asp-for="Name" class="control-label">Category Name</label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <input asp-for="CreatedDate" hidden />
+    <input asp-for="UpdatedDate" hidden />
+</form>
+
+<span>Products Count - <span class="badge badge-primary">@productCount</span></span>

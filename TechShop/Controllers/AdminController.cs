@@ -8,22 +8,8 @@ namespace TechShopWeb.Controllers
 {
     [Authorize(Roles = "Admin")]
     [TypeFilter(typeof(MvcControllerExceptionFilter))]
-    public class AdminController(IAdminService adminService, ICacheService cacheService) : Controller
+    public class AdminController(IAdminService adminService) : Controller
     {
-        private readonly string cacheKey = "AdminPanelCacheKey";
-
-        private async Task<ResponseAdminDto> GetCachedAdminPanel()
-        {
-            var response = cacheService.Get<ResponseAdminDto>(cacheKey);
-            if (response == null)
-            {
-                response = await adminService.GetAdminPanel();
-                cacheService.Set(cacheKey, response, TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(2));
-            }
-
-            return response;
-        }
-
         [HttpGet]
         public IActionResult AdminPanel()
         {
@@ -33,29 +19,29 @@ namespace TechShopWeb.Controllers
         [HttpGet]
         public async Task<IActionResult> GetUsersAdminPanel()
         {
-            var response = await GetCachedAdminPanel();
-            return PartialView("~/Views/Admin/_UsersPartial.cshtml", response.Users);
+            var response = await adminService.GetCachedAdminPanel();
+            return PartialView("~/Views/Admin/User/_UsersPartial.cshtml", response.Users);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetRolesAdminPanel()
         {
-            var response = await GetCachedAdminPanel();
-            return PartialView("~/Views/Admin/_RolesPartial.cshtml", response.Roles);
+            var response = await adminService.GetCachedAdminPanel();
+            return PartialView("~/Views/Admin/User/_RolesPartial.cshtml", response.Roles);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetProductsAdminPanel()
         {
-            var response = await GetCachedAdminPanel();
-            return PartialView("~/Views/Admin/_ProductsPartial.cshtml", response.Products);
+            var response = await adminService.GetCachedAdminPanel();
+            return PartialView("~/Views/Admin/Product/_ProductsPartial.cshtml", response.Products);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetCategoriesAdminPanel()
         {
-            var response = await GetCachedAdminPanel();
-            return PartialView("~/Views/Admin/_CategoriesPartial.cshtml", response.Categories);
+            var response = await adminService.GetCachedAdminPanel();
+            return PartialView("~/Views/Admin/Product/_CategoriesPartial.cshtml", response.Categories);
         }
     }
 }

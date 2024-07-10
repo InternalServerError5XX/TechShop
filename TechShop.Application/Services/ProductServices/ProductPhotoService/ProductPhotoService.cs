@@ -80,7 +80,7 @@ namespace TechShop.Application.Services.ProductServices.ProductPhotoService
                 //if (!File.Exists(filePath))
                 //    throw new NullReferenceException("Photo not found from the server");
 
-                //File.Delete(filePath);
+                File.Delete(filePath);
             }
         }
 
@@ -107,7 +107,7 @@ namespace TechShop.Application.Services.ProductServices.ProductPhotoService
                 //if (!File.Exists(filePath))
                 //    throw new NullReferenceException("Photo not found from the server");
 
-                //File.Delete(filePath);               
+                File.Delete(filePath);
             }
 
             await _productPhotoRepository.DeleteRangeAsync(productPhotos);

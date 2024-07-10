@@ -1,0 +1,47 @@
+﻿@using TechShop.Application.Services.UserServices.UserService
+@using TechShop.Domain.DTOs.UserDtos.UserDto
+@model RequestUserDto
+
+@{
+    Layout = null;
+    ViewData["Title"] = "Create User";
+    @inject IUserService userService
+    var roles = await userService.GetRoles();
+}
+
+<form id="addUserForm" class="mt-1">
+    <div class="form-group">
+        <label asp-for="User.Firstname">First Name</label>
+        <input asp-for="User.Firstname" type="text" class="form-control" />
+        <span asp-validation-for="User.Firstname" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="User.Lastname">Last Name</label>
+        <input asp-for="User.Lastname" type="text" class="form-control" />
+        <span asp-validation-for="User.Lastname" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="User.Age">Age</label>
+        <input asp-for="User.Age" type="number" class="form-control" />
+        <span asp-validation-for="User.Age" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="User.Email">Email</label>
+        <input asp-for="User.Email" type="email" class="form-control" />
+        <span asp-validation-for="User.Email" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="User.Password">Password</label>
+        <input asp-for="User.Password" type="password" class="form-control" />
+        <span asp-validation-for="User.Password" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <select asp-for="RoleId" class="custom-select">
+            @foreach (var role in roles)
+            {
+                <option value="@role.Id">@role.Name</option>
+            }
+        </select>
+    </div>
+</form>

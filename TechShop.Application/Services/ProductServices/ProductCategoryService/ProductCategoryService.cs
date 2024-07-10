@@ -1,23 +1,35 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using System.Linq.Expressions;
+using TechShop.Application.Services.AdminService;
 using TechShop.Application.Services.BaseService;
 using TechShop.Domain.DTOs.ProductDtos.ProductCaregoryDto;
 using TechShop.Domain.DTOs.ProductDtos.ProductCategoryService;
 using TechShop.Domain.Entities.ProductEntities;
-using TechShop.Domain.Entities.WishlistEntities;
 using TechShop.Infrastructure.Repositories.BaseRepository;
 
 namespace TechShop.Application.Services.ProductServices.ProductCategoryService
 {
     public class ProductCategoryService : BaseService<ProductCategory>, IProductCategoryService
     {
-        private readonly IMapper _mapper;
+        private readonly IServiceProvider _serviceProvider;
+        private readonly IMapper _mapper;        
 
         public ProductCategoryService(IBaseRepository<ProductCategory> productCategoryRepository,
-            IMapper mapper) : base(productCategoryRepository)
+            IServiceProvider serviceProvider, IMapper mapper) : base(productCategoryRepository)
         {
+            _serviceProvider = serviceProvider;
             _mapper = mapper;
+        }
+
+        private void RemoveAdminChache()
+        {
+            var adminChacheService = _serviceProvider.GetService<IAdminService>();
+            if (adminChacheService == null)
+                throw new Exception("Couldn't start Admin Service");
+
+            adminChacheService.RemoveCachedAdminPanel();
         }
 
         public async Task<ProductCategory> CreateCategory(RequestProductCategoryDto productCategory)
@@ -26,6 +38,8 @@ namespace TechShop.Application.Services.ProductServices.ProductCategoryService
                 throw new Exception("Category already exists");
 
             var reasponse = _mapper.Map<ProductCategory>(productCategory);
+
+            RemoveAdminChache();
             return await AddAsync(reasponse);
         }
 
@@ -40,6 +54,13 @@ namespace TechShop.Application.Services.ProductServices.ProductCategoryService
             category.CreatedDate = categoryCheck.CreatedDate;
 
             await UpdateAsync(category);
+            RemoveAdminChache();
+        }
+
+        public async Task DeleteCategory(int id)
+        {
+            await DeleteAsync(id);
+            RemoveAdminChache();
         }
 
         private async Task<bool> IfExist<TField>(TField field, Expression<Func<ProductCategory, TField>> selector)

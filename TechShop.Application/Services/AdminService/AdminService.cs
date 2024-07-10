@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using TechShop.Application.Services.AppServices.CacheService;
 using TechShop.Application.Services.ProductServices.ProductService;
 using TechShop.Application.Services.UserServices.UserService;
 using TechShop.Domain.DTOs.AdminDto;
@@ -9,9 +10,11 @@ using TechShop.Domain.DTOs.UserDtos.UserDto;
 
 namespace TechShop.Application.Services.AdminService
 {
-    public class AdminService(IUserService userService, IProductService productService, 
+    public class AdminService(IUserService userService, IProductService productService, ICacheService cacheService,
         IProductCategoryService productCategoryService, IMapper mapper) : IAdminService
     {
+        private readonly string cacheKey = "AdminPanelCacheKey";
+
         public async Task<ResponseAdminDto> GetAdminPanel()
         {
             var users = userService.GetUsers();
@@ -34,6 +37,23 @@ namespace TechShop.Application.Services.AdminService
                 Categories = categoriesResponse,
                 Products = productsReponse
             };
+        }
+
+        public async Task<ResponseAdminDto> GetCachedAdminPanel()
+        {
+            var response = cacheService.Get<ResponseAdminDto>(cacheKey);
+            if (response == null)
+            {
+                response = await GetAdminPanel();
+                cacheService.Set(cacheKey, response, TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(2));
+            }
+
+            return response;
+        }
+
+        public void RemoveCachedAdminPanel()
+        {
+            cacheService.Remove(cacheKey);
         }
     }
 }

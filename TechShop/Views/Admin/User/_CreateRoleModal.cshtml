@@ -1,0 +1,16 @@
+﻿@using Microsoft.AspNetCore.Identity
+@model IdentityRole
+@{
+    Layout = null;
+    ViewData["Title"] = "Create Role";
+}
+
+<form id="addRoleForm" class="mt-1">
+    <input asp-for="Id" hidden />
+
+    <div class="form-group">
+        <label asp-for="Name" class="control-label">Role Name</label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+</form>

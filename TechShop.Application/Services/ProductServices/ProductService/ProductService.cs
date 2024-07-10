@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using TechShop.Application.Services.AdminService;
 using TechShop.Application.Services.BaseService;
 using TechShop.Application.Services.ProductServices.ProductPhotoService;
 using TechShop.Domain.DTOs.ProductDtos.ProductDto;
@@ -11,13 +13,24 @@ namespace TechShop.Application.Services.ProductServices.ProductService
     public class ProductService : BaseService<Product>, IProductService
     {
         private readonly IProductPhotoService _productPhotoService;
+        private readonly IServiceProvider _serviceProvider;
         private readonly IMapper _mapper;
 
         public ProductService(IBaseRepository<Product> productRepository, IProductPhotoService productPhotoService,
-            IMapper mapper) : base(productRepository)
+            IServiceProvider serviceProvider, IMapper mapper) : base(productRepository)
         {
             _productPhotoService = productPhotoService;
+            _serviceProvider = serviceProvider;
             _mapper = mapper;
+        }
+
+        private void RemoveAdminChache()
+        {
+            var adminChacheService = _serviceProvider.GetService<IAdminService>();
+            if (adminChacheService == null)
+                throw new Exception("Couldn't start Admin Service");
+
+            adminChacheService.RemoveCachedAdminPanel();
         }
 
         public async Task<Product> CreateProduct(CreateProductDto productDto)
@@ -44,6 +57,8 @@ namespace TechShop.Application.Services.ProductServices.ProductService
                     throw new Exception("Couldn't create the photos");
 
                 await CommitTransactionAsync();
+
+                RemoveAdminChache();
                 return productResponse;
             }
             catch (Exception ex)
@@ -80,6 +95,7 @@ namespace TechShop.Application.Services.ProductServices.ProductService
                 await UpdateAsync(product);
 
                 await CommitTransactionAsync();
+                RemoveAdminChache();
             }
             catch (Exception ex)
             {
@@ -101,6 +117,7 @@ namespace TechShop.Application.Services.ProductServices.ProductService
                 await DeleteAsync(product.Id);
 
                 await CommitTransactionAsync();
+                RemoveAdminChache();
             }
             catch (Exception ex)
             {

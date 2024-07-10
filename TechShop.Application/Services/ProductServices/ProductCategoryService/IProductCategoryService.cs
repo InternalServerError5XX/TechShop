@@ -8,5 +8,6 @@ namespace TechShop.Domain.DTOs.ProductDtos.ProductCategoryService
     {
         Task<ProductCategory> CreateCategory(RequestProductCategoryDto productCategory);
         Task UpdateCategory(int id, RequestProductCategoryDto productCategory);
+        Task DeleteCategory(int id);
     }
 }

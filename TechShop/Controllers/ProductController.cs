@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Azure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TechShop.Application.Services.AppServices.CacheService;
 using TechShop.Application.Services.ProductServices.ProductService;
 using TechShop.Domain.DTOs.FilterDto;
 using TechShop.Domain.DTOs.PaginationDto;
@@ -60,22 +62,25 @@ namespace TechShopWeb.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(CreateProductDto productDto)
         {
             if (!ModelState.IsValid)
                 return View(productDto);
-            var response = await productService.CreateProduct(productDto);
 
+            var response = await productService.CreateProduct(productDto);
             return RedirectToAction(nameof(GetById), new { id = response.Id });
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update(int id)
         {
             var product = await productService.GetByIdAsync(id);
@@ -84,6 +89,7 @@ namespace TechShopWeb.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update(int id, CreateProductDto productDto)
         {
             if (!ModelState.IsValid)
@@ -93,38 +99,57 @@ namespace TechShopWeb.Controllers
             return RedirectToAction(nameof(GetById), new { id });
         }
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             await productService.DeleteProduct(id);
-
-            var referer = Request.Headers["Referer"].ToString();
-
-            if (!string.IsNullOrEmpty(referer) && referer.Contains("Adminpanel") && referer.Contains("GetAll"))
-            {
-                return Redirect(referer);
-            }
-            else
-            {
-                return RedirectToAction("Adminpanel", "Admin");
-            }
+            return NoContent();
         }
 
         [HttpGet]
-        public IActionResult CreateCategory()
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetCategory(int id)
         {
-            return PartialView("~/Views/Product/_CreateCategoryModal.cshtml", new RequestProductCategoryDto());
+            var category = await productCategoryService.GetByIdAsync(id);
+            var response = mapper.Map<ResponseProductCaregoryDto>(category);
+
+            return PartialView("~/Views/Product/Category/_GetCategoryModal.cshtml", response);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateCategory(RequestProductCategoryDto categoryDto)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateCategory(ResponseProductCaregoryDto caregoryDto)
         {
-            if (!ModelState.IsValid)
-                return PartialView("~/Views/Product/_CreateCategoryModal.cshtml", categoryDto);
-
-            await productCategoryService.CreateCategory(categoryDto);
+            var response = mapper.Map<ProductCategory>(caregoryDto);
+            await productCategoryService.UpdateAsync(response);
 
             return Json(new { success = true });
         }
 
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public IActionResult CreateCategory()
+        {
+            return PartialView("~/Views/Product/Category/_CreateCategoryModal.cshtml", new RequestProductCategoryDto());
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> CreateCategory(RequestProductCategoryDto categoryDto)
+        {
+            if (!ModelState.IsValid)
+                return PartialView("~/Views/Product/Category/_CreateCategoryModal.cshtml", categoryDto);
+
+            await productCategoryService.CreateCategory(categoryDto);
+            return Json(new { success = true });
+        }
+
+        [HttpDelete]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteCategory(int id)
+        {
+            await productCategoryService.DeleteCategory(id);
+            return NoContent();
+        }
     }
 }
