@@ -74,23 +74,25 @@ namespace TechShop.Application.Services.ProductServices.ProductService
 
             try
             {
-                var checkProduct = await GetByIdAsync(id, x => x.ProductPhotos);
-                if (checkProduct == null)
+                var productCheck = GetAll().Where(x => x.Id == id).Select(x => x.Id);
+                if (productCheck == null)
                     throw new NullReferenceException("Product not found");
 
+                var productPhotos = await _productPhotoService.GetAll().Where(x => x.ProductId == id).ToListAsync();               
                 var requestProduct = _mapper.Map<RequestProductDto>(productDto);
                 var product = _mapper.Map<Product>(requestProduct);
-                product.Id = checkProduct.Id;
-                product.CreatedDate = checkProduct.CreatedDate;
+                product.Id = id;
 
                 if (!productDto.ProductPhotos.Any())
-                    product.ProductPhotos = checkProduct.ProductPhotos;
-                else if (checkProduct.ProductPhotos.Count() == productDto.ProductPhotos.Count())
+                    product.ProductPhotos = productPhotos;
+                else if (productPhotos.Count() == productDto.ProductPhotos.Count())
                     product.ProductPhotos = (await _productPhotoService
-                        .UpdatePhotoSameCount(requestProduct.ProductPhotos, checkProduct.ProductPhotos)).ToList();
+                        .UpdatePhotoSameCount(requestProduct.ProductPhotos, productPhotos)).ToList();
                 else
+                {
                     product.ProductPhotos = (await _productPhotoService
-                        .UpdatePhoto(requestProduct.ProductPhotos, checkProduct)).ToList();
+                        .UpdatePhoto(requestProduct.ProductPhotos, productPhotos, id)).ToList();
+                }             
 
                 await UpdateAsync(product);
 

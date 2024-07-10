@@ -88,7 +88,7 @@ namespace TechShopWeb.Controllers
             return View(response);
         }
 
-        [HttpPost]
+        [HttpPatch]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update(int id, CreateProductDto productDto)
         {

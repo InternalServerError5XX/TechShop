@@ -355,6 +355,7 @@ namespace TechShop.Controllers
             var profile = await userService.GetProfile(userId);
             var response = mapper.Map<ResponseUserProfileDto>(profile);
             response.Role = await userService.GetRoleByUserId(userId);
+            response.RoleId = response.Role.Id;
 
             return Ok(response);
         }
@@ -367,6 +368,7 @@ namespace TechShop.Controllers
             var profile = await userService.GetUserProfile(email!);
             var response = mapper.Map<ResponseUserProfileDto>(profile);
             response.Role = await userService.GetRoleByUserId(profile.UserId);
+            response.RoleId = response.Role.Id;
 
             return Ok(response);
         }

@@ -43,5 +43,17 @@ namespace TechShopWeb.Controllers
             var response = await adminService.GetCachedAdminPanel();
             return PartialView("~/Views/Admin/Product/_CategoriesPartial.cshtml", response.Categories);
         }
+
+        [HttpGet]
+        public IActionResult Dashboard()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult Logs()
+        {
+            return View();
+        }
     }
 }

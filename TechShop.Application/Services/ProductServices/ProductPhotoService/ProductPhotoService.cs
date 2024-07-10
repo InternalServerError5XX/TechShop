@@ -47,10 +47,10 @@ namespace TechShop.Application.Services.ProductServices.ProductPhotoService
         }
 
         public async Task<IEnumerable<ProductPhoto>> UpdatePhoto(IEnumerable<RequestProductPhotoDto> productPhotoDto, 
-            Product product)
+            List<ProductPhoto> productPhotos, int id)
         {
-            await DeletePhoto(product.ProductPhotos);
-            var response = await SavePhoto(productPhotoDto, product.Id);
+            await DeletePhoto(productPhotos);
+            var response = await SavePhoto(productPhotoDto, id);
 
             return response;
         }
@@ -77,8 +77,8 @@ namespace TechShop.Application.Services.ProductServices.ProductPhotoService
             foreach (var photo in productPhotos)
             {
                 var filePath = Path.Combine("wwwroot", photo.Path.TrimStart('/'));
-                //if (!File.Exists(filePath))
-                //    throw new NullReferenceException("Photo not found from the server");
+                if (!File.Exists(filePath))
+                    throw new NullReferenceException("Photo not found from the server");
 
                 File.Delete(filePath);
             }
@@ -104,8 +104,8 @@ namespace TechShop.Application.Services.ProductServices.ProductPhotoService
             foreach (var photo in productPhotos)
             {
                 var filePath = Path.Combine("wwwroot", photo.Path.TrimStart('/'));
-                //if (!File.Exists(filePath))
-                //    throw new NullReferenceException("Photo not found from the server");
+                if (!File.Exists(filePath))
+                    throw new NullReferenceException("Photo not found from the server");
 
                 File.Delete(filePath);
             }
@@ -159,6 +159,10 @@ namespace TechShop.Application.Services.ProductServices.ProductPhotoService
                 var productPhoto = _mapper.Map<ProductPhoto>(productPhotoDto);
                 productPhoto.Path = $"/images/products/{fileName}";
                 productPhoto.ProductId = productId;
+
+                var date = DateTime.Now;
+                productPhoto.CreatedDate = date;
+                productPhoto.UpdatedDate = date;
 
                 savedPhotos.Add(productPhoto);
             }
