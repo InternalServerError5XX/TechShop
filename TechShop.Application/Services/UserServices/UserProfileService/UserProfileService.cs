@@ -1,5 +1,5 @@
 ﻿using TechShop.Application.Services.BaseService;
-using TechShop.Domain.Entities;
+using TechShop.Domain.Entities.UserEntities;
 using TechShop.Infrastructure.Repositories.BaseRepository;
 
 namespace TechShop.Application.Services.UserServices.UserProfileService

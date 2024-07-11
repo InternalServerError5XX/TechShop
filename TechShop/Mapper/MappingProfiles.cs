@@ -12,9 +12,9 @@ using TechShop.Domain.DTOs.UserDtos.UserDto;
 using TechShop.Domain.DTOs.UserDtos.UserProfileDto;
 using TechShop.Domain.DTOs.WishlistDtos.WishlistDto;
 using TechShop.Domain.DTOs.WishlistDtos.WishlistItemDto;
-using TechShop.Domain.Entities;
 using TechShop.Domain.Entities.BasketEntities;
 using TechShop.Domain.Entities.ProductEntities;
+using TechShop.Domain.Entities.UserEntities;
 using TechShop.Domain.Entities.WishlistEntities;
 
 namespace TechShop.Infrastructure.Mapper

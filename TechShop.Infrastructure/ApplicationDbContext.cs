@@ -1,11 +1,15 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using TechShop.Domain.DTOs.UserDtos.UserDto;
-using TechShop.Domain.Entities;
 using TechShop.Domain.Entities.BasketEntities;
+using TechShop.Domain.Entities.OrderEntities;
 using TechShop.Domain.Entities.ProductEntities;
+using TechShop.Domain.Entities.UserEntities;
 using TechShop.Domain.Entities.WishlistEntities;
 using TechShop.Infrastructure.Configs;
+using TechShop.Infrastructure.Configs.Basket;
+using TechShop.Infrastructure.Configs.Product;
+using TechShop.Infrastructure.Configs.User;
+using TechShop.Infrastructure.Configs.Wishlist;
 
 namespace TechShop.Infrastructure
 {
@@ -24,6 +28,10 @@ namespace TechShop.Infrastructure
         public DbSet<Wishlist> Wishlists { get; set; }
         public DbSet<WishlistItem> WishlistItems { get; set; }
         public DbSet<ProductCategory> ProductCategories { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<Payment> Payments { get; set; }
+        public DbSet<ShippingInfo> ShippingInfos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -38,6 +46,7 @@ namespace TechShop.Infrastructure
             builder.ApplyConfiguration(new WishlistConfiguration());
             builder.ApplyConfiguration(new WishlistItemsConfiguration());
             builder.ApplyConfiguration(new ProductCategoryConfiguration());
+            builder.ApplyConfiguration(new OrderConfiguration());
         }
     }
 }

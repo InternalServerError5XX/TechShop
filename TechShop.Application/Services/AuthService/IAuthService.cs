@@ -1,6 +1,6 @@
 ﻿using TechShop.Domain.DTOs.AuthDto;
 using TechShop.Domain.DTOs.JWTDto;
-using TechShop.Domain.DTOs.UserDtos.UserDto;
+using TechShop.Domain.Entities.UserEntities;
 
 namespace TechShop.Application.Services.AuthService
 {

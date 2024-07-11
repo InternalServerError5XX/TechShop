@@ -10,8 +10,7 @@ using System.Text;
 using TechShop.Application.Services.UserServices.UserProfileService;
 using TechShop.Domain.DTOs.AuthDto;
 using TechShop.Domain.DTOs.JWTDto;
-using TechShop.Domain.DTOs.UserDtos.UserDto;
-using TechShop.Domain.Entities;
+using TechShop.Domain.Entities.UserEntities;
 using TechShop.Domain.Identity;
 
 namespace TechShop.Application.Services.AuthService

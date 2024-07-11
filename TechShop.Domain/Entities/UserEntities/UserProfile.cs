@@ -1,6 +1,4 @@
-﻿using TechShop.Domain.DTOs.UserDtos.UserDto;
-
-namespace TechShop.Domain.Entities
+﻿namespace TechShop.Domain.Entities.UserEntities
 {
     public class UserProfile : BaseEntity
     {

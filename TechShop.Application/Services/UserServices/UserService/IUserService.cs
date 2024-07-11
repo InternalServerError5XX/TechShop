@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using TechShop.Domain.DTOs.UserDtos.RoleDto;
 using TechShop.Domain.DTOs.UserDtos.UserDto;
-using TechShop.Domain.Entities;
+using TechShop.Domain.Entities.UserEntities;
 
 namespace TechShop.Application.Services.UserServices.UserService
 {

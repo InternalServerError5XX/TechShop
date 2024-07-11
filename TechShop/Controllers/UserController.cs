@@ -5,7 +5,7 @@ using System.Security.Claims;
 using TechShop.Application.Services.UserServices.UserService;
 using TechShop.Domain.DTOs.UserDtos.UserDto;
 using TechShop.Domain.DTOs.UserDtos.UserProfileDto;
-using TechShop.Domain.Entities;
+using TechShop.Domain.Entities.UserEntities;
 
 namespace TechShopWeb.Controllers
 {

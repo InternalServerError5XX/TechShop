@@ -24,12 +24,12 @@ using TechShop.Domain.DTOs.ProductDtos.ProductCategoryService;
 using TechShop.Application.Services.UserServices.UserProfileService;
 using TechShop.Domain.DTOs.UserDtos.UserProfileDto;
 using TechShop.Application.Services.AdminService;
-using TechShop.Domain.Entities;
 using TechShop.Application.Services.AppServices.TempDataService;
 using TechShop.Application.Services.AppServices.CacheService;
 using Microsoft.AspNetCore.SignalR;
 using TechShop.Domain.DTOs.UserDtos.RoleDto;
 using Microsoft.AspNetCore.Identity;
+using TechShop.Domain.Entities.UserEntities;
 
 namespace TechShop.Controllers
 {

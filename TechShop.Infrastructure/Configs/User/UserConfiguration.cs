@@ -1,11 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
-using TechShop.Domain.Entities;
 using TechShop.Domain.Entities.BasketEntities;
 using TechShop.Domain.Entities.WishlistEntities;
-using TechShop.Domain.DTOs.UserDtos.UserDto;
+using TechShop.Domain.Entities.UserEntities;
 
-namespace TechShop.Infrastructure.Configs
+namespace TechShop.Infrastructure.Configs.User
 {
     public class UserConfiguration : IEntityTypeConfiguration<ApplicationUser>
     {
@@ -27,6 +26,11 @@ namespace TechShop.Infrastructure.Configs
                 .WithOne(w => w.User)
                 .HasForeignKey<Wishlist>(w => w.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasMany(u => u.Orders)
+                .WithOne(w => w.User)
+                .HasForeignKey(w => w.UserId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

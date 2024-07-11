@@ -16,7 +16,7 @@ using TechShop.Application.Services.WishlistServices.WishlistItemService;
 using TechShop.Application.Services.WishlistServices.WishlistService;
 using TechShop.Domain.DTOs.JWTDto;
 using TechShop.Domain.DTOs.ProductDtos.ProductCategoryService;
-using TechShop.Domain.DTOs.UserDtos.UserDto;
+using TechShop.Domain.Entities.UserEntities;
 using TechShop.Infrastructure;
 using TechShop.Infrastructure.Repositories.BaseRepository;
 using TechShop.Infrastructure.Repositories.BasketRepositories.BasketItemRepository;

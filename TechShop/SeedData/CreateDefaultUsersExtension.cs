@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using TechShop.Application.Services.UserServices.UserProfileService;
-using TechShop.Domain.DTOs.UserDtos.UserDto;
 using TechShop.Domain.Entities;
+using TechShop.Domain.Entities.UserEntities;
 using TechShop.Domain.Identity;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 

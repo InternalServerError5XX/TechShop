@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TechShop.Domain.Entities.ProductEntities;
 
-namespace TechShop.Infrastructure.Configs
+namespace TechShop.Infrastructure.Configs.Product
 {
     public class ProductConfiguration : IEntityTypeConfiguration<Product>
     {

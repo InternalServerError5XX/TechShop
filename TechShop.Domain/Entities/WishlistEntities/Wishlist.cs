@@ -1,4 +1,4 @@
-﻿using TechShop.Domain.DTOs.UserDtos.UserDto;
+﻿using TechShop.Domain.Entities.UserEntities;
 
 namespace TechShop.Domain.Entities.WishlistEntities
 {

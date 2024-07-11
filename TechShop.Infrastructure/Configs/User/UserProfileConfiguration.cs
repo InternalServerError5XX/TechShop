@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using TechShop.Domain.Entities;
+using TechShop.Domain.Entities.UserEntities;
 
-namespace TechShop.Infrastructure.Configs
+namespace TechShop.Infrastructure.Configs.User
 {
     public class UserProfileConfiguration : IEntityTypeConfiguration<UserProfile>
     {
