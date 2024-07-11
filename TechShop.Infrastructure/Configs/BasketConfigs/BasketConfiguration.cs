@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using TechShop.Domain.Entities.BasketEntities;
 
-namespace TechShop.Infrastructure.Configs.Basket
+namespace TechShop.Infrastructure.Configs.BasketConfigs
 {
     public class BasketConfiguration : IEntityTypeConfiguration<Basket>
     {

@@ -12,7 +12,5 @@ namespace TechShop.Domain.DTOs.OrderDtos.PaymentDto
         public decimal Amount { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime UpdatedDate { get; set; }
-
-        public ResponseOrderDto Order { get; set; } = null!;
     }
 }

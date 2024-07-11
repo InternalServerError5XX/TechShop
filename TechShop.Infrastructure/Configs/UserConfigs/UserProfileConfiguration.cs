@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TechShop.Domain.Entities.UserEntities;
 
-namespace TechShop.Infrastructure.Configs.User
+namespace TechShop.Infrastructure.Configs.UserConfigs
 {
     public class UserProfileConfiguration : IEntityTypeConfiguration<UserProfile>
     {

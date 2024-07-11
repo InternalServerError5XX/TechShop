@@ -4,7 +4,7 @@ using TechShop.Domain.Entities.BasketEntities;
 using TechShop.Domain.Entities.WishlistEntities;
 using TechShop.Domain.Entities.UserEntities;
 
-namespace TechShop.Infrastructure.Configs.User
+namespace TechShop.Infrastructure.Configs.UserConfigs
 {
     public class UserConfiguration : IEntityTypeConfiguration<ApplicationUser>
     {

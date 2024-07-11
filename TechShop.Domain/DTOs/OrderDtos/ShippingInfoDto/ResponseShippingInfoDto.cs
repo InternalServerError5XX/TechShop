@@ -14,7 +14,5 @@ namespace TechShop.Domain.DTOs.OrderDtos.ShippingInfoDto
         public string Street { get; set; } = string.Empty;
         public DateTime CreatedDate { get; set; }
         public DateTime UpdatedDate { get; set; }
-
-        public ResponseOrderDto Order { get; set; } = null!;
     }
 }

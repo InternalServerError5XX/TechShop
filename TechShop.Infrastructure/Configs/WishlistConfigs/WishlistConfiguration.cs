@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TechShop.Domain.Entities.WishlistEntities;
 
-namespace TechShop.Infrastructure.Configs.Wishlist
+namespace TechShop.Infrastructure.Configs.WishlistConfigs
 {
     public class WishlistConfiguration : IEntityTypeConfiguration<Wishlist>
     {

@@ -6,10 +6,10 @@ using TechShop.Domain.Entities.ProductEntities;
 using TechShop.Domain.Entities.UserEntities;
 using TechShop.Domain.Entities.WishlistEntities;
 using TechShop.Infrastructure.Configs;
-using TechShop.Infrastructure.Configs.Basket;
-using TechShop.Infrastructure.Configs.Product;
-using TechShop.Infrastructure.Configs.User;
-using TechShop.Infrastructure.Configs.Wishlist;
+using TechShop.Infrastructure.Configs.BasketConfigs;
+using TechShop.Infrastructure.Configs.ProductConfigs;
+using TechShop.Infrastructure.Configs.UserConfigs;
+using TechShop.Infrastructure.Configs.WishlistConfigs;
 
 namespace TechShop.Infrastructure
 {

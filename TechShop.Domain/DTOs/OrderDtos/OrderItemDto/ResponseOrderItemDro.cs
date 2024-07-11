@@ -17,6 +17,5 @@ namespace TechShop.Domain.DTOs.OrderDtos.OrderItemDto
 
 
         public ResponseProductDto Product { get; set; } = null!;
-        public ResponseOrderDto Order { get; set; } = null!;
     }
 }
