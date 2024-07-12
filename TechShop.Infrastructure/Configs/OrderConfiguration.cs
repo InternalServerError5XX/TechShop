@@ -28,8 +28,8 @@ namespace TechShop.Infrastructure.Configs
 
             builder.HasOne(o => o.Payment)
                 .WithOne(p => p.Order)
-                .HasForeignKey<Payment>(p => p.OrderId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .HasForeignKey<Order>(p => p.PaymentId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

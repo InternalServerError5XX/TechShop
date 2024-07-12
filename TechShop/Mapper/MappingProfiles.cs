@@ -3,6 +3,10 @@ using Microsoft.AspNetCore.Identity;
 using TechShop.Domain.DTOs.AuthDto;
 using TechShop.Domain.DTOs.BasketDtos.BasketDto;
 using TechShop.Domain.DTOs.BasketDtos.BasketItemDto;
+using TechShop.Domain.DTOs.OrderDtos.OrderDto;
+using TechShop.Domain.DTOs.OrderDtos.OrderItemDto;
+using TechShop.Domain.DTOs.OrderDtos.PaymentDto;
+using TechShop.Domain.DTOs.OrderDtos.ShippingInfoDto;
 using TechShop.Domain.DTOs.PaginationDto;
 using TechShop.Domain.DTOs.ProductDtos.ProductCaregoryDto;
 using TechShop.Domain.DTOs.ProductDtos.ProductDto;
@@ -13,6 +17,7 @@ using TechShop.Domain.DTOs.UserDtos.UserProfileDto;
 using TechShop.Domain.DTOs.WishlistDtos.WishlistDto;
 using TechShop.Domain.DTOs.WishlistDtos.WishlistItemDto;
 using TechShop.Domain.Entities.BasketEntities;
+using TechShop.Domain.Entities.OrderEntities;
 using TechShop.Domain.Entities.ProductEntities;
 using TechShop.Domain.Entities.UserEntities;
 using TechShop.Domain.Entities.WishlistEntities;
@@ -79,6 +84,21 @@ namespace TechShop.Infrastructure.Mapper
 
             CreateMap<ResponsePaginationDto<Product>, ResponsePaginationDto<ResponseProductDto>>()
                 .ForMember(dest => dest.Data, opt => opt.MapFrom(src => src.Data));
+
+            CreateMap<RequestShippingInfoDto, ShippingInfo>();
+            CreateMap<ShippingInfo, ResponseShippingInfoDto>();
+
+            CreateMap<RequestPaymentDto, Payment>();
+            CreateMap<Payment, ResponsePaymentDto>();
+
+            CreateMap<RequestOrderDto, Order>();
+            CreateMap<Order, ResponseOrderDto>();
+
+            CreateMap<RequestOrderItemDro, OrderItem>();
+            CreateMap<OrderItem, ResponseOrderItemDro>();
+            CreateMap<BasketItem, OrderItem>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.Product, opt => opt.Ignore());
         }
     }
 }

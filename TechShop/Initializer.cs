@@ -7,6 +7,10 @@ using TechShop.Application.Services.AppServices.TempDataService;
 using TechShop.Application.Services.AuthService;
 using TechShop.Application.Services.BasketServices.BasketItemService;
 using TechShop.Application.Services.BasketServices.BasketService;
+using TechShop.Application.Services.OrserServices.OrderItemService;
+using TechShop.Application.Services.OrserServices.OrserService;
+using TechShop.Application.Services.OrserServices.PaymentService;
+using TechShop.Application.Services.OrserServices.ShippingInfoServie;
 using TechShop.Application.Services.ProductServices.ProductCategoryService;
 using TechShop.Application.Services.ProductServices.ProductPhotoService;
 using TechShop.Application.Services.ProductServices.ProductService;
@@ -21,6 +25,10 @@ using TechShop.Infrastructure;
 using TechShop.Infrastructure.Repositories.BaseRepository;
 using TechShop.Infrastructure.Repositories.BasketRepositories.BasketItemRepository;
 using TechShop.Infrastructure.Repositories.BasketRepositories.BasketRepository;
+using TechShop.Infrastructure.Repositories.OrderRepositories.OrderItemRepository;
+using TechShop.Infrastructure.Repositories.OrderRepositories.OrderRepository;
+using TechShop.Infrastructure.Repositories.OrderRepositories.PaymentRepository;
+using TechShop.Infrastructure.Repositories.OrderRepositories.ShippingInfoRepository;
 using TechShop.Infrastructure.Repositories.ProductRepositories.ProductCategoryRepository;
 using TechShop.Infrastructure.Repositories.ProductRepositories.ProductPhotoRepository;
 using TechShop.Infrastructure.Repositories.ProductRepositories.ProductRepositoty;
@@ -44,6 +52,10 @@ namespace TechShop
             services.AddScoped<IWishlistItemRepository, WishlistItemRepository>();
             services.AddScoped<IBasketRepository, BasketRepository>();
             services.AddScoped<IBasketItemRepository, BasketItemRepository>();
+            services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddScoped<IOrderItemRepository, OrderItemRepository>();
+            services.AddScoped<IPaymentRepository, PaymentRepository>();
+            services.AddScoped<IShippingInfoRepository, ShippingInfoRepository>();            
         }
 
         public static void InitializeServices(this IServiceCollection services)
@@ -62,6 +74,10 @@ namespace TechShop
             services.AddScoped<IWishlistItemService, WishlistItemService>();
             services.AddScoped<IBasketService, BasketService>();
             services.AddScoped<IBasketItemService, BasketItemService>();
+            services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IOrderItemService, OrderItemService>();
+            services.AddScoped<IPaymentService, PaymentService>();
+            services.AddScoped<IShippingInfoService, ShippingInfoService>();
         }
 
         public static void InitializeFilters(this IServiceCollection services)

@@ -1,44 +1,54 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using TechShop.Application.Services.AuthService;
-using TechShop.Domain.DTOs.AuthDto;
-using AutoMapper;
-using TechShop.Domain.DTOs.PaginationDto;
-using TechShop.Domain.DTOs.FilterDto;
-using TechShopWeb.Filters;
-using TechShop.Domain.Entities.ProductEntities;
-using TechShop.Application.Services.ProductServices.ProductService;
-using TechShop.Application.Services.ProductServices.ProductPhotoService;
-using TechShop.Application.Services.UserServices.UserService;
-using TechShop.Domain.DTOs.WishlistDtos.WishlistDto;
-using TechShop.Application.Services.WishlistServices.WishlistService;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
+using TechShop.Application.Services.AdminService;
+using TechShop.Application.Services.AppServices.CacheService;
+using TechShop.Application.Services.AppServices.TempDataService;
+using TechShop.Application.Services.AuthService;
 using TechShop.Application.Services.BasketServices.BasketService;
+using TechShop.Application.Services.OrserServices.OrderItemService;
+using TechShop.Application.Services.OrserServices.OrserService;
+using TechShop.Application.Services.OrserServices.PaymentService;
+using TechShop.Application.Services.OrserServices.ShippingInfoServie;
+using TechShop.Application.Services.ProductServices.ProductPhotoService;
+using TechShop.Application.Services.ProductServices.ProductService;
+using TechShop.Application.Services.UserServices.UserProfileService;
+using TechShop.Application.Services.UserServices.UserService;
+using TechShop.Application.Services.WishlistServices.WishlistService;
+using TechShop.Domain.DTOs.AuthDto;
 using TechShop.Domain.DTOs.BasketDtos.BasketDto;
-using TechShop.Domain.DTOs.ProductDtos.ProductDto;
-using TechShop.Domain.DTOs.ProductDtos.ProductPhoto;
-using TechShop.Domain.DTOs.UserDtos.UserDto;
+using TechShop.Domain.DTOs.FilterDto;
+using TechShop.Domain.DTOs.OrderDtos.OrderDto;
+using TechShop.Domain.DTOs.OrderDtos.PaymentDto;
+using TechShop.Domain.DTOs.OrderDtos.ShippingInfoDto;
+using TechShop.Domain.DTOs.PaginationDto;
 using TechShop.Domain.DTOs.ProductDtos.ProductCaregoryDto;
 using TechShop.Domain.DTOs.ProductDtos.ProductCategoryService;
-using TechShop.Application.Services.UserServices.UserProfileService;
-using TechShop.Domain.DTOs.UserDtos.UserProfileDto;
-using TechShop.Application.Services.AdminService;
-using TechShop.Application.Services.AppServices.TempDataService;
-using TechShop.Application.Services.AppServices.CacheService;
-using Microsoft.AspNetCore.SignalR;
+using TechShop.Domain.DTOs.ProductDtos.ProductDto;
+using TechShop.Domain.DTOs.ProductDtos.ProductPhoto;
 using TechShop.Domain.DTOs.UserDtos.RoleDto;
-using Microsoft.AspNetCore.Identity;
+using TechShop.Domain.DTOs.UserDtos.UserDto;
+using TechShop.Domain.DTOs.UserDtos.UserProfileDto;
+using TechShop.Domain.DTOs.WishlistDtos.WishlistDto;
+using TechShop.Domain.Entities.OrderEntities;
+using TechShop.Domain.Entities.ProductEntities;
 using TechShop.Domain.Entities.UserEntities;
+using TechShopWeb.Filters;
 
 namespace TechShop.Controllers
 {
     [Authorize(Roles = "Admin")]
     [TypeFilter(typeof(ApiControllerExceptionFilter))]
     public class ApiController(IAuthService authService, IUserService userService, IProductService productService,
-        IProductPhotoService productPhotoService, ITempDataService tempDataService, IWishlistService wishlistService, 
+        IProductPhotoService productPhotoService, ITempDataService tempDataService, IWishlistService wishlistService,
         IBasketService basketService, IProductCategoryService productCategoryService, IAdminService adminService,
-        IUserProfileService userProfileService, ICacheService cacheService, IMapper mapper) : Controller
+        IUserProfileService userProfileService, IOrderService orderService, IOrderItemService orderItemService,
+        IPaymentService paymentService, IShippingInfoService shippingInfoServie, ICacheService cacheService, 
+        IMapper mapper) : Controller
     {
         [HttpGet]
         public async Task<IActionResult> Swagger()
@@ -151,14 +161,14 @@ namespace TechShop.Controllers
 
         [AllowAnonymous]
         [HttpPost("Register")]
-        [ApiExplorerSettings(GroupName = "Auth")]      
+        [ApiExplorerSettings(GroupName = "Auth")]
         public async Task<ActionResult> Register(RegisterDto registerDto)
         {
             try
             {
-                if (!ModelState.IsValid) 
+                if (!ModelState.IsValid)
                     return BadRequest("Wrong input");
-                
+
                 var token = await authService.Register(registerDto);
 
                 return Ok(new
@@ -232,7 +242,7 @@ namespace TechShop.Controllers
         [HttpPost("CreateProduct")]
         [ApiExplorerSettings(GroupName = "Products")]
         public async Task<IActionResult> CreateProduct([FromForm] CreateProductDto productDto)
-        {        
+        {
             var product = await productService.CreateProduct(productDto);
             return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, product);
         }
@@ -244,6 +254,7 @@ namespace TechShop.Controllers
             await productService.UpdateProduct(id, productDto);
             var updatedProduct = await productService.GetProduct(id);
             var response = mapper.Map<ResponseProductDto>(updatedProduct);
+
             return Ok(response);
         }
 
@@ -325,7 +336,7 @@ namespace TechShop.Controllers
         {
             var check = User.IsInRole("Admin");
             return Ok(check);
-        }        
+        }
 
         [HttpGet("GetUsers")]
         [ApiExplorerSettings(GroupName = "Users")]
@@ -607,6 +618,194 @@ namespace TechShop.Controllers
             }
 
             return Unauthorized("Unauthorized");
+        }
+
+        // SHIPPING
+
+        [HttpGet("GetShippingInfos")]
+        [ApiExplorerSettings(GroupName = "ShippingInfo")]
+        public IActionResult GetShippingInfos()
+        {
+            var shippings = shippingInfoServie.GetAll();
+            var response = mapper.Map<IEnumerable<ResponseShippingInfoDto>>(shippings);
+
+            return Ok(response);
+        }
+
+        [HttpGet("GetShippingInfo")]
+        [ApiExplorerSettings(GroupName = "ShippingInfo")]
+        public async Task<IActionResult> GetShippingInfo(int id)
+        {
+            var shipping = await shippingInfoServie.GetByIdAsync(id);
+            if (shipping == null)
+                throw new NullReferenceException("Spipping not found");
+
+            var response = mapper.Map<ResponseShippingInfoDto>(shipping);
+            return Ok(response);
+        }
+
+        [HttpPost("CreateShippingInfo")]
+        [ApiExplorerSettings(GroupName = "ShippingInfo")]
+        public async Task<IActionResult> CreateShippingInfo(RequestShippingInfoDto shippingInfoDto)
+        {
+            var shipping = mapper.Map<ShippingInfo>(shippingInfoDto);
+            var response = await shippingInfoServie.AddAsync(shipping);
+
+            return CreatedAtAction(nameof(GetShippingInfo), new { id = response.Id }, response);
+        }
+
+        [HttpPatch("UpdateShippingInfo")]
+        [ApiExplorerSettings(GroupName = "ShippingInfo")]
+        public async Task<IActionResult> UpdateShippingInfo(int id, RequestShippingInfoDto shippingInfoDto)
+        {
+            var shippingCheck = await shippingInfoServie.GetByIdAsync(id);
+            if (shippingCheck == null)
+                throw new NullReferenceException("Spipping not found");
+
+            var shipping = mapper.Map<ShippingInfo>(shippingInfoDto);
+            shipping.Id = shippingCheck.Id;
+            shipping.CreatedDate = shippingCheck.CreatedDate;
+            await shippingInfoServie.UpdateAsync(shipping);
+
+            var response = mapper.Map<ResponseShippingInfoDto>(shipping);
+            return Ok(response);
+        }
+
+        [HttpDelete("DeleteShippingInfo")]
+        [ApiExplorerSettings(GroupName = "ShippingInfo")]
+        public async Task<IActionResult> DeleteShippingInfo(int id)
+        {
+            await shippingInfoServie.DeleteAsync(id);
+            return NoContent();
+        }
+
+        // ORDER
+
+        [HttpGet("GetOrders")]
+        [ApiExplorerSettings(GroupName = "Order")]
+        public IActionResult GetOrders()
+        {
+            var orders = orderService.GetOrders();
+            var response = mapper.Map<IEnumerable<ResponseOrderDto>>(orders);
+
+            return Ok(response);
+        }
+
+        [HttpGet("GetUserOrders")]
+        [ApiExplorerSettings(GroupName = "Order")]
+        public IActionResult GetUserOrders()
+        {
+            var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            var orders = orderService.GetUsersOrders(email);
+            var response = mapper.Map<IEnumerable<ResponseOrderDto>>(orders);
+
+            return Ok(response);
+        }
+
+        [HttpGet("GetOrder")]
+        [ApiExplorerSettings(GroupName = "Order")]
+        public async Task<IActionResult> GetOrder(int id)
+        {
+            var order = await orderService.GetOrder(id);
+            var response = mapper.Map<ResponseOrderDto>(order);
+
+            return Ok(response);
+        }
+
+        [Authorize]
+        [HttpPost("CreateOrder")]
+        [ApiExplorerSettings(GroupName = "Order")]
+        public async Task<IActionResult> CreateOrder(RequestOrderDto orderDto)
+        {
+            var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            var order = mapper.Map<Order>(orderDto);
+            var newOrder = await orderService.CreateOrder(email!, order);
+
+            var orderResponse = await orderService.GetOrder(newOrder.Id);
+            var response = mapper.Map<ResponseOrderDto>(orderResponse);
+            return CreatedAtAction(nameof(GetOrder), new { id = response.Id }, response);          
+        }
+
+        [HttpPatch("UpdateOrder")]
+        [ApiExplorerSettings(GroupName = "Order")]
+        public async Task<IActionResult> UpdateOrder(int id, RequestOrderDto orderDto)
+        {
+            var orderCheck = await orderService.GetByIdAsync(id);
+            if (orderCheck == null)
+                throw new NullReferenceException("Spipping not found");
+
+            var order = mapper.Map<Order>(orderDto);
+            order.Id = orderCheck.Id;
+            order.CreatedDate = orderCheck.CreatedDate;
+            await orderService.UpdateAsync(order);
+
+            var response = await orderService.GetOrder(orderCheck.Id);
+            return Ok(response);
+        }
+
+        [HttpDelete("DeleteOrder")]
+        [ApiExplorerSettings(GroupName = "Order")]
+        public async Task<IActionResult> DeleteOrder(int id)
+        {
+            await orderService.DeleteAsync(id);
+            return NoContent();
+        }
+
+        // PAYMENT
+
+        [HttpGet("GetPayments")]
+        [ApiExplorerSettings(GroupName = "Payment")]
+        public IActionResult GetPayments()
+        {
+            var payments = paymentService.GetAll();
+            var response = mapper.Map<IEnumerable<ResponsePaymentDto>>(payments);
+
+            return Ok(response);
+        }
+
+        [HttpGet("GetPayment")]
+        [ApiExplorerSettings(GroupName = "Payment")]
+        public async Task<IActionResult> GetPayment(int id)
+        {
+            var payments = await paymentService.GetByIdAsync(id);
+            var response = mapper.Map<ResponsePaymentDto>(payments);
+
+            return Ok(response);
+        }
+
+        [HttpPost("CreatePayment")]
+        [ApiExplorerSettings(GroupName = "Payment")]
+        public async Task<IActionResult> CreatePayment(RequestPaymentDto paymentDto)
+        {
+            var payment = mapper.Map<Payment>(paymentDto);
+            var response = await paymentService.AddAsync(payment);
+
+            return CreatedAtAction(nameof(GetPayment), new { id = response.Id }, response);
+        }
+
+        [HttpPatch("CreatePayment")]
+        [ApiExplorerSettings(GroupName = "Payment")]
+        public async Task<IActionResult> CreatePayment(int id, RequestPaymentDto paymentDto)
+        {
+            var paymentCheck = await paymentService.GetByIdAsync(id);
+            if (paymentCheck == null)
+                throw new NullReferenceException("Payment not found");
+
+            var payment = mapper.Map<Payment>(paymentDto);
+            payment.Id = paymentCheck.Id;
+            payment.CreatedDate = paymentCheck.CreatedDate;
+
+            await paymentService.UpdateAsync(payment);
+            var response = mapper.Map<ResponsePaymentDto>(payment);
+            return Ok(response);
+        }
+
+        [HttpDelete("DeletePayment")]
+        [ApiExplorerSettings(GroupName = "Payment")]
+        public async Task<IActionResult> DeletePayment(int id)
+        {
+            await paymentService.DeleteAsync(id);
+            return NoContent();
         }
     }
 }

@@ -11,6 +11,9 @@ namespace TechShop.Domain.DTOs.OrderDtos.OrderDto
         [Required]
         public int ShippingInfoId { get; set; }
 
+        [Required]
+        public int PaymentId { get; set; }
+
         public OrderStatus Status { get; set; } = OrderStatus.Pending;
     }
 }

@@ -244,7 +244,7 @@ namespace TechShop.Infrastructure.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Baskets");
+                    b.ToTable("Baskets", (string)null);
                 });
 
             modelBuilder.Entity("TechShop.Domain.Entities.BasketItem", b =>
@@ -277,7 +277,7 @@ namespace TechShop.Infrastructure.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("BasketItems");
+                    b.ToTable("BasketItems", (string)null);
                 });
 
             modelBuilder.Entity("TechShop.Domain.Entities.Product", b =>
@@ -317,7 +317,7 @@ namespace TechShop.Infrastructure.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("TechShop.Domain.Entities.ProductCategory", b =>
@@ -341,7 +341,7 @@ namespace TechShop.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ProductCategories");
+                    b.ToTable("ProductCategories", (string)null);
                 });
 
             modelBuilder.Entity("TechShop.Domain.Entities.ProductPhoto", b =>
@@ -370,7 +370,7 @@ namespace TechShop.Infrastructure.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductPhotos");
+                    b.ToTable("ProductPhotos", (string)null);
                 });
 
             modelBuilder.Entity("TechShop.Domain.Entities.UserProfile", b =>
@@ -411,7 +411,7 @@ namespace TechShop.Infrastructure.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("UserProfiles");
+                    b.ToTable("UserProfiles", (string)null);
                 });
 
             modelBuilder.Entity("TechShop.Domain.Entities.Wishlist", b =>
@@ -438,7 +438,7 @@ namespace TechShop.Infrastructure.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Wishlists");
+                    b.ToTable("Wishlists", (string)null);
                 });
 
             modelBuilder.Entity("TechShop.Domain.Entities.WishlistItem", b =>
@@ -468,7 +468,7 @@ namespace TechShop.Infrastructure.Migrations
 
                     b.HasIndex("WishlistId");
 
-                    b.ToTable("WishlistItems");
+                    b.ToTable("WishlistItems", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

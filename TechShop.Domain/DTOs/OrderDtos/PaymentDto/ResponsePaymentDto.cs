@@ -7,7 +7,6 @@ namespace TechShop.Domain.DTOs.OrderDtos.PaymentDto
     public class ResponsePaymentDto
     {
         public int Id { get; set; }
-        public int OrderId { get; set; }
         public PaymentStatus Status { get; set; }
         public decimal Amount { get; set; }
         public DateTime CreatedDate { get; set; }

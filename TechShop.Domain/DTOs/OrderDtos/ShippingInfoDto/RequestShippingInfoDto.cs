@@ -4,8 +4,6 @@ namespace TechShop.Domain.DTOs.OrderDtos.ShippingInfoDto
 {
     public class RequestShippingInfoDto
     {
-        [Required]
-        public int OrderId { get; set; }
 
         [Required]
         public string Firstname { get; set; } = string.Empty;

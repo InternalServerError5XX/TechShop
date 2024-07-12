@@ -1,5 +1,6 @@
 ﻿using TechShop.Domain.DTOs.AdminDto;
 using TechShop.Domain.DTOs.OrderDtos.OrderItemDto;
+using TechShop.Domain.DTOs.OrderDtos.PaymentDto;
 using TechShop.Domain.DTOs.OrderDtos.ShippingInfoDto;
 using TechShop.Domain.DTOs.UserDtos.UserDto;
 using TechShop.Domain.Entities.OrderEntities;
@@ -17,9 +18,8 @@ namespace TechShop.Domain.DTOs.OrderDtos.OrderDto
         public DateTime CreatedDate { get; set; }
         public DateTime UpdatedDate { get; set; }
 
-        public ApplicationUserDto User { get; set; } = null!;
         public ResponseShippingInfoDto ShippingInfo { get; set; } = null!;
         public ICollection<ResponseOrderItemDro> OrderItems { get; set; } = [];
-        public ResponseAdminDto Payment { get; set; } = null!;
+        public ResponsePaymentDto Payment { get; set; } = null!;
     }
 }
