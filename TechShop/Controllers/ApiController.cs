@@ -691,12 +691,13 @@ namespace TechShop.Controllers
             return Ok(response);
         }
 
+        [Authorize]
         [HttpGet("GetUserOrders")]
         [ApiExplorerSettings(GroupName = "Order")]
         public IActionResult GetUserOrders()
         {
             var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-            var orders = orderService.GetUsersOrders(email);
+            var orders = orderService.GetUsersOrders(email!);
             var response = mapper.Map<IEnumerable<ResponseOrderDto>>(orders);
 
             return Ok(response);
@@ -783,9 +784,34 @@ namespace TechShop.Controllers
             return CreatedAtAction(nameof(GetPayment), new { id = response.Id }, response);
         }
 
-        [HttpPatch("CreatePayment")]
+        [Authorize]
+        [HttpPost("CreatePaymentIntent")]
         [ApiExplorerSettings(GroupName = "Payment")]
-        public async Task<IActionResult> CreatePayment(int id, RequestPaymentDto paymentDto)
+        public async Task<IActionResult> CreatePaymentIntent()
+        {
+            var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            var basket = await basketService.GetUserBasket(email!);
+            var response = await paymentService.CreatePaymentIntent(basket);
+            return Ok(response);
+        }
+
+        [HttpGet("success")]
+        [ApiExplorerSettings(GroupName = "Payment")]
+        public IActionResult Success()
+        {
+            return Ok(new { message = "Payment successful!" });
+        }
+
+        [HttpGet("cancel")]
+        [ApiExplorerSettings(GroupName = "Payment")]
+        public IActionResult Cancel()
+        {
+            return Ok(new { message = "Payment canceled." });
+        }
+
+        [HttpPatch("UpdatePayment")]
+        [ApiExplorerSettings(GroupName = "Payment")]
+        public async Task<IActionResult> UpdatePayment(int id, RequestPaymentDto paymentDto)
         {
             var paymentCheck = await paymentService.GetByIdAsync(id);
             if (paymentCheck == null)
@@ -798,7 +824,7 @@ namespace TechShop.Controllers
             await paymentService.UpdateAsync(payment);
             var response = mapper.Map<ResponsePaymentDto>(payment);
             return Ok(response);
-        }
+        }        
 
         [HttpDelete("DeletePayment")]
         [ApiExplorerSettings(GroupName = "Payment")]

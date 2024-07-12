@@ -13,7 +13,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.InitializeRepositories();
 builder.Services.InitializeServices();
 builder.Services.InitializeIdentity();
-builder.InitializeAuthentication();
+builder.InitializeJWT();
+builder.InitializeStripe();
 builder.Services.InitializeFilters();
 builder.Services.InitializeSwagger();
 

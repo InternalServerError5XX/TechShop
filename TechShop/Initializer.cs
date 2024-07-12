@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
 using TechShop.Application.Extensions;
 using TechShop.Application.Services.AdminService;
@@ -20,6 +21,7 @@ using TechShop.Application.Services.WishlistServices.WishlistItemService;
 using TechShop.Application.Services.WishlistServices.WishlistService;
 using TechShop.Domain.DTOs.JWTDto;
 using TechShop.Domain.DTOs.ProductDtos.ProductCategoryService;
+using TechShop.Domain.DTOs.StripeDto;
 using TechShop.Domain.Entities.UserEntities;
 using TechShop.Infrastructure;
 using TechShop.Infrastructure.Repositories.BaseRepository;
@@ -95,7 +97,7 @@ namespace TechShop
             services.AddScoped<RoleManager<IdentityRole>>();
         }
 
-        public static void InitializeAuthentication(this WebApplicationBuilder builder)
+        public static void InitializeJWT(this WebApplicationBuilder builder)
         {
             builder.Services.Configure<JwtTokenSettings>(
                 builder.Configuration.GetSection(nameof(JwtTokenSettings)));
@@ -106,6 +108,15 @@ namespace TechShop
                 builder.Configuration.GetValue<string>("JwtTokenSettings:JwtKey"),
                 builder.Configuration.GetValue<int>("JwtTokenSettings:JwtExpires")
             );
+        }
+
+        public static void InitializeStripe(this WebApplicationBuilder builder)
+        {
+            builder.Services.Configure<StripeSettings>(
+                builder.Configuration.GetSection(nameof(StripeSettings)));
+
+            builder.Configuration.GetValue<string>("StripeSettings:SecretKey");
+            builder.Configuration.GetValue<string>("StripeSettings:PublishableKey");
         }
 
         public static void InitializeSwagger(this IServiceCollection services)
