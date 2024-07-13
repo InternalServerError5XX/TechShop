@@ -1,0 +1,91 @@
+﻿@using TechShop.Domain.DTOs.BasketDtos.BasketDto
+@using TechShop.Domain.Enums
+@model ResponseBasketDto
+
+@{
+    decimal total = 0;
+}
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            Order Confirmation
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Order Details</h5>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Photo</th>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.BasketItems)
+                        {
+                            total = total + item.Product.Price * item.Quantity;
+                            <tr>
+                                <td><img src="@item.Product.ProductPhotos.First().Path" style="width: 50px; height: 50px;" /></td>
+                                <td style="width: 450px">
+                                    @item.Product.Brand @item.Product.Model
+                                </td>
+                                <td>$@item.Product.Price</td>
+                                <td>@item.Quantity</td>
+                                <td>$@(item.Quantity * item.Product.Price)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <hr />
+            <div class="d-flex justify-content-between">
+                <div>
+                    <strong>Total Amount:</strong> $@total
+                </div>
+                <a class="btn btn-primary btn-sm d-flex align-items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle me-2" viewBox="0 0 16 16">
+                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                        <path d="m10.97 4.97-.02.022-3.473 4.425-2.093-2.094a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05" />
+                    </svg>
+                    Confirm order
+                </a>
+            </div>
+
+            @* <h5 class="card-title mt-5">Shipping Information</h5>
+            <form asp-action="ConfirmOrder">
+                <div class="form-group">
+                    <label asp-for="@Model.ShippingInfo.Firstname">First Name</label>
+                    <input asp-for="@Model.ShippingInfo.Firstname" type="text" class="form-control" value="@Model.ShippingInfo.Firstname">
+                    <span asp-validation-for="@Model.ShippingInfo.Firstname" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="@Model.ShippingInfo.Lastname">Last Name</label>
+                    <input asp-for="@Model.ShippingInfo.Lastname" type="text" class="form-control" value="@Model.ShippingInfo.Lastname">
+                    <span asp-validation-for="@Model.ShippingInfo.Lastname" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="@Model.ShippingInfo.State">State</label>
+                    <input asp-for="@Model.ShippingInfo.State" type="text" class="form-control" value="@Model.ShippingInfo.State">
+                    <span asp-validation-for="@Model.ShippingInfo.State" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="@Model.ShippingInfo.City">City</label>
+                    <input asp-for="@Model.ShippingInfo.City" type="text" class="form-control" value="@Model.ShippingInfo.City">
+                    <span asp-validation-for="@Model.ShippingInfo.City" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="@Model.ShippingInfo.Street">Street</label>
+                    <input asp-for="@Model.ShippingInfo.Street" type="text" class="form-control" value="@Model.ShippingInfo.Street">
+                    <span asp-validation-for="@Model.ShippingInfo.Street" class="text-danger"></span>
+                </div>
+                <div class="form-group mt-3">
+                    <button type="submit" class="btn btn-primary">Confirm Order</button>
+                </div>
+            </form> *@
+        </div>
+    </div>
+</div>

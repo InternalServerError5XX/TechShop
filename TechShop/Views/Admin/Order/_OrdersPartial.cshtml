@@ -1,0 +1,90 @@
+﻿@using TechShop.Domain.DTOs.OrderDtos.OrderDto
+@using TechShop.Domain.Enums
+@model List<ResponseOrderDto>
+
+@{
+    <script src="~/js/order.js" asp-append-version="true"></script>
+    var counter = 0;
+
+    string GetPaymentStatusSvg(PaymentStatus status)
+    {
+        switch (status)
+        {
+            case PaymentStatus.Pending:
+                return "<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='currentColor' class='bi bi-circle-fill me-1 text-primary' viewBox='0 0 16 16'><circle cx='8' cy='8' r='8' /></svg>Pending";
+            case PaymentStatus.Completed:
+                return "<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='currentColor' class='bi bi-circle-fill me-1 text-success' viewBox='0 0 16 16'><circle cx='8' cy='8' r='8' /></svg>Paid";
+            default:
+                return "<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='currentColor' class='bi bi-circle-fill me-1 text-danger' viewBox='0 0 16 16'><circle cx='8' cy='8' r='8' /></svg>Failed";
+        }
+    }
+
+    string GetOrderStatusSvg(OrderStatus status)
+    {
+        switch (status)
+        {
+            case OrderStatus.Pending:
+                return "<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='currentColor' class='bi bi-circle-fill me-1 text-primary' viewBox='0 0 16 16'><circle cx='8' cy='8' r='8' /></svg>Pending";
+            case OrderStatus.Shipped:
+                return "<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='currentColor' class='bi bi-circle-fill me-1 text-body' viewBox='0 0 16 16'><circle cx='8' cy='8' r='8' /></svg>Shipped";
+            case OrderStatus.Completed:
+                return "<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='currentColor' class='bi bi-circle-fill me-1 text-success' viewBox='0 0 16 16'><circle cx='8' cy='8' r='8' /></svg>Completed";
+            default:
+                return "<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='currentColor' class='bi bi-circle-fill me-1 text-danger' viewBox='0 0 16 16'><circle cx='8' cy='8' r='8' /></svg>Canceled";
+        }
+    }
+}
+
+<table class="table table-striped mt-3">
+    <thead>
+        <tr>
+            <th>№</th>
+            <th scope="col">ID</th>
+            <th scope="col">Firstname</th>
+            <th scope="col">Lastname</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Payment Status</th>
+            <th scope="col">Order Status</th>
+            <th scope="col" class="table-actions">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model.OrderBy(x => x.Status))
+        {
+            counter++;
+            <tr>
+                <td>
+                    <strong>@counter</strong>
+                </td>
+                <td>@order.Id</td>
+                <td>@order.ShippingInfo.Firstname</td>
+                <td>@order.ShippingInfo.Lastname</td>
+                <td>@order.Payment.Amount</td>
+                <td>
+                    <div class="d-flex align-items-center">
+                        @Html.Raw(GetPaymentStatusSvg(order.Payment.Status))
+                    </div>
+                </td>
+                <td>
+                    <div class="d-flex align-items-center">
+                        @Html.Raw(GetOrderStatusSvg(order.Status))
+                    </div>
+                </td>
+                <td class="table-actions">
+                    <a class="btn btn-primary btn-sm update_order_button" data-order-id="@order.Id">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z" />
+                            <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466" />
+                        </svg>
+                    </a>
+                    <a class="btn btn-danger btn-sm delete_order_button" data-order-id="@order.Id">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                            <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+                        </svg>
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

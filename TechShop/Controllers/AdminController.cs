@@ -45,9 +45,10 @@ namespace TechShopWeb.Controllers
         }
 
         [HttpGet]
-        public IActionResult Dashboard()
+        public async Task<IActionResult> GetOrdersAdminPanel()
         {
-            return View();
+            var response = await adminService.GetCachedAdminPanel();
+            return PartialView("~/Views/Admin/Order/_OrdersPartial.cshtml", response.Orders);
         }
 
         [HttpGet]

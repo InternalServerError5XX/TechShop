@@ -37,6 +37,7 @@ using TechShop.Domain.DTOs.WishlistDtos.WishlistDto;
 using TechShop.Domain.Entities.OrderEntities;
 using TechShop.Domain.Entities.ProductEntities;
 using TechShop.Domain.Entities.UserEntities;
+using TechShop.Domain.Enums;
 using TechShopWeb.Filters;
 
 namespace TechShop.Controllers
@@ -683,9 +684,10 @@ namespace TechShop.Controllers
 
         [HttpGet("GetOrders")]
         [ApiExplorerSettings(GroupName = "Order")]
-        public IActionResult GetOrders()
+        public async Task<IActionResult> GetOrders()
         {
             var orders = orderService.GetOrders();
+            await orderService.UpdateOrdersPaymentStatusTransaction(orders);
             var response = mapper.Map<IEnumerable<ResponseOrderDto>>(orders);
 
             return Ok(response);
@@ -694,10 +696,11 @@ namespace TechShop.Controllers
         [Authorize]
         [HttpGet("GetUserOrders")]
         [ApiExplorerSettings(GroupName = "Order")]
-        public IActionResult GetUserOrders()
+        public async Task<IActionResult> GetUserOrders()
         {
             var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
             var orders = orderService.GetUsersOrders(email!);
+            await orderService.UpdateOrdersPaymentStatusTransaction(orders);
             var response = mapper.Map<IEnumerable<ResponseOrderDto>>(orders);
 
             return Ok(response);
@@ -708,6 +711,7 @@ namespace TechShop.Controllers
         public async Task<IActionResult> GetOrder(int id)
         {
             var order = await orderService.GetOrder(id);
+            await orderService.UpdateOrdersPaymentStatusTransaction(order);
             var response = mapper.Map<ResponseOrderDto>(order);
 
             return Ok(response);
@@ -716,31 +720,33 @@ namespace TechShop.Controllers
         [Authorize]
         [HttpPost("CreateOrder")]
         [ApiExplorerSettings(GroupName = "Order")]
-        public async Task<IActionResult> CreateOrder(RequestOrderDto orderDto)
+        public async Task<IActionResult> CreateOrder(RequestShippingInfoDto shippingInfoDto)
         {
             var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-            var order = mapper.Map<Order>(orderDto);
-            var newOrder = await orderService.CreateOrder(email!, order);
+            var shippingInfo = mapper.Map<ShippingInfo>(shippingInfoDto);
+            var response = await orderService.CreateOrder(email!, shippingInfo);
 
-            var orderResponse = await orderService.GetOrder(newOrder.Id);
-            var response = mapper.Map<ResponseOrderDto>(orderResponse);
-            return CreatedAtAction(nameof(GetOrder), new { id = response.Id }, response);          
+            return Ok(response);          
         }
 
         [HttpPatch("UpdateOrder")]
         [ApiExplorerSettings(GroupName = "Order")]
-        public async Task<IActionResult> UpdateOrder(int id, RequestOrderDto orderDto)
+        public async Task<IActionResult> UpdateOrder(UpdateOrderDto updateOrderDto)
+        {           
+            var shippingInfo = mapper.Map<ShippingInfo>(updateOrderDto.ShippingInfoDto);
+            var order = await orderService.UpdateOrder(updateOrderDto.Id, updateOrderDto.OrderStatus, shippingInfo);
+
+            var response = mapper.Map<ResponseOrderDto>(order);
+            return Ok(response);
+        }
+
+        [HttpPatch("CancelOrder")]
+        [ApiExplorerSettings(GroupName = "Order")]
+        public async Task<IActionResult> CancelOrder(int id)
         {
-            var orderCheck = await orderService.GetByIdAsync(id);
-            if (orderCheck == null)
-                throw new NullReferenceException("Spipping not found");
+            var order = await orderService.CancelOrder(id);
+            var response = mapper.Map<ResponseOrderDto>(order);
 
-            var order = mapper.Map<Order>(orderDto);
-            order.Id = orderCheck.Id;
-            order.CreatedDate = orderCheck.CreatedDate;
-            await orderService.UpdateAsync(order);
-
-            var response = await orderService.GetOrder(orderCheck.Id);
             return Ok(response);
         }
 
@@ -748,7 +754,7 @@ namespace TechShop.Controllers
         [ApiExplorerSettings(GroupName = "Order")]
         public async Task<IActionResult> DeleteOrder(int id)
         {
-            await orderService.DeleteAsync(id);
+            await orderService.DeleteOrder(id);
             return NoContent();
         }
 
@@ -771,6 +777,14 @@ namespace TechShop.Controllers
             var payments = await paymentService.GetByIdAsync(id);
             var response = mapper.Map<ResponsePaymentDto>(payments);
 
+            return Ok(response);
+        }
+
+        [HttpGet("GetStripeSession")]
+        [ApiExplorerSettings(GroupName = "Payment")]
+        public async Task<IActionResult> GetStripeSession(string sessionId)
+        {
+            var response = await paymentService.GetStripeSession(sessionId);
             return Ok(response);
         }
 
@@ -811,18 +825,11 @@ namespace TechShop.Controllers
 
         [HttpPatch("UpdatePayment")]
         [ApiExplorerSettings(GroupName = "Payment")]
-        public async Task<IActionResult> UpdatePayment(int id, RequestPaymentDto paymentDto)
+        public async Task<IActionResult> UpdatePayment(int id)
         {
-            var paymentCheck = await paymentService.GetByIdAsync(id);
-            if (paymentCheck == null)
-                throw new NullReferenceException("Payment not found");
-
-            var payment = mapper.Map<Payment>(paymentDto);
-            payment.Id = paymentCheck.Id;
-            payment.CreatedDate = paymentCheck.CreatedDate;
-
-            await paymentService.UpdateAsync(payment);
+            var payment = await paymentService.UpdatePayment(id);
             var response = mapper.Map<ResponsePaymentDto>(payment);
+
             return Ok(response);
         }        
 

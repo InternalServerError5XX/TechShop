@@ -87,6 +87,7 @@ namespace TechShop.Infrastructure.Mapper
 
             CreateMap<RequestShippingInfoDto, ShippingInfo>();
             CreateMap<ShippingInfo, ResponseShippingInfoDto>();
+            CreateMap<UserProfile, RequestShippingInfoDto>();
 
             CreateMap<RequestPaymentDto, Payment>();
             CreateMap<Payment, ResponsePaymentDto>();

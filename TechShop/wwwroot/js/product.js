@@ -61,7 +61,7 @@ $(document).on('click', '.delete_product_button', function (e) {
                 error: function (xhr, status, error) {
                     Swal.fire(
                         'Error!',
-                        'There was an error deleting the category.',
+                        'There was an error deleting the product.',
                         'error'
                     );
                 }

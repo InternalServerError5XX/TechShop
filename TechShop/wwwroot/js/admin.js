@@ -195,3 +195,53 @@ $(document).on('click', '.delete_user_button', function (e) {
         cancelButton.style.fontSize = '17px';
     }
 });
+
+$(document).on('click', '.delete_order_button', function (e) {
+    e.preventDefault();
+    var id = $(this).data('order-id');
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#28a745",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Confirm",
+        customClass: {
+            confirmButton: 'confirmSave',
+            cancelButton: 'confirmCancel'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: '/Order/DeleteOrder/' + id,
+                type: 'DELETE',
+                success: function (result) {
+                    Swal.fire({
+                        title: 'Deleted!',
+                        text: 'Order has been deleted.',
+                        icon: 'success',
+                        timer: 1500,
+                    }).then(() => {
+                        location.reload();
+                    });
+                },
+                error: function (xhr, status, error) {
+                    Swal.fire(
+                        'Error!',
+                        'There was an error deleting the order.',
+                        'error'
+                    );
+                }
+            });
+        }
+    });
+
+    var confirmButton = document.querySelector('.confirmSave');
+    var cancelButton = document.querySelector('.confirmCancel');
+
+    if (confirmButton && cancelButton) {
+        confirmButton.style.fontSize = '17px';
+        cancelButton.style.fontSize = '17px';
+    }
+});

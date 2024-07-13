@@ -99,6 +99,7 @@ namespace TechShopWeb.Controllers
             return RedirectToAction(nameof(GetById), new { id });
         }
 
+        [HttpDelete]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {

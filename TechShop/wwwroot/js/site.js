@@ -66,6 +66,18 @@ function closeProfileModal() {
     });
 }
 
+function closeOrdersModal() {
+    $(document).ready(function () {
+        $('#ordersModal').on('hidden.bs.modal', function () {
+            $('#ordersModalBody').empty();
+        });
+
+        $('.close').click(function () {
+            $('#ordersModal').modal('hide');
+        });
+    });
+}
+
 function getBasketFromWishlist() {
     $(document).ready(function () {
         $('#wishlistModal .btn-primary').click(function () {
