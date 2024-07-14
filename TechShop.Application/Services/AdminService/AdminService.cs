@@ -24,7 +24,6 @@ namespace TechShop.Application.Services.AdminService
             var categories = productCategoryService.GetAll();
             var products = productService.GetProducts();
             var orders = orderService.GetOrders();
-            await orderService.UpdateOrdersPaymentStatusTransaction(orders);
 
             var usersResponse = mapper.Map<IEnumerable<ApplicationUserDto>>(users);
 

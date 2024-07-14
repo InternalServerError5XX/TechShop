@@ -687,7 +687,6 @@ namespace TechShop.Controllers
         public async Task<IActionResult> GetOrders()
         {
             var orders = orderService.GetOrders();
-            await orderService.UpdateOrdersPaymentStatusTransaction(orders);
             var response = mapper.Map<IEnumerable<ResponseOrderDto>>(orders);
 
             return Ok(response);
@@ -700,7 +699,6 @@ namespace TechShop.Controllers
         {
             var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
             var orders = orderService.GetUsersOrders(email!);
-            await orderService.UpdateOrdersPaymentStatusTransaction(orders);
             var response = mapper.Map<IEnumerable<ResponseOrderDto>>(orders);
 
             return Ok(response);
@@ -711,7 +709,6 @@ namespace TechShop.Controllers
         public async Task<IActionResult> GetOrder(int id)
         {
             var order = await orderService.GetOrder(id);
-            await orderService.UpdateOrdersPaymentStatusTransaction(order);
             var response = mapper.Map<ResponseOrderDto>(order);
 
             return Ok(response);

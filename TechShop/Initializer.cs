@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Hangfire;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
 using TechShop.Application.Extensions;
@@ -117,6 +118,14 @@ namespace TechShop
 
             builder.Configuration.GetValue<string>("StripeSettings:SecretKey");
             builder.Configuration.GetValue<string>("StripeSettings:PublishableKey");
+        }
+
+        public static void InitializeHangfire(this IApplicationBuilder app)
+        {
+            app.UseHangfireDashboard();
+            app.UseHangfireServer();
+
+            RecurringJob.AddOrUpdate<PaymentStatusJob>(x => x.UpdatePaymentStatus(), Cron.MinuteInterval(5));
         }
 
         public static void InitializeSwagger(this IServiceCollection services)

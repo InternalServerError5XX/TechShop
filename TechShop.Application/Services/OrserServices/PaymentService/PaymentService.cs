@@ -128,19 +128,18 @@ namespace TechShop.Application.Services.OrserServices.PaymentService
                 if (stripeResponse.Status == "complete" && stripeResponse.PaymentStatus == "paid")
                 {
                     payment.Status = PaymentStatus.Completed;
+                    payments.Add(payment);
                 }
                 else if (DateTime.Now > order.CreatedDate.AddDays(1))
                 {
                     payment.Status = PaymentStatus.Failed;
-                }
-
-                payments.Add(payment);
+                    payments.Add(payment);
+                }                
             }
 
             await UpdateRangeAsync(payments);
             return payments;
         }
-
 
         public async Task<Session> GetStripeSession(string sessionId)
         {

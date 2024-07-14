@@ -1,3 +1,4 @@
+using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using TechShop;
 using TechShop.Application.Services.UserServices.UserService;
@@ -7,8 +8,16 @@ using TechShop.Infrastructure.SeedData;
 var builder = WebApplication.CreateBuilder(args);
 
 var connection = builder.Configuration.GetConnectionString("DefaultConnection");
+if (connection == null)
+    throw new Exception("Connection not set");
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connection));
+
+builder.Services.AddHangfire(config => config
+        .UseSimpleAssemblyNameTypeSerializer()
+        .UseRecommendedSerializerSettings()
+        .UseSqlServerStorage(connection));
 
 builder.Services.InitializeRepositories();
 builder.Services.InitializeServices();
@@ -34,6 +43,8 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+app.InitializeHangfire();
 
 app.UseSwagger(c =>
 {

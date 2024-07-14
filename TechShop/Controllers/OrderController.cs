@@ -67,7 +67,6 @@ namespace TechShopWeb.Controllers
         public async Task<IActionResult> OrderDetails(int id)
         {
             var order = await orderService.GetOrder(id);
-            await orderService.UpdateOrdersPaymentStatusTransaction(order);
             var response = mapper.Map<ResponseOrderDto>(order);
 
             return View(response);
@@ -78,7 +77,6 @@ namespace TechShopWeb.Controllers
         {
             var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
             var orders = orderService.GetUsersOrders(email!);
-            await orderService.UpdateOrdersPaymentStatusTransaction(orders);
             var response = mapper.Map<IEnumerable<ResponseOrderDto>>(orders);
 
             return PartialView("~/Views/Shared/_UserOrdersModal.cshtml", response);
