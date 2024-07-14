@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using TechShop.Application.Services.AdminService;
@@ -37,7 +36,6 @@ using TechShop.Domain.DTOs.WishlistDtos.WishlistDto;
 using TechShop.Domain.Entities.OrderEntities;
 using TechShop.Domain.Entities.ProductEntities;
 using TechShop.Domain.Entities.UserEntities;
-using TechShop.Domain.Enums;
 using TechShopWeb.Filters;
 
 namespace TechShop.Controllers
@@ -47,16 +45,9 @@ namespace TechShop.Controllers
     public class ApiController(IAuthService authService, IUserService userService, IProductService productService,
         IProductPhotoService productPhotoService, ITempDataService tempDataService, IWishlistService wishlistService,
         IBasketService basketService, IProductCategoryService productCategoryService, IAdminService adminService,
-        IUserProfileService userProfileService, IOrderService orderService, IOrderItemService orderItemService,
-        IPaymentService paymentService, IShippingInfoService shippingInfoServie, ICacheService cacheService, 
-        IMapper mapper) : Controller
+        IUserProfileService userProfileService, IOrderService orderService, IPaymentService paymentService, 
+        IShippingInfoService shippingInfoServie, ICacheService cacheService, IMapper mapper) : Controller
     {
-        [HttpGet]
-        public async Task<IActionResult> Swagger()
-        {
-            return await Task.FromResult(View());
-        }
-
         // ADMIN
 
         [HttpGet("AdminPanel")]

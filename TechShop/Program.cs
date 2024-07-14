@@ -46,15 +46,11 @@ if (!app.Environment.IsDevelopment())
 
 app.InitializeHangfire();
 
-app.UseSwagger(c =>
-{
-    c.RouteTemplate = "swagger/{documentName}/swagger.json";
-});
-
+app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Tech Shop API V1");
-    c.RoutePrefix = string.Empty;
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+    c.RoutePrefix = "Swagger";
 });
 
 app.UseHttpsRedirection();

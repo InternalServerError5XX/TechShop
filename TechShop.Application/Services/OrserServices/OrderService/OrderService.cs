@@ -160,16 +160,18 @@ namespace TechShop.Application.Services.OrserServices.OrserService
 
                 await _paymentService.UpdatePayment(orderlist);
 
+                var updatedOrders = new List<Order>();
                 foreach (var order in orderlist)
                 {
                     if (order.Payment.Status == PaymentStatus.Failed)
                     {
                         order.Status = OrderStatus.Cancelled;
+                        updatedOrders.Add(order);
                         RemoveAdminChache();
                     }
                 }
 
-                await UpdateRangeAsync(orderlist);
+                await UpdateRangeAsync(updatedOrders);
                 await CommitTransactionAsync();
             }
             catch (Exception ex)
@@ -256,6 +258,7 @@ namespace TechShop.Application.Services.OrserServices.OrserService
                 if (order == null)
                     throw new NullReferenceException("Order not found");
 
+                order.OrderItems = null!;
                 await UpdateOrdersPaymentStatus(order);
                 if (order.Status != OrderStatus.Pending)
                     throw new InvalidOperationException("Unable to delete a started order");

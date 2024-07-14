@@ -125,7 +125,8 @@ namespace TechShop.Application.Services.OrserServices.PaymentService
 
                 var stripeResponse = await GetStripeSession(payment.SessionId);
 
-                if (stripeResponse.Status == "complete" && stripeResponse.PaymentStatus == "paid")
+                if (stripeResponse.Status == "complete" && stripeResponse.PaymentStatus == "paid" && 
+                    payment.Status == PaymentStatus.Pending)
                 {
                     payment.Status = PaymentStatus.Completed;
                     payments.Add(payment);

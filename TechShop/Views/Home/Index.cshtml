@@ -2,4 +2,32 @@
     ViewData["Title"] = "Home Page";
 }
 
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-body text-center">
+            <h1 class="card-title mt-3">Welcome to TechShop</h1>
+            <p class="card-text">Your one-stop shop for all your technology needs</p>
 
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Explore Products</h5>
+                            <p class="card-text">Discover our latest collection of tech gadgets, accessories, and more.</p>
+                            <a asp-controller="Product" asp-action="GetAll" class="btn btn-primary">View Products</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">About Us</h5>
+                            <p class="card-text">Learn more about TechShop and our commitment to providing cutting-edge technology solutions.</p>
+                            <a asp-controller="Home" asp-action="About" class="btn btn-primary">About TechShop</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

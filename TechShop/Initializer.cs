@@ -1,6 +1,5 @@
 ﻿using Hangfire;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
 using TechShop.Application.Extensions;
 using TechShop.Application.Services.AdminService;
