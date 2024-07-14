@@ -1,0 +1,17 @@
+﻿@{
+    ViewData["Title"] = "Payment Error";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-body text-center">
+            <h1 class="card-title text-danger mt-3">Payment Error!</h1>
+            <p class="card-text">There was an issue processing your payment.</p>
+            <p class="card-text">Please try again or contact customer support for assistance.</p>
+
+            <div class="mt-4">
+                <a asp-controller="Product" asp-action="GetAll" class="btn btn-outline-primary mt-4">Home Page</a>
+            </div>
+        </div>
+    </div>
+</div>

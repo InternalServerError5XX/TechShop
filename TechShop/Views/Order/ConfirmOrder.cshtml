@@ -1,0 +1,58 @@
+﻿@using TechShop.Domain.DTOs.OrderDtos.ShippingInfoDto
+@model RequestShippingInfoDto
+
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header text-black">
+            <h5 class="mb-0">Shipping Information</h5>
+        </div>
+        <div class="card-body">
+            <form asp-action="ConfirmOrder" id="confirm_order_form">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="@Model.Firstname" class="form-label">First Name</label>
+                            <input asp-for="@Model.Firstname" type="text" class="form-control" value="@Model.Firstname">
+                            <span asp-validation-for="@Model.Firstname" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="@Model.Lastname" class="form-label">Last Name</label>
+                            <input asp-for="@Model.Lastname" type="text" class="form-control" value="@Model.Lastname">
+                            <span asp-validation-for="@Model.Lastname" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="@Model.State" class="form-label">State</label>
+                            <input asp-for="@Model.State" type="text" class="form-control" value="@Model.State">
+                            <span asp-validation-for="@Model.State" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="@Model.City" class="form-label">City</label>
+                            <input asp-for="@Model.City" type="text" class="form-control" value="@Model.City">
+                            <span asp-validation-for="@Model.City" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label asp-for="@Model.Street" class="form-label">Street</label>
+                            <input asp-for="@Model.Street" type="text" class="form-control" value="@Model.Street">
+                            <span asp-validation-for="@Model.Street" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group mt-4">
+                    <button id="confirm_order" type="submit" class="btn btn-primary w-100">Confirm Order</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

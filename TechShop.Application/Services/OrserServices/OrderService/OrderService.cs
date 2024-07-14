@@ -50,6 +50,7 @@ namespace TechShop.Application.Services.OrserServices.OrserService
         public IQueryable<Order> GetOrders()
         {
             return GetAll()
+                .AsSplitQuery()
                 .Include(x => x.User)
                 .Include(x => x.OrderItems)
                     .ThenInclude(x => x.Product)
@@ -64,6 +65,7 @@ namespace TechShop.Application.Services.OrserServices.OrserService
         public IQueryable<Order> GetUsersOrders(string email)
         {
             return GetAll()
+                .AsSplitQuery()
                 .Include(x => x.User)
                 .Include(x => x.OrderItems)
                     .ThenInclude(x => x.Product)
@@ -261,9 +263,11 @@ namespace TechShop.Application.Services.OrserServices.OrserService
                     throw new InvalidOperationException("Unable to delete a started order");
 
                 if (order.Payment.Status == PaymentStatus.Completed)
+                {
                     await _paymentService.RefundPayment(order);
-
-                order.Status = OrderStatus.Cancelled;
+                    order.Payment.Status = PaymentStatus.Refund;
+                    order.Status = OrderStatus.Cancelled;
+                }                
 
                 await UpdateAsync(order);
                 RemoveAdminChache();

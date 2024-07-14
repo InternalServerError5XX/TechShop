@@ -1,0 +1,102 @@
+﻿@using TechShop.Domain.DTOs.OrderDtos.OrderDto
+@using TechShop.Domain.Enums
+@model ResponseOrderDto
+
+@{
+    string GetPaymentStatusSvg(PaymentStatus status)
+    {
+        switch (status)
+        {
+            case PaymentStatus.Pending:
+                return "<div class='badge bg-primary text-wrap' style='width: 5rem;'> Pending</div>";
+            case PaymentStatus.Completed:
+                return "<div class='badge bg-success text-wrap' style='width: 5rem;'> Paid</div>";
+            case PaymentStatus.Refund:
+                return "<div class='badge bg-black text-wrap' style='width: 5rem;'> Refund</div>";
+            default:
+                return "<div class='badge bg-danger text-wrap' style='width: 5rem;'> Failed</div>";
+        }
+    }
+
+    string GetOrderStatusSvg(OrderStatus status)
+    {
+        switch (status)
+        {
+            case OrderStatus.Pending:
+                return "<div class='badge bg-primary text-wrap' style='width: 5rem;'> Pending</div>";
+            case OrderStatus.Shipped:
+                return "<div class='badge bg-body text-wrap' style='width: 5rem;'> Shipped</div>";
+            case OrderStatus.Completed:
+                return "<div class='badge bg-success text-wrap' style='width: 5rem;'> Completed</div>";
+            default:
+                return "<div class='badge bg-danger text-wrap' style='width: 5rem;'> Canceled</div>";
+        }
+    }
+}
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <strong>Order ID:</strong> @Model.Id
+        </div>
+        <div class="card-body">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <h5 class="card-title">Shipping Information</h5>
+                    <p class="card-text">
+                        <strong>Name:</strong> @Model.ShippingInfo.Firstname @Model.ShippingInfo.Firstname<br />
+                        <strong>Address:</strong> @Model.ShippingInfo.State; @Model.ShippingInfo.City; @Model.ShippingInfo.Street<br />
+                    </p>
+                </div>
+                <div style="margin-top: -5px">
+                    <strong>Order Status:</strong>
+                    <div class="d-flex align-items-center">
+                        @Html.Raw(GetOrderStatusSvg(Model.Status))
+                    </div>
+                </div>
+            </div>          
+            <hr />
+            <h5 class="card-title">Order Details</h5>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.OrderItems)
+                        {
+                            <tr>
+                                <td>
+                                    @item.Product.Brand @item.Product.Model
+                                </td>
+                                <td>$@item.Product.Price</td>
+                                <td>@item.Quantity</td>
+                                <td>$@(item.Quantity * item.Product.Price)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <hr />
+            <div class="d-flex justify-content-between">
+                <div>
+                    <strong>Payment Status:</strong>
+                    <div class="d-flex align-items-center">
+                        @Html.Raw(GetPaymentStatusSvg(Model.Payment.Status))
+                    </div>
+                </div>
+                <div>
+                    <strong>Total Amount:</strong> $@Model.Payment.Amount
+                </div>
+            </div>
+        </div>
+        <div class="card-footer text-muted">
+            Thank you for your order!
+        </div>
+    </div>
+</div>

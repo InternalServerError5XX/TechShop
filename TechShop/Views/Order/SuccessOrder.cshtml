@@ -1,0 +1,96 @@
+﻿@using TechShop.Domain.DTOs.OrderDtos.OrderDto
+@using TechShop.Domain.Enums
+@model ResponseOrderDto
+
+@{
+    ViewData["Title"] = "Payment Successful";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-body text-center">
+            <h1 class="card-title text-success mt-3">Payment Successful!</h1>
+            <p class="card-text">Thank you for your purchase. Your payment was successful and your order is being processed.</p>
+
+            <h5 class="mt-5">Order Details</h5>
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <table class="table table-bordered">
+                        <tbody>
+                            <tr>
+                                <th>Order ID</th>
+                                <td>@Model.Id</td>
+                            </tr>
+                            <tr>
+                                <th>Order Date</th>
+                                <td>@Model.CreatedDate.ToString("dd/MM/yyyy")</td>
+                            </tr>
+                            <tr>
+                                <th>Total Amount</th>
+                                <td>$@Model.Payment.Amount</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <h5 class="mt-4">Order Items</h5>
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.OrderItems)
+                            {
+                                <tr>
+                                    <td>@item.Product.Brand</td>
+                                    <td>@item.Quantity</td>
+                                    <td>$@item.Product.Price</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <h5 class="mt-4">Shipping Information</h5>
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <table class="table table-bordered">
+                        <tbody>
+                            <tr>
+                                <th>First Name</th>
+                                <td>@Model.ShippingInfo.Firstname</td>
+                            </tr>
+                            <tr>
+                                <th>Last Name</th>
+                                <td>@Model.ShippingInfo.Lastname</td>
+                            </tr>
+                            <tr>
+                                <th>State</th>
+                                <td>@Model.ShippingInfo.State</td>
+                            </tr>
+                            <tr>
+                                <th>City</th>
+                                <td>@Model.ShippingInfo.City</td>
+                            </tr>
+                            <tr>
+                                <th>Street</th>
+                                <td>@Model.ShippingInfo.Street</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>           
+
+            <a asp-controller="Order" asp-action="OrderDetails" asp-route-id="@Model.Id" class="btn btn-info mt-4 me-3">Order Details</a>
+            <a asp-controller="Product" asp-action="GetAll" class="btn btn-primary mt-4">Continue Shopping</a>          
+        </div>
+    </div>
+</div>

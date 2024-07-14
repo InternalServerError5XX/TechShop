@@ -11,6 +11,8 @@
                 return "<div class='badge bg-primary text-wrap' style='width: 5rem;'> Pending</div>";
             case PaymentStatus.Completed:
                 return "<div class='badge bg-success text-wrap' style='width: 5rem;'> Paid</div>";
+            case PaymentStatus.Refund:
+                return "<div class='badge bg-black text-wrap' style='width: 5rem;'> Refund</div>";
             default:
                 return "<div class='badge bg-danger text-wrap' style='width: 5rem;'> Failed</div>";
         }
@@ -38,10 +40,10 @@
     {
         if (item.Status == OrderStatus.Cancelled)
         {
-            <div class="card mb-3 order_card" style="background-color: lightgray">
+            <div class="card mb-3 order_card" style="background-color: #e9e9e9">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
-                        <a class="dropdown-item d-flex align-items-center justify-content-between me-3 w-100">
+                        <a asp-controller="Order" asp-action="OrderDetails" asp-route-id="@item.Id" class="dropdown-item d-flex align-items-center justify-content-between me-3 w-100">
                             <div class="d-flex flex-column">
                                 <span>
                                     №@item.Id - @($"{item.CreatedDate.Day:D2}:{item.CreatedDate.Month:D2}:{item.CreatedDate.Year}")
@@ -106,7 +108,7 @@
             <div class="card mb-3 order_card">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
-                        <a class="dropdown-item d-flex align-items-center justify-content-between me-3 w-100">
+                        <a asp-controller="Order" asp-action="OrderDetails" asp-route-id="@item.Id" class="dropdown-item d-flex align-items-center justify-content-between me-3 w-100">
                             <div class="d-flex flex-column">
                                 <span>
                                     №@item.Id - @($"{item.CreatedDate.Day:D2}:{item.CreatedDate.Month:D2}:{item.CreatedDate.Year}")

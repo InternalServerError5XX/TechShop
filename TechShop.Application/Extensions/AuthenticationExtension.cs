@@ -42,7 +42,20 @@ namespace TechShop.Application.Extensions
                     {
                         OnMessageReceived = context =>
                         {
-                            context.Token = context.Request.Cookies["token"];
+                            if (context.Request.Cookies.TryGetValue("token", out var token))
+                            {
+                                context.Token = token;
+                            }
+                            else if (context.HttpContext.Response.Headers.TryGetValue("Set-Cookie", out var setCookieHeaders))
+                            {
+                                var cookieHeader = setCookieHeaders.FirstOrDefault(h => h.StartsWith("token="));
+                                if (cookieHeader != null)
+                                {
+                                    token = cookieHeader.Split('=')[1].Split(';')[0];
+                                    context.Token = token;
+                                }
+                            }
+
                             return Task.CompletedTask;
                         },
 

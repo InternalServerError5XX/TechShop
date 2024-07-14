@@ -28,14 +28,13 @@ namespace TechShop.Application.Services.OrserServices.PaymentService
         public async Task<Session> CreatePaymentIntent(Basket basket)
         {
             var lineItems = new List<SessionLineItemOptions>();
+            var baseUrl = $"{_contextAccessor.HttpContext!.Request.Scheme}://" +
+                    $"{_contextAccessor.HttpContext.Request.Host}";
 
             foreach (var item in basket.BasketItems)
             {
                 var productPhoto = item.Product.ProductPhotos.FirstOrDefault()?.Path;
-                var imageUrl = new List<string> 
-                { $"{_contextAccessor.HttpContext!.Request.Scheme}://" +
-                    $"{_contextAccessor.HttpContext.Request.Host}/{productPhoto}" 
-                };
+                var imageUrl = new List<string> { $"{baseUrl}/{productPhoto}" };
 
                 var lineItem = new SessionLineItemOptions
                 {
@@ -60,8 +59,8 @@ namespace TechShop.Application.Services.OrserServices.PaymentService
                 PaymentMethodTypes = new List<string> { "card" },
                 LineItems = lineItems,
                 Mode = "payment",
-                SuccessUrl = _stripeSettings.Value.SuccessUrl,
-                CancelUrl = _stripeSettings.Value.CancelUrl,
+                SuccessUrl = $"{baseUrl}/{_stripeSettings.Value.SuccessUrl}",
+                CancelUrl = $"{baseUrl}/{_stripeSettings.Value.CancelUrl}",
                 ExpiresAt = DateTime.Now.AddHours(24)
             };
 
@@ -91,7 +90,6 @@ namespace TechShop.Application.Services.OrserServices.PaymentService
         public async Task<Payment> UpdatePayment(Order order)
         {
             var payment = order.Payment;
-            order.OrderItems = null!;
             order.User = null!;
             if (payment == null)
                 throw new NullReferenceException("Payment not found");

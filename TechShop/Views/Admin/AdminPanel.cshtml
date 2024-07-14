@@ -227,6 +227,9 @@
                 case 'nav-categories-tab':
                     loadCategoryModal();
                     break;
+                case 'nav-orders-tab':
+                    window.location.href = '@Url.Action("OrderProducts", "Order")';
+                    break;
                 default:
                     break;
             }
@@ -282,6 +285,9 @@
                     addNewButton.removeAttribute('href');
                     addNewButton.setAttribute('data-bs-target', '#addCategoryModal');
                     addNewButton.setAttribute('data-bs-toggle', 'modal');
+                    break;
+                case 'nav-orders-tab':
+                    addNewButton.setAttribute('href', '@Url.Action("OrderProducts", "Order")');
                     break;
                 default:
                     addNewButton.removeAttribute('href');
