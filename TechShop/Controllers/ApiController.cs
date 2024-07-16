@@ -197,31 +197,42 @@ namespace TechShop.Controllers
 
         [HttpGet("GetProducts")]
         [ApiExplorerSettings(GroupName = "Products")]
-        public async Task<IActionResult> GetProducts(RequestPaginationDto paginationDto, string? searchTerm, string? orderBy)
+        public async Task<IActionResult> GetProducts(RequestPaginationDto paginationDto, string? searchTerm, 
+            string? orderBy, string? categories)
         {
-            var filterDto = new RequestFilterDto<Product>
-            {
-                SearchTerm = string.IsNullOrWhiteSpace(searchTerm) ? null :
-                        x => x.Brand.ToLower().Contains(searchTerm.ToLower()) ||
-                        x.Model.ToLower().Contains(searchTerm.ToLower()) ||
-                        x.Category.Name.ToLower().Contains(searchTerm.ToLower()),
+            var filterDto = new RequestFilterDto<Product>();
 
-                OrderBy = orderBy switch
-                {
-                    "price_desc" => x => x.Price,
-                    "price_asc" => x => x.Price,
-                    "date_desc" => x => x.CreatedDate,
-                    "date_asc" => x => x.CreatedDate,
-                    _ => null
-                },
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                filterDto.AddSearchTerm(x =>
+                    x.Brand.ToLower().Contains(searchTerm.ToLower()) ||
+                    x.Model.ToLower().Contains(searchTerm.ToLower()) ||
+                    x.Category.Name.ToLower().Contains(searchTerm.ToLower()));
+            }
+
+            var categoryList = new List<string>();
+            if (!string.IsNullOrWhiteSpace(categories))
+            {
+                categoryList = categories.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                                         .Select(c => c.Trim().ToLower())
+                                         .ToList();
+            }
+
+            if (categoryList.Any())
+                filterDto.AddSearchTerm(x => categoryList.Contains(x.Category.Name.ToLower()));
+
+            filterDto.OrderBy = orderBy switch
+            {
+                "price_desc" => x => x.Price,
+                "price_asc" => x => x.Price,
+                "date_desc" => x => x.CreatedDate,
+                "date_asc" => x => x.CreatedDate,
+                _ => null
             };
 
             if (filterDto.OrderBy != null)
             {
-                if (orderBy!.EndsWith("_desc"))
-                    filterDto.IsAsc = false;
-                else if (orderBy.EndsWith("_asc"))
-                    filterDto.IsAsc = true;
+                filterDto.IsAsc = !orderBy!.EndsWith("_desc");
             }
 
             var query = productService.GetFilteredQuery(productService.GetProducts(), filterDto);
@@ -230,6 +241,7 @@ namespace TechShop.Controllers
 
             return Ok(response);
         }
+
 
         [HttpPost("CreateProduct")]
         [ApiExplorerSettings(GroupName = "Products")]

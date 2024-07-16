@@ -66,8 +66,7 @@ namespace TechShop.Application.Services.UserServices.UserService
                         .ThenInclude(x => x.WishlistItems)
                             .ThenInclude(wi => wi.Product)
                                 .ThenInclude(p => p.Category)
-                    .Include(x => x.Orders)
-                        .ThenInclude(x => x.OrderItems);
+                    .Include(x => x.Orders);
         }
 
         public async Task<ApplicationUser> GetUser(string id)

@@ -1,5 +1,6 @@
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
+using Stripe;
 using TechShop;
 using TechShop.Application.Services.UserServices.UserService;
 using TechShop.Infrastructure;
@@ -14,6 +15,7 @@ if (connection == null)
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connection));
 
+builder.Services.AddHangfireServer();
 builder.Services.AddHangfire(config => config
         .UseSimpleAssemblyNameTypeSerializer()
         .UseRecommendedSerializerSettings()
@@ -44,7 +46,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.InitializeHangfire();
+app.InitializeHangfire(builder.Services);
 
 app.UseSwagger();
 app.UseSwaggerUI(c =>

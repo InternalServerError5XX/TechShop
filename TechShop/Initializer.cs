@@ -119,12 +119,15 @@ namespace TechShop
             builder.Configuration.GetValue<string>("StripeSettings:PublishableKey");
         }
 
-        public static void InitializeHangfire(this IApplicationBuilder app)
+        public static void InitializeHangfire(this IApplicationBuilder app, IServiceCollection services)
         {
-            app.UseHangfireDashboard();
-            app.UseHangfireServer();
+            app.UseHangfireDashboard();           
 
-            RecurringJob.AddOrUpdate<PaymentStatusJob>(x => x.UpdatePaymentStatus(), Cron.MinuteInterval(5));
+            RecurringJob.AddOrUpdate<PaymentStatusJob>(
+                recurringJobId: "payment-status-job",
+                methodCall: x => x.UpdatePaymentStatus(),
+                cronExpression: "*/5 * * * *"
+            );
         }
 
         public static void InitializeSwagger(this IServiceCollection services)

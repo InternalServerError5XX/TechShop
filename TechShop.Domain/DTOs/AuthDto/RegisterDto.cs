@@ -11,6 +11,7 @@ namespace TechShop.Domain.DTOs.AuthDto
         public string Lastname { get; set; } = string.Empty;
 
         [Required]
+        [Range(12, 120, ErrorMessage = "Age must be between 12 and 120")]
         public int Age { get; set; }
 
         [Required]

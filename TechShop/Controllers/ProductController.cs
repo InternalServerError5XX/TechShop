@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
-using Azure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TechShop.Application.Services.AppServices.CacheService;
 using TechShop.Application.Services.ProductServices.ProductService;
 using TechShop.Domain.DTOs.FilterDto;
 using TechShop.Domain.DTOs.PaginationDto;
@@ -18,22 +16,37 @@ namespace TechShopWeb.Controllers
         IMapper mapper) : Controller
     {
         [HttpGet]
-        public async Task<IActionResult> GetAll(RequestPaginationDto paginationDto, string? searchTerm, string? orderBy)
+        public async Task<IActionResult> GetAll(RequestPaginationDto paginationDto, string? searchTerm, 
+            string? orderBy, string? categories)
         {
-            var filterDto = new RequestFilterDto<Product>
-            {
-                SearchTerm = string.IsNullOrWhiteSpace(searchTerm) ? null :
-                        x => x.Brand.ToLower().Contains(searchTerm.ToLower()) ||
-                        x.Model.ToLower().Contains(searchTerm.ToLower()),
+            var filterDto = new RequestFilterDto<Product>();
 
-                OrderBy = orderBy switch
-                {
-                    "price_desc" => x => x.Price,
-                    "price_asc" => x => x.Price,
-                    "date_desc" => x => x.CreatedDate,
-                    "date_asc" => x => x.CreatedDate,
-                    _ => null
-                },
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                filterDto.AddSearchTerm(x =>
+                    x.Brand.ToLower().Contains(searchTerm.ToLower()) ||
+                    x.Model.ToLower().Contains(searchTerm.ToLower()) ||
+                    x.Category.Name.ToLower().Contains(searchTerm.ToLower()));
+            }
+
+            var categoryList = new List<string>();
+            if (!string.IsNullOrWhiteSpace(categories))
+            {
+                categoryList = categories.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                                         .Select(c => c.Trim().ToLower())
+                                         .ToList();
+            }
+
+            if (categoryList.Any())
+                filterDto.AddSearchTerm(x => categoryList.Contains(x.Category.Name.ToLower()));
+
+            filterDto.OrderBy = orderBy switch
+            {
+                "price_desc" => x => x.Price,
+                "price_asc" => x => x.Price,
+                "date_desc" => x => x.CreatedDate,
+                "date_asc" => x => x.CreatedDate,
+                _ => null
             };
 
             if (filterDto.OrderBy != null)

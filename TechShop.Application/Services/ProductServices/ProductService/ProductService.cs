@@ -74,7 +74,10 @@ namespace TechShop.Application.Services.ProductServices.ProductService
 
             try
             {
-                var productCheck = GetAll().Where(x => x.Id == id).Select(x => x.Id);
+                var productCheck = GetAll()
+                    .Where(x => x.Id == id)
+                    .Select(x => x.CreatedDate);
+
                 if (productCheck == null)
                     throw new NullReferenceException("Product not found");
 
@@ -90,8 +93,9 @@ namespace TechShop.Application.Services.ProductServices.ProductService
                         .UpdatePhotoSameCount(requestProduct.ProductPhotos, productPhotos)).ToList();
                 else
                     product.ProductPhotos = (await _productPhotoService
-                        .UpdatePhoto(requestProduct.ProductPhotos, productPhotos, id)).ToList();           
+                        .UpdatePhoto(requestProduct.ProductPhotos, productPhotos, id)).ToList();
 
+                product.CreatedDate = await productCheck.FirstOrDefaultAsync();
                 await UpdateAsync(product);
 
                 await CommitTransactionAsync();

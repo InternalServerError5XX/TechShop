@@ -50,7 +50,6 @@ namespace TechShop.Application.Services.OrserServices.OrserService
         public IQueryable<Order> GetOrders()
         {
             return GetAll()
-                .Include(x => x.User)
                 .Include(x => x.OrderItems)
                     .ThenInclude(x => x.Product)
                         .ThenInclude(x => x.ProductPhotos)
@@ -64,7 +63,6 @@ namespace TechShop.Application.Services.OrserServices.OrserService
         public IQueryable<Order> GetUsersOrders(string email)
         {
             return GetAll()
-                .Include(x => x.User)
                 .Include(x => x.OrderItems)
                     .ThenInclude(x => x.Product)
                         .ThenInclude(x => x.ProductPhotos)

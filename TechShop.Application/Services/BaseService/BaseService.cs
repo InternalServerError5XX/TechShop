@@ -56,13 +56,18 @@ namespace TechShop.Application.Services.BaseService
 
         public IQueryable<T> GetFilteredQuery(IQueryable<T> query, RequestFilterDto<T> filterDto)
         {
-            if (filterDto.SearchTerm != null)
-                query = query.Where(filterDto.SearchTerm);
+            if (filterDto.SearchTerms != null && filterDto.SearchTerms.Any())
+            {
+                foreach (var searchTerm in filterDto.SearchTerms)
+                    query = query.Where(searchTerm);
+            }
 
             if (filterDto.OrderBy != null)
+            {
                 query = filterDto.IsAsc
                     ? query.OrderBy(filterDto.OrderBy)
                     : query.OrderByDescending(filterDto.OrderBy);
+            }
 
             return query;
         }
