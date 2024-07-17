@@ -64,11 +64,5 @@ namespace TechShopWeb.Controllers
             var stats = await adminService.GetOrdersStats(start, end);
             return View(stats);
         }
-
-        [HttpGet]
-        public IActionResult Logs()
-        {
-            return View();
-        }
     }
 }

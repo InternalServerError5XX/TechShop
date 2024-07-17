@@ -1,12 +1,13 @@
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
-using Stripe;
+using Serilog;
 using TechShop;
 using TechShop.Application.Services.UserServices.UserService;
 using TechShop.Infrastructure;
 using TechShop.Infrastructure.SeedData;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.InitializeLogging();
 
 var connection = builder.Configuration.GetConnectionString("DefaultConnection");
 if (connection == null)
@@ -46,6 +47,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.UseSerilogRequestLogging();
 app.InitializeHangfire(builder.Services);
 
 app.UseSwagger();

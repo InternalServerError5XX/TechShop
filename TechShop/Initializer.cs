@@ -1,6 +1,7 @@
 ﻿using Hangfire;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using TechShop.Application.Extensions;
 using TechShop.Application.Services.AdminService;
 using TechShop.Application.Services.AppServices.CacheService;
@@ -38,6 +39,7 @@ using TechShop.Infrastructure.Repositories.UserProfileRepository;
 using TechShop.Infrastructure.Repositories.WishlistRepositories.WishlistItemRepository;
 using TechShop.Infrastructure.Repositories.WishlistRepositories.WishlistRepository;
 using TechShopWeb.Filters;
+using Serilog;
 
 namespace TechShop
 {
@@ -108,6 +110,23 @@ namespace TechShop
                 builder.Configuration.GetValue<string>("JwtTokenSettings:JwtKey"),
                 builder.Configuration.GetValue<int>("JwtTokenSettings:JwtExpires")
             );
+        }
+
+        public static void InitializeLogging(this WebApplicationBuilder builder)
+        {
+            Log.Logger = new LoggerConfiguration()
+            .ReadFrom.Configuration(builder.Configuration)
+            .CreateLogger();
+
+            builder.Services.AddLogging(loggingBuilder =>
+            {
+                loggingBuilder.AddConfiguration(builder.Configuration.GetSection("Serilog"));
+                loggingBuilder.AddConsole();
+                loggingBuilder.AddDebug();
+                loggingBuilder.AddSerilog(Log.Logger);
+            });
+
+            builder.Host.UseSerilog();
         }
 
         public static void InitializeStripe(this WebApplicationBuilder builder)
