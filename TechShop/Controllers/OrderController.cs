@@ -73,7 +73,7 @@ namespace TechShopWeb.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> UserOrders()
+        public IActionResult UserOrders()
         {
             var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
             var orders = orderService.GetUsersOrders(email!);

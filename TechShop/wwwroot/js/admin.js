@@ -245,3 +245,39 @@ $(document).on('click', '.delete_order_button', function (e) {
         cancelButton.style.fontSize = '17px';
     }
 });
+
+document.addEventListener('DOMContentLoaded', function () {
+    var statsForm = document.getElementById('statsForm');
+
+    statsForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+        updateDateStats();
+    });
+
+    function updateDateStats() {
+        var startDate = document.getElementById('startDate').value;
+        var endDate = document.getElementById('endDate').value;
+        var currentUrl = new URL(window.location.href);
+
+        if (currentUrl.pathname.includes("GetOrdersStats")) {
+            currentUrl.searchParams.set('start', startDate);
+            currentUrl.searchParams.set('end', endDate);
+            window.location.href = currentUrl.href;
+        } else {
+            var newUrl = new URL("/Admin/GetOrdersStats", window.location.origin);
+            newUrl.searchParams.set('start', startDate);
+            newUrl.searchParams.set('end', endDate);
+            window.location.href = newUrl.href;
+        }
+    }
+
+    var currentUrl = new URL(window.location.href);
+    var startDateInput = currentUrl.searchParams.get('start');
+    var endDateInput = currentUrl.searchParams.get('end');
+    if (startDateInput) {
+        document.getElementById('startDate').value = startDateInput;
+    }
+    if (endDateInput) {
+        document.getElementById('endDate').value = endDateInput;
+    }
+});

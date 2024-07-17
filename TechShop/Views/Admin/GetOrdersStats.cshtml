@@ -1,0 +1,129 @@
+﻿@using TechShop.Domain.DTOs.OrderDtos.StatsDto
+@using TechShop.Domain.Enums
+@model OrdersStatsDto
+
+<div class="container">
+    <div class="d-flex justify-content-center flex-column">
+        <h3 class="text-center mt-4">Orders Statistics</h3>
+
+        <form id="statsForm">
+            <div class="row mt-4 d-flex justify-content-center">
+                <div class="col-md-3">
+                    <label for="startDate">Start Date:</label>
+                    <input type="date" id="startDate" name="startDate" class="form-control">
+                </div>
+                <div class="col-md-3">
+                    <label for="endDate">End Date:</label>
+                    <input type="date" id="endDate" name="endDate" class="form-control">
+                </div>
+                <div class="col-md-3">
+                    <label>&nbsp;</label><br>
+                    <button type="submit" class="btn btn-primary">Get Statistics</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-md-6">
+            <canvas id="monthlyProfitsChart" width="400" height="200"></canvas>
+        </div>
+        <div class="col-md-6">
+            <canvas id="orderStatusChart" width="400" height="200"></canvas>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-6 text-center">
+            <strong>Average Profit: $@Model.OrdersProfit.AverageProfit.ToString("0.00")</strong>
+        </div>
+        <div class="col-md-6 text-center">
+            <strong>Total Orders: @Model.OrderStatus.TotalOrders</strong>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var monthlyProfitsLabels = @Html.Raw(Json.Serialize(Model.OrdersProfit.MonthlyProfits.Keys.Select(d => d.ToString("MMM yyyy")).ToList()));
+        var monthlyProfitsData = @Html.Raw(Json.Serialize(Model.OrdersProfit.MonthlyProfits.Values.ToList()));
+        var orderStatusLabels = @Html.Raw(Json.Serialize(Model.OrderStatus.StatusCounts.Keys.Select(s => s.ToString()).ToList()));
+        var orderStatusData = @Html.Raw(Json.Serialize(Model.OrderStatus.StatusCounts.Values.ToList()));
+        var allTimeProfitsData = @Html.Raw(Json.Serialize(Model.OrdersProfit.AverageProfit));
+
+        var ctxMonthlyProfits = document.getElementById('monthlyProfitsChart').getContext('2d');
+        var monthlyProfitsChart = new Chart(ctxMonthlyProfits, {
+            type: 'line',
+            data: {
+                labels: monthlyProfitsLabels,
+                datasets: [{
+                    label: "All Time Profits",
+                    data: [allTimeProfitsData, allTimeProfitsData, allTimeProfitsData],
+                    fill: false,
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    tension: 0.1
+                }, {
+                    label: 'Monthly Profits',
+                    data: monthlyProfitsData,
+                    fill: true,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Monthly Profits'
+                    }
+                }
+            }
+        });
+
+        var ctxOrderStatus = document.getElementById('orderStatusChart').getContext('2d');
+        var orderStatusChart = new Chart(ctxOrderStatus, {
+            type: 'bar',
+            data: {
+                labels: orderStatusLabels,
+                datasets: [{
+                    label: 'Order Statuses',
+                    data: orderStatusData,
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 0.6)',
+                        'rgba(153, 102, 255, 0.6)',
+                        'rgba(75, 192, 192, 0.6)',
+                        'rgba(255, 99, 132, 0.6)'
+                    ],
+                    borderColor: [
+                        'rgba(54, 162, 235, 0.6)',
+                        'rgba(153, 102, 255, 0.6)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(255, 99, 132, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Order Statuses'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    });
+</script>

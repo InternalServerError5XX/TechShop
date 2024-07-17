@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Stripe;
 using TechShop.Application.Services.AdminService;
 using TechShop.Application.Services.BaseService;
 using TechShop.Application.Services.BasketServices.BasketItemService;
@@ -9,6 +8,7 @@ using TechShop.Application.Services.BasketServices.BasketService;
 using TechShop.Application.Services.OrserServices.PaymentService;
 using TechShop.Application.Services.OrserServices.ShippingInfoServie;
 using TechShop.Application.Services.UserServices.UserService;
+using TechShop.Domain.DTOs.OrderDtos.StatsDto;
 using TechShop.Domain.Entities.OrderEntities;
 using TechShop.Domain.Enums;
 using TechShop.Infrastructure.Repositories.BaseRepository;
@@ -72,6 +72,50 @@ namespace TechShop.Application.Services.OrserServices.OrserService
                 .Include(x => x.ShippingInfo)
                 .Include(x => x.Payment)
                 .Where(x => x.User.Email == email);
+        }
+
+        public OrdersProfitDto CalculateProfit(IQueryable<Order> orders, DateTime? startDate, DateTime? endDate)
+        {
+            var completedOrders = orders
+                .Where(order => order.Status == OrderStatus.Completed &&
+                                order.UpdatedDate >= startDate &&
+                                order.UpdatedDate <= endDate);
+
+            var monthlyProfits = completedOrders
+                .GroupBy(order => new DateTime(order.UpdatedDate.Year, order.UpdatedDate.Month, 1))
+                .ToDictionary(group => group.Key, group => group.Sum(order => order.Payment.Amount));
+
+            var totalProfit = monthlyProfits.Values.Sum();
+            var averageProfit = completedOrders.Any() ? 
+                completedOrders.Select(x => x.Payment.Amount)
+                .Average() : 0;
+
+            return new OrdersProfitDto
+            {
+                MonthlyProfits = monthlyProfits,
+                AverageProfit = averageProfit
+            };
+        }
+
+        public async Task<OrderStatusDto> GetOrderStatusStatistics(IQueryable<Order> orders, DateTime? startDate, DateTime? endDate)
+        {
+            var dateOrders = orders
+                .Where(order => order.UpdatedDate >= startDate && order.UpdatedDate <= endDate);
+
+            var totalOrders = await dateOrders.CountAsync();
+
+            var statusCounts = Enum.GetValues(typeof(OrderStatus))
+                .Cast<OrderStatus>()
+                .ToDictionary(
+                    status => status,
+                    status => dateOrders.Count(order => order.Status == status)
+                );
+
+            return new OrderStatusDto
+            {
+                TotalOrders = totalOrders,
+                StatusCounts = statusCounts
+            };
         }
 
         public async Task<Order> GetOrder(int id)

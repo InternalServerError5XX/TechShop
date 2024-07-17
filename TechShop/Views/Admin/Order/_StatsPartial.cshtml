@@ -1,0 +1,64 @@
+﻿@using TechShop.Domain.DTOs.OrderDtos.StatsDto
+@using TechShop.Domain.Enums
+@model OrdersStatsDto
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Pending Orders</th>
+                    <th>Shipped Orders</th>
+                    <th>Completed Orders</th>
+                    <th>Cancelled Orders</th>
+                    <th>Total Orders</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>@Model.OrderStatus.StatusCounts[OrderStatus.Pending]</td>
+                    <td>@Model.OrderStatus.StatusCounts[OrderStatus.Shipped]</td>
+                    <td>@Model.OrderStatus.StatusCounts[OrderStatus.Completed]</td>
+                    <td>@Model.OrderStatus.StatusCounts[OrderStatus.Cancelled]</td>
+                    <td>@Model.OrderStatus.StatusCounts.Values.Sum()</td>
+                    <td>
+                        <a asp-controller="Admin" asp-action="GetOrdersStats" class="btn btn-primary">Analytics</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Monthly Profit</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var month in Model.OrdersProfit.MonthlyProfits.OrderByDescending(x => x.Key))
+                {
+                    <tr>
+                        <td>@month.Key.ToString("MMM yyyy")</td>
+                        <td>$@month.Value.ToString("0.00")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6 text-center">
+        <strong>Average Profit: $@Model.OrdersProfit.AverageProfit.ToString("0.00")</strong>
+    </div>
+    <div class="col-md-6 text-center">
+        <strong>Total Orders: @Model.OrderStatus.TotalOrders</strong>
+    </div>
+</div>
+</div>

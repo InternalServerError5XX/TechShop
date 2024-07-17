@@ -52,6 +52,20 @@ namespace TechShopWeb.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> GetStatsAdminPanel()
+        {
+            var response = await adminService.GetCachedAdminPanel();
+            return PartialView("~/Views/Admin/Order/_StatsPartial.cshtml", response.OrdersStats);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetOrdersStats(DateTime? start, DateTime? end)
+        {
+            var stats = await adminService.GetOrdersStats(start, end);
+            return View(stats);
+        }
+
+        [HttpGet]
         public IActionResult Logs()
         {
             return View();

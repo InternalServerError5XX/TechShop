@@ -242,7 +242,6 @@ namespace TechShop.Controllers
             return Ok(response);
         }
 
-
         [HttpPost("CreateProduct")]
         [ApiExplorerSettings(GroupName = "Products")]
         public async Task<IActionResult> CreateProduct([FromForm] CreateProductDto productDto)
@@ -687,7 +686,7 @@ namespace TechShop.Controllers
 
         [HttpGet("GetOrders")]
         [ApiExplorerSettings(GroupName = "Order")]
-        public async Task<IActionResult> GetOrders()
+        public IActionResult GetOrders()
         {
             var orders = orderService.GetOrders();
             var response = mapper.Map<IEnumerable<ResponseOrderDto>>(orders);
@@ -698,13 +697,21 @@ namespace TechShop.Controllers
         [Authorize]
         [HttpGet("GetUserOrders")]
         [ApiExplorerSettings(GroupName = "Order")]
-        public async Task<IActionResult> GetUserOrders()
+        public IActionResult GetUserOrders()
         {
             var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
             var orders = orderService.GetUsersOrders(email!);
             var response = mapper.Map<IEnumerable<ResponseOrderDto>>(orders);
 
             return Ok(response);
+        }
+
+        [HttpGet("GetOrdersStats")]
+        [ApiExplorerSettings(GroupName = "Order")]
+        public async Task<IActionResult> GetOrdersStats(DateTime? start, DateTime? end)
+        {
+            var stats = await adminService.GetOrdersStats(start, end);
+            return Ok(stats);
         }
 
         [HttpGet("GetOrder")]

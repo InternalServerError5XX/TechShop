@@ -9,7 +9,7 @@ using TechShop.Domain.DTOs.UserDtos.UserDto;
 namespace TechShopWeb.Controllers
 {
     [TypeFilter(typeof(MvcControllerExceptionFilter))]
-    public class RoleController(IUserService userService, IMapper mapper) : Controller
+    public class RoleController(IUserService userService) : Controller
     {
         [HttpGet]
         public IActionResult Create()
