@@ -17,7 +17,7 @@ namespace TechShopWeb.Controllers
     {
         [HttpGet]
         public async Task<IActionResult> GetAll(RequestPaginationDto paginationDto, string? searchTerm, 
-            string? orderBy, string? categories)
+            string? orderBy, string? categories, decimal? minPrice, decimal? maxPrice)
         {
             var filterDto = new RequestFilterDto<Product>();
 
@@ -36,6 +36,10 @@ namespace TechShopWeb.Controllers
                                          .Select(c => c.Trim().ToLower())
                                          .ToList();
             }
+
+            filterDto.AddSearchTerm(x =>
+                (!minPrice.HasValue || x.Price >= minPrice.Value) &&
+                (!maxPrice.HasValue || x.Price <= maxPrice.Value));
 
             if (categoryList.Any())
                 filterDto.AddSearchTerm(x => categoryList.Contains(x.Category.Name.ToLower()));

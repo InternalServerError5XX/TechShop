@@ -61,6 +61,87 @@ function updateCategoryFilters() {
     }
 }
 
+document.addEventListener('DOMContentLoaded', function () {
+    const priceRangeMin = document.getElementById('priceRangeMin');
+    const priceRangeMax = document.getElementById('priceRangeMax');
+    const priceLabelMin = document.getElementById('priceLabelMin');
+    const priceLabelMax = document.getElementById('priceLabelMax');
+
+    const currentUrl = new URL(window.location.href);
+    const minPrice = currentUrl.searchParams.get('minPrice') || '0';
+    const maxPrice = currentUrl.searchParams.get('maxPrice') || '1000';
+
+    if (priceRangeMin) {
+        priceRangeMin.value = minPrice;
+    }
+    if (priceRangeMax) {
+        priceRangeMax.value = maxPrice;
+    }
+    if (priceLabelMin) {
+        priceLabelMin.textContent = minPrice;
+    }
+    if (priceLabelMax) {
+        priceLabelMax.textContent = maxPrice;
+    }
+
+    function updateLabels() {
+        if (parseInt(priceRangeMin.value) > parseInt(priceRangeMax.value)) {
+            priceRangeMin.value = priceRangeMax.value;
+        }
+        priceLabelMin.textContent = priceRangeMin.value;
+        priceLabelMax.textContent = priceRangeMax.value;
+    }
+
+    function adjustRangeValue(rangeElement, adjustment) {
+        const currentValue = parseInt(rangeElement.value);
+        const newValue = Math.max(parseInt(rangeElement.min), Math.min(currentValue + adjustment, parseInt(rangeElement.max)));
+        rangeElement.value = newValue;
+        updateLabels();
+    }
+
+    function updatePriceRange() {
+        const minPrice = encodeURIComponent(priceRangeMin.value);
+        const maxPrice = encodeURIComponent(priceRangeMax.value);
+        const currentUrl = new URL(window.location.href);
+
+        if (currentUrl.pathname.includes("GetAll")) {
+            currentUrl.searchParams.set('minPrice', minPrice);
+            currentUrl.searchParams.set('maxPrice', maxPrice);
+        } else {
+            currentUrl.pathname = "Product/GetAll";
+            currentUrl.searchParams.set('minPrice', minPrice);
+            currentUrl.searchParams.set('maxPrice', maxPrice);
+        }
+
+        window.location.href = currentUrl.href;
+    }
+
+    document.getElementById('decreaseMin').addEventListener('click', function () {
+        adjustRangeValue(priceRangeMin, -1);
+    });
+
+    document.getElementById('increaseMin').addEventListener('click', function () {
+        adjustRangeValue(priceRangeMin, 1);
+    });
+
+    document.getElementById('decreaseMax').addEventListener('click', function () {
+        adjustRangeValue(priceRangeMax, -1);
+    });
+
+    document.getElementById('increaseMax').addEventListener('click', function () {
+        adjustRangeValue(priceRangeMax, 1);
+    });
+
+    document.getElementById('applyPriceRange').addEventListener('click', function () {
+        updatePriceRange();
+    });
+
+    priceRangeMin.addEventListener('input', updateLabels);
+    priceRangeMax.addEventListener('input', updateLabels);
+
+    updateLabels();
+});
+
 document.addEventListener("DOMContentLoaded", function () {
     var currentUrl = new URL(window.location.href);
 
@@ -101,7 +182,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 });
-
 
 function setActiveSlide(index) {
     var carousel = new bootstrap.Carousel(document.querySelector('#productCarousel'));

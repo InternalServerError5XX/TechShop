@@ -198,7 +198,7 @@ namespace TechShop.Controllers
         [HttpGet("GetProducts")]
         [ApiExplorerSettings(GroupName = "Products")]
         public async Task<IActionResult> GetProducts(RequestPaginationDto paginationDto, string? searchTerm, 
-            string? orderBy, string? categories)
+            string? orderBy, string? categories, decimal? minPrice, decimal? maxPrice)
         {
             var filterDto = new RequestFilterDto<Product>();
 
@@ -218,8 +218,12 @@ namespace TechShop.Controllers
                                          .ToList();
             }
 
+            filterDto.AddSearchTerm(x =>
+                (!minPrice.HasValue || x.Price >= minPrice.Value) &&
+                (!maxPrice.HasValue || x.Price <= maxPrice.Value));
+
             if (categoryList.Any())
-                filterDto.AddSearchTerm(x => categoryList.Contains(x.Category.Name.ToLower()));
+                filterDto.AddSearchTerm(x => categoryList.Contains(x.Category.Name.ToLower()));          
 
             filterDto.OrderBy = orderBy switch
             {

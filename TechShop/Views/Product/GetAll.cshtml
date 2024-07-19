@@ -41,6 +41,48 @@
                 </li>
             }
         </ul>
+
+        <h5 class="px-3 mt-4">Select Price Range</h5>
+        <div class="row slider-container">
+            <div class="col-md-12">
+                <div class="d-flex align-items-center">
+                    <div class="input-group-prepend">
+                        <a class="btn btn-link minus-btn" id="decreaseMin">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-dash-circle-fill text-danger" viewBox="0 0 16 16">
+                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M4.5 7.5a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1z" />
+                            </svg>
+                        </a>
+                    </div>
+                    <input type="range" class="form-range" style="width: 50%; margin-top: 3px" min="0" max="1000" step="1" id="priceRangeMin" value="0" onchange="updateLabels()">
+                    <div class="input-group-append">
+                        <a class="btn btn-link plus-btn" id="increaseMin">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
+                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; margin-top: 10px;">
+                    <div class="input-group-prepend">
+                        <a class="btn btn-link minus-btn" id="decreaseMax">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-dash-circle-fill text-danger" viewBox="0 0 16 16">
+                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M4.5 7.5a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1z" />
+                            </svg>
+                        </a>
+                    </div>
+                    <input type="range" class="form-range" style="width: 50%" min="0" max="1000" step="1" id="priceRangeMax" value="1000" onchange="updateLabels()">
+                    <div class="input-group-append">
+                        <a class="btn btn-link plus-btn" id="increaseMax">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
+                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                <p style="margin-top: 10px;">Price Range: $<span id="priceLabelMin">0</span> - $<span id="priceLabelMax">1000</span></p>
+                <button class="btn btn-primary" id="applyPriceRange" style="margin-top: 10px;">Apply</button>
+            </div>
+        </div>
     </div>
 
     @if (Model.Data != null && Model.Data.Any())
